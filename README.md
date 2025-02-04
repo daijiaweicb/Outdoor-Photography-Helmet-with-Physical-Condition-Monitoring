@@ -1,9 +1,9 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
 
-# MODE 1
+# Mode 1
 Keep the camera level or at a certain elevation angle
 
-# MODE 2
+# Mode 2
 1. Identify the condition of users by the camera
 2. Combine the data with the current temperature humidity (heart rate) and give advice to user
 
