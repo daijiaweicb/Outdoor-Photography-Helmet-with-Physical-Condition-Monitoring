@@ -11,6 +11,7 @@ Keep the camera at a certain elevation angle with horizontal level to record the
 
 
 # Frame
-![5044c63c9cd4c44293ee21c463c334e2](https://github.com/user-attachments/assets/63f93ba1-e833-4910-8451-e61f55b42213)
+![1e670894-2de2-45d7-86f5-565f9e828a4b](https://github.com/user-attachments/assets/6487dc9f-63e7-45f8-b6ee-b69a6d64750a)
+
 
 
