@@ -2,6 +2,7 @@
 #include <cmath>
 #include "iic.h"
 
+
 void Kalman::initKalmanFilter(KalmanFilter &kf)
 {
     kf.angle = 0.0f;
@@ -43,10 +44,7 @@ float Kalman::kalmanUpdate(KalmanFilter &kf, float newRate, float dt, float meas
     return kf.angle;
 }
 
-void MPU::RegisterCallback(SensorCallback* cb)
-    {
-        callback.push_back(cb);
-    }
+
 
 // Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
 void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
@@ -147,43 +145,41 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
 }
 
 
-void ThreadMPU::run()
-{
+
+void ThreadMPU::RegisterCallback(SensorCallback* cb)
+ {
+    callback.push_back(cb);  
+}
+
+void ThreadMPU::calibrate() {
+    calib = {0};
+    MPU::calibrateSensors(iic, calib, 1000);  // 调用基类方法
+}
+
+void ThreadMPU::run() {
     running = true;
-    MPU mpu;
-    IIC iic(1); 
-    KalmanFilter kfRoll, kfPitch;
-    MPU::AngleData angle;
-    MPU::AngleData prevAngle = {0, 0, 0};
-    MPU::AngleData calib = {0, 0, 0};
-    float dt = 0.01f;
-
-    Kalman kalman;
-    kalman.initKalmanFilter(kfRoll);
-    kalman.initKalmanFilter(kfPitch);
-    
-    mpu.calibrateSensors(iic, calib);
-
-    while (running)
-    {
+    while (running) {
         try {
+            // 使用成员变量 iic、dt、calib 等
+            MPU::SensorData data = readMPU6050(iic);  // 调用继承方法
+            MPU::AngleData angle = calculateAngle(data, dt, prevAngle, 
+                                                 calib, kfRoll, kfPitch);
+            
+            // 更新历史数据
+            prevAngle = angle;
 
-            MPU::SensorData data = mpu.readMPU6050(iic);
-            
-            angle = mpu.calculateAngle(data, dt, prevAngle, calib, kfRoll, kfPitch);
-            
-            float NowAngle = angle.yaw;
-            for (auto cb : callback)
-            {
-                cb->onSensorData(NowAngle);
+            // 触发回调
+            for (auto cb : callback) {
+                cb->onSensorData(angle.yaw);
             }
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "Error: " << e.what() << std::endl;
+        } 
+        catch (const std::exception& e) {
+            std::cerr << "Sensor Error: " << e.what() << std::endl;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10)); 
+        // 精确周期控制
+        auto start = std::chrono::steady_clock::now();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 

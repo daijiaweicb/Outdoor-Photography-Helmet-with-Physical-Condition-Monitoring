@@ -24,7 +24,7 @@ public:
 
 
 
-class MotorControl : public SensorCallback , StepperMotor
+class MotorControl : public SensorCallback , public StepperMotor
 {
     private:
     struct Data
@@ -34,6 +34,7 @@ class MotorControl : public SensorCallback , StepperMotor
         float RevData =0;
     };
     
+    public:
     void onSensorData(float value) override;
 };
 

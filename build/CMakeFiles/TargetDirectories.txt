@@ -1,0 +1,3 @@
+/home/zha-yixuan/Desktop/Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring/build/CMakeFiles/main.dir
+/home/zha-yixuan/Desktop/Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring/build/CMakeFiles/edit_cache.dir
+/home/zha-yixuan/Desktop/Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring/build/CMakeFiles/rebuild_cache.dir
