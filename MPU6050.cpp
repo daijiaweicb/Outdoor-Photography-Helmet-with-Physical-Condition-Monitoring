@@ -172,7 +172,7 @@ void ThreadMPU::run() {
                 std::lock_guard<std::mutex> lock(data_mutex);
                 angle = calculateAngle(data, dt, prevAngle, calib, kfRoll, kfPitch);
                 prevAngle = angle;
-                sleep(1);
+                
             }
 
             // 安全获取回调列表
@@ -186,6 +186,7 @@ void ThreadMPU::run() {
             for (auto cb : local_callbacks) {
                 cb->onSensorData(angle.pitch);
             }
+            sleep(1);
         }
         catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;
