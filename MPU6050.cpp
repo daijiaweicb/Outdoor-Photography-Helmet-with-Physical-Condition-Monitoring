@@ -76,8 +76,8 @@ void MPU::initMPU6050(IIC &iic)
 {
     iic.iic_writeRegister(0x6B, 0x00);  // Wake up
     iic.iic_writeRegister(0x1B, 0x00);  //  ±250°/s
-    // iic.iic_writeRegister(0x1A, 0x03);  // LowPass Filter 44Hz
-    iic.iic_writeRegister(0x19, 0xFF);  // Sampling Rate 1kHz
+    iic.iic_writeRegister(0x1A, 0x03);  // LowPass Filter 44Hz
+    iic.iic_writeRegister(0x19, 0x00);  // Sampling Rate 1kHz
 }
 
 // Read MPU6050 data: accelerometer and gyro totaling 14 bytes (6 bytes for accelerometer, 2 bytes for temperature, 6 bytes for gyro)
@@ -172,6 +172,7 @@ void ThreadMPU::run() {
                 std::lock_guard<std::mutex> lock(data_mutex);
                 angle = calculateAngle(data, dt, prevAngle, calib, kfRoll, kfPitch);
                 prevAngle = angle;
+                sleep(1);
             }
 
             // 安全获取回调列表
