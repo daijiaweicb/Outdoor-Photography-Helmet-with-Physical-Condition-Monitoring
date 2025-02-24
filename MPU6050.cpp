@@ -183,7 +183,7 @@ void ThreadMPU::run() {
 
             // 触发回调
             for (auto cb : local_callbacks) {
-                cb->onSensorData(angle.yaw);
+                cb->onSensorData(angle.roll);
             }
         }
         catch (const std::exception& e) {
