@@ -30,8 +30,8 @@ class MotorControl : public SensorCallback , public StepperMotor
     struct Data
     {
         float PrevData =0;
-        float NewData =0;
-        float RevData =0;
+        float NewData ;
+        float RevData ;
     };
     
     public:
