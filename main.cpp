@@ -12,7 +12,10 @@ int main() {
     iic.iic_open();
 
     StepperMotor motor;
-    motor.start(0, 17, 27, 22, 5);
+    if(motor.start(0, 17, 27, 22, 5))
+    {
+        cout << "motor init success" << endl;
+    }
 
     // 创建线程管理对象（传入IIC引用和采样周期）
     ThreadMPU threadm(iic, 0.01f); 
