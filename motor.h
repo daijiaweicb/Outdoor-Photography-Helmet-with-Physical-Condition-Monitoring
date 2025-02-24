@@ -30,8 +30,8 @@ class MotorControl : public SensorCallback , public StepperMotor
     private:
     StepperMotor motor;
     std::mutex motor_mutex;
-    std::chrono::steady_clock::time_point last_action_time;  // 记录上次操作时间
-    const std::chrono::milliseconds action_interval{100};    // 操作间隔 100ms
+    std::chrono::steady_clock::time_point last_action_time;
+    std::chrono::milliseconds action_interval{100};  // 默认间隔 100ms
     struct Data
     {
         float PrevData;
@@ -43,6 +43,7 @@ class MotorControl : public SensorCallback , public StepperMotor
     public:
     MotorControl();
     void onSensorData(float value) override;
+    void MotorControl::setActionInterval(int milliseconds);
 };
 
 #endif

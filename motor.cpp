@@ -133,3 +133,7 @@ void MotorControl::onSensorData(float value) {
     // 更新时间戳
     last_action_time = now;
 }
+
+void MotorControl::setActionInterval(int milliseconds) {
+    action_interval = std::chrono::milliseconds(milliseconds);
+}
