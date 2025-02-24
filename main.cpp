@@ -11,6 +11,9 @@ int main() {
     IIC iic(1);
     iic.iic_open();
 
+    StepperMotor motor;
+    motor.start(0, 17, 27, 22, 5);
+
     // 创建线程管理对象（传入IIC引用和采样周期）
     ThreadMPU threadm(iic, 0.01f); 
 
@@ -20,9 +23,9 @@ int main() {
 
     // 注册回调并启动
     MotorControl motorc;
-    threadm.RegisterCallback(&motorc);
+    
     threadm.start();
-
+    threadm.RegisterCallback(&motorc);
 
     // 停止
     threadm.stop();
