@@ -111,19 +111,6 @@ MotorControl::MotorControl()
     angle.PrevData =0;
 }
 
-// motor.h
-#include <chrono>
-
-class MotorControl : public SensorCallback {
-private:
-    Data angle;
-    std::chrono::steady_clock::time_point last_action_time;  // 记录上次操作时间
-    const std::chrono::milliseconds action_interval{100};    // 操作间隔 100ms
-public:
-    void onSensorData(float value) override;
-};
-
-// motor.cpp
 void MotorControl::onSensorData(float value) {
     // 更新角度数据
     angle.NewData = value;
