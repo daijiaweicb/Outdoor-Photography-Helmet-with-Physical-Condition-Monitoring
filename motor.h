@@ -36,8 +36,10 @@ class MotorControl : public SensorCallback , public StepperMotor
         float NewData ;
         float RevData ;
     };
+    Data angle;
     
     public:
+    MotorControl();
     void onSensorData(float value) override;
 };
 

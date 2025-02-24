@@ -105,10 +105,14 @@ void StepperMotor::cleanup()
     }
 }
 
+MotorControl::MotorControl()
+{
+    
+    angle.PrevData =0;
+}
+
 void MotorControl::onSensorData(float value)
 {
-    Data angle;
-    
     angle.NewData = value;
     angle.RevData = angle.NewData - angle.PrevData;
     angle.PrevData = angle.NewData;
