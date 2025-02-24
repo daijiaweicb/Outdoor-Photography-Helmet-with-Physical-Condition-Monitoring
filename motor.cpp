@@ -113,18 +113,18 @@ void MotorControl::onSensorData(float value)
     angle.RevData = angle.NewData - angle.PrevData;
     angle.PrevData = angle.NewData;
 
-    cout << "Now The Angles is: " << angle.NewData<<endl;
-    float steps = angle.RevData /5.625;
-    int intSteps = static_cast<int>(round(steps));
+    cout << "Now The Angles is: " << angle.RevData<<endl;
+    // float steps = angle.RevData /5.625;
+    // int intSteps = static_cast<int>(round(steps));
 
-    std::lock_guard<std::mutex> lock(motor_mutex);  // 加锁
-    if(intSteps > 0)
-    {
-        motor.forward(intSteps);
-    }
-    else if(intSteps < 0)
-    {
-        motor.backward(-intSteps);
-    }
+    // std::lock_guard<std::mutex> lock(motor_mutex);  // 加锁
+    // if(intSteps > 0)
+    // {
+    //     motor.forward(intSteps);
+    // }
+    // else if(intSteps < 0)
+    // {
+    //     motor.backward(-intSteps);
+    // }
 
 }
