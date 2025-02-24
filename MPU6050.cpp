@@ -190,9 +190,9 @@ void ThreadMPU::run() {
             std::cerr << "Error: " << e.what() << std::endl;
         }
 
-        // 精确周期控制
-        auto elapsed = std::chrono::steady_clock::now() - cycle_start;
-        std::this_thread::sleep_for(std::chrono::milliseconds(10) - elapsed);
+        // // 精确周期控制
+        // auto elapsed = std::chrono::steady_clock::now() - cycle_start;
+        // std::this_thread::sleep_for(std::chrono::milliseconds(10) - elapsed);
     }
 }
 
