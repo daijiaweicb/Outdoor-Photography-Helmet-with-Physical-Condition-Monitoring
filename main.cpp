@@ -34,7 +34,6 @@ int main() {
 
     // 5. 注册回调
     MotorControl motorc;
-    motorc.setActionInterval(100);
     threadm.RegisterCallback(&motorc);
 
     // 6. 最后启动线程（关键修改）
