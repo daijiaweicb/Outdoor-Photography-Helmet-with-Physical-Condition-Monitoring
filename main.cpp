@@ -19,6 +19,8 @@ int main() {
         cout << "motor init success" << endl;
     }
 
+    
+
     // 2. 创建线程管理对象（但暂不启动）
     ThreadMPU threadm(iic, 0.01f); 
 
@@ -32,6 +34,7 @@ int main() {
 
     // 5. 注册回调
     MotorControl motorc;
+    motorc.setActionInterval(100);
     threadm.RegisterCallback(&motorc);
 
     // 6. 最后启动线程（关键修改）
