@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <vector>
 #include <thread>
+#include <mutex>
 
 class SensorCallback
 {
@@ -69,6 +70,8 @@ class MPU : public Kalman
 
 class ThreadMPU : public MPU {
 private:
+    mutable std::mutex callback_mutex;
+    mutable std::mutex data_mutex;
     IIC& iic;                 // 引用外部IIC对象
     Kalman::KalmanFilter kfRoll, kfPitch;  // Kalman滤波器作为成员
     MPU::AngleData calib;     // 校准数据

@@ -147,7 +147,8 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
 
 
 void ThreadMPU::RegisterCallback(SensorCallback* cb)
- {
+{
+    std::lock_guard<std::mutex> lock(callback_mutex);
     callback.push_back(cb);  
 }
 
@@ -159,27 +160,39 @@ void ThreadMPU::calibrate() {
 void ThreadMPU::run() {
     running = true;
     while (running) {
+        auto cycle_start = std::chrono::steady_clock::now();
+        
         try {
-            // 使用成员变量 iic、dt、calib 等
-            MPU::SensorData data = readMPU6050(iic);  // 调用继承方法
-            MPU::AngleData angle = calculateAngle(data, dt, prevAngle, 
-                                                 calib, kfRoll, kfPitch);
+            // 读取传感器数据
+            auto data = readMPU6050(iic);
             
-            // 更新历史数据
-            prevAngle = angle;
+            // 计算角度
+            MPU::AngleData angle;
+            {
+                std::lock_guard<std::mutex> lock(data_mutex);
+                angle = calculateAngle(data, dt, prevAngle, calib, kfRoll, kfPitch);
+                prevAngle = angle;
+            }
+
+            // 安全获取回调列表
+            std::vector<SensorCallback*> local_callbacks;
+            {
+                std::lock_guard<std::mutex> lock(callback_mutex);
+                local_callbacks = callback;
+            }
 
             // 触发回调
-            for (auto cb : callback) {
+            for (auto cb : local_callbacks) {
                 cb->onSensorData(angle.yaw);
             }
-        } 
+        }
         catch (const std::exception& e) {
-            std::cerr << "Sensor Error: " << e.what() << std::endl;
+            std::cerr << "Error: " << e.what() << std::endl;
         }
 
         // 精确周期控制
-        auto start = std::chrono::steady_clock::now();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        auto elapsed = std::chrono::steady_clock::now() - cycle_start;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10) - elapsed);
     }
 }
 
