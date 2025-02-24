@@ -23,8 +23,6 @@ int main() {
     threadm.RegisterCallback(&motorc);
     threadm.start();
 
-    // 主线程等待
-    std::this_thread::sleep_for(std::chrono::seconds(10));
 
     // 停止
     threadm.stop();
