@@ -16,7 +16,12 @@
 #include <unistd.h>
 
 class IIC {
-public:
+
+    private:
+    int adapter_nr;
+    char filename[20];
+    
+    public:
     /**
      * construct of the class
      */
@@ -52,9 +57,7 @@ public:
     void iic_writeRegister(uint8_t reg, uint8_t value);
     int file;
 
-private:
-    int adapter_nr;
-    char filename[20];
+
 };
 
 

@@ -1,6 +1,6 @@
 #include "MPU6050.h"
 #include <cmath>
-#include "Test.h"
+#include "iic.h"
 
 void Kalman::initKalmanFilter(KalmanFilter &kf)
 {
@@ -43,6 +43,10 @@ float Kalman::kalmanUpdate(KalmanFilter &kf, float newRate, float dt, float meas
     return kf.angle;
 }
 
+void MPU::RegisterCallback(SensorCallback* cb)
+    {
+        callback.push_back(cb);
+    }
 
 // Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
 void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
@@ -119,10 +123,11 @@ float MPU:: getAccPitch(float accelX, float accelY, float accelZ)
 
 
 // Calculate Roll, Pitch by fusing gyroscope integration with accelerometer measurements using Kalman filtering (Yaw simply integrates)
-MPU::AngleData Kalman::calculateAngle(const SensorData &data, float dt, const AngleData &prev, 
+MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const AngleData &prev, 
                            const AngleData &calib, KalmanFilter &kfRoll, KalmanFilter &kfPitch)
 {
     AngleData angle;
+    MPU mpu;
     // Correct gyro data (remove calibration zero bias)
     float gyroX = data.gyroX - calib.gyroBiasX;
     float gyroY = data.gyroY - calib.gyroBiasY;
@@ -139,4 +144,60 @@ MPU::AngleData Kalman::calculateAngle(const SensorData &data, float dt, const An
     angle.yaw = prev.yaw + gyroZ * dt;
     
     return angle;
+}
+
+
+void ThreadMPU::run()
+{
+    running = true;
+    MPU mpu;
+    IIC iic(1); 
+    KalmanFilter kfRoll, kfPitch;
+    MPU::AngleData angle;
+    MPU::AngleData prevAngle = {0, 0, 0};
+    MPU::AngleData calib = {0, 0, 0};
+    float dt = 0.01f;
+
+    Kalman kalman;
+    kalman.initKalmanFilter(kfRoll);
+    kalman.initKalmanFilter(kfPitch);
+    
+    mpu.calibrateSensors(iic, calib);
+
+    while (running)
+    {
+        try {
+
+            MPU::SensorData data = mpu.readMPU6050(iic);
+            
+            angle = mpu.calculateAngle(data, dt, prevAngle, calib, kfRoll, kfPitch);
+            
+            float NowAngle = angle.yaw;
+            for (auto cb : callback)
+            {
+                cb->onSensorData(NowAngle);
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); 
+    }
+}
+
+
+void ThreadMPU ::start()
+{
+    workerThread = std::thread(&ThreadMPU::run,this);
+}
+
+void ThreadMPU :: stop()
+{
+    running = false;
+    if(workerThread.joinable())
+    {
+        workerThread.join();
+    }
 }
