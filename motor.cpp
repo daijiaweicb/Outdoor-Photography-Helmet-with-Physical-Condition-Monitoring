@@ -116,6 +116,7 @@ void MotorControl::onSensorData(float value)
     angle.NewData = value;
     angle.RevData = angle.NewData - angle.PrevData;
     angle.PrevData = angle.NewData;
+    sleep(1);
 
     cout << "Now The Angles is: " << angle.RevData<<endl;
     // float steps = angle.RevData /5.625;

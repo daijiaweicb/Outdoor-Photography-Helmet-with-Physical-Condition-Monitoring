@@ -186,7 +186,6 @@ void ThreadMPU::run() {
             for (auto cb : local_callbacks) {
                 cb->onSensorData(angle.pitch);
             }
-            sleep(1);
         }
         catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;
