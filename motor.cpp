@@ -1,6 +1,6 @@
 #include "motor.h"
 #include <cmath>
-
+#include <chrono>
 
 using namespace std;
 
@@ -111,25 +111,38 @@ MotorControl::MotorControl()
     angle.PrevData =0;
 }
 
-void MotorControl::onSensorData(float value)
-{
+// motor.h
+#include <chrono>
+
+class MotorControl : public SensorCallback {
+private:
+    Data angle;
+    std::chrono::steady_clock::time_point last_action_time;  // 记录上次操作时间
+    const std::chrono::milliseconds action_interval{100};    // 操作间隔 100ms
+public:
+    void onSensorData(float value) override;
+};
+
+// motor.cpp
+void MotorControl::onSensorData(float value) {
+    // 更新角度数据
     angle.NewData = value;
     angle.RevData = angle.NewData - angle.PrevData;
     angle.PrevData = angle.NewData;
-    sleep(1);
+    
+    std::cout << "Angle Change: " << angle.RevData << "°\n";
 
-    cout << "Now The Angles is: " << angle.RevData<<endl;
-    // float steps = angle.RevData /5.625;
+    // 检查是否达到操作间隔
+    auto now = std::chrono::steady_clock::now();
+    if (now - last_action_time < action_interval) {
+        return;  // 未到时间，直接返回
+    }
+
+    // // 执行舵机控制
+    // float steps = angle.RevData / 5.625;
     // int intSteps = static_cast<int>(round(steps));
 
-    // std::lock_guard<std::mutex> lock(motor_mutex);  // 加锁
-    // if(intSteps > 0)
-    // {
-    //     motor.forward(intSteps);
-    // }
-    // else if(intSteps < 0)
-    // {
-    //     motor.backward(-intSteps);
-    // }
 
+    // 更新时间戳
+    last_action_time = now;
 }
