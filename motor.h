@@ -43,7 +43,7 @@ class MotorControl : public SensorCallback , public StepperMotor
     public:
     MotorControl();
     void onSensorData(float value) override;
-    void MotorControl::setActionInterval(int milliseconds);
+    void setActionInterval(int milliseconds);
 };
 
 #endif
