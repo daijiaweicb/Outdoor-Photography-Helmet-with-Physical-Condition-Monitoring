@@ -27,6 +27,7 @@ public:
 class MotorControl : public SensorCallback , public StepperMotor
 {
     private:
+    StepperMotor motor;
     struct Data
     {
         float PrevData =0;
