@@ -7,30 +7,19 @@
 using namespace std;
 
 int main() {
-    // 初始化硬件
-    IIC iic(1);
-    iic.iic_open();
-
-    StepperMotor motor;
-    if(motor.start(0, 17, 27, 22, 5))
-    {
-        cout << "motor init success" << endl;
-    }
-
-    // 创建线程管理对象（传入IIC引用和采样周期）
+    IIC iic(1);  // 确保 iic 生命周期覆盖所有线程
     ThreadMPU threadm(iic, 0.01f); 
 
-    // 校准传感器（通过线程对象操作）
-    threadm.calibrate();
-    std::cout << "Calibration done." << std::endl;
-
-    // 注册回调并启动
+    // 启动线程前注册回调
     MotorControl motorc;
-    
-    threadm.start();
     threadm.RegisterCallback(&motorc);
 
-    // 停止
+    threadm.start();
+
+    // 主线程等待（避免 iic 提前销毁）
+    std::cout << "Press ENTER to exit..." << std::endl;
+    std::cin.get();
+
     threadm.stop();
     return 0;
 }
