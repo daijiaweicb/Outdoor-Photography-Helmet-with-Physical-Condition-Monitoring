@@ -32,7 +32,7 @@ class MotorControl : public SensorCallback , public StepperMotor
     std::mutex motor_mutex;
     struct Data
     {
-        float PrevData =0;
+        float PrevData;
         float NewData ;
         float RevData ;
     };
