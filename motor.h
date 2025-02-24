@@ -5,6 +5,7 @@
 #include <gpiod.h>
 #include <unistd.h>  
 #include "MPU6050.h"
+#include <mutex>
 
 class StepperMotor
 {
@@ -28,6 +29,7 @@ class MotorControl : public SensorCallback , public StepperMotor
 {
     private:
     StepperMotor motor;
+    std::mutex motor_mutex;
     struct Data
     {
         float PrevData =0;

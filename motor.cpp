@@ -1,7 +1,9 @@
 #include "motor.h"
 #include <cmath>
 
+
 using namespace std;
+
 
 bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
 {
@@ -115,6 +117,7 @@ void MotorControl::onSensorData(float value)
     float steps = angle.RevData /5.625;
     int intSteps = static_cast<int>(round(steps));
 
+    std::lock_guard<std::mutex> lock(motor_mutex);  // 加锁
     if(intSteps > 0)
     {
         motor.forward(intSteps);
