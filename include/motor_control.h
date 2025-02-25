@@ -28,11 +28,16 @@ public:
         angle.PrevData = 0;
         timer_1s.start(1000, [&]()
                        { time_flag = 1; });
+        if (motor.start(0, 17, 27, 22, 5))
+        {
+            cout << "motor init success" << endl;
+        }
     }
 
     ~MotorControl()
     {
         timer_1s.stop();
+        motor.cleanup();
     }
     void onSensorData(float value) override;
 };

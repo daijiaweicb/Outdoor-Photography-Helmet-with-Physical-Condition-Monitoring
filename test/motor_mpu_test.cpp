@@ -12,12 +12,6 @@ int main()
     IIC iic(1);
     iic.iic_open();
 
-    StepperMotor motor;
-    if (motor.start(0, 17, 27, 22, 5))
-    {
-        cout << "motor init success" << endl;
-    }
-
     ThreadMPU threadm(iic, 0.01f);
     threadm.calibrate();
     std::cout << "Calibration done." << std::endl;
