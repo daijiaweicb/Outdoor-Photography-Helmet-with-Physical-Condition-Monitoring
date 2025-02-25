@@ -29,6 +29,11 @@ public:
         timer_1s.start(1000, [&]()
                        { time_flag = 1; });
     }
+
+    ~MotorControl()
+    {
+        timer_1s.stop();
+    }
     void onSensorData(float value) override;
 };
 
