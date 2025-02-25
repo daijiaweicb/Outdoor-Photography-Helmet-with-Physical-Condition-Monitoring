@@ -6,23 +6,21 @@
 class ThreadMPU : public MPU
 {
 private:
-    mutable std::mutex callback_mutex;
-    mutable std::mutex data_mutex;
-    IIC &iic;                             // 引用外部IIC对象
-    Kalman::KalmanFilter kfRoll, kfPitch; // Kalman滤波器作为成员
-    MPU::AngleData calib;                 // 校准数据
-    MPU::AngleData prevAngle;             // 上一时刻角度
-    float dt;                             // 采样周期
+    IIC &iic;                             
+    Kalman::KalmanFilter kfRoll, kfPitch; 
+    MPU::AngleData calib;                 
+    MPU::AngleData prevAngle;             
+    float dt;                             
     std::vector<SensorCallback *> callback;
     std::thread workerThread;
     bool running = false;
 
 public:
-    // 通过构造函数初始化必要资源
+
     ThreadMPU(IIC &iic_ref, float delta_time)
         : iic(iic_ref), dt(delta_time)
     {
-        initKalmanFilter(kfRoll); // 使用继承自Kalman的方法
+        initKalmanFilter(kfRoll);
         initKalmanFilter(kfPitch);
     }
 
