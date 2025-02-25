@@ -18,11 +18,11 @@ void MotorControl::onSensorData(float value)
 
         if(intSteps > 0)
         {
-            motor.forward(intSteps);
+            motor.forward(1024);
         }
         else if(intSteps < 0)
         {
-            motor.backward(-intSteps);
+            motor.backward(1024);
         }
 
         time_flag = 0;
