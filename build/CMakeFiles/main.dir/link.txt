@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/main.dir/main.cpp.o CMakeFiles/main.dir/MPU6050.cpp.o CMakeFiles/main.dir/motor.cpp.o CMakeFiles/main.dir/iic.cpp.o -o main  -lgpiod -li2c 

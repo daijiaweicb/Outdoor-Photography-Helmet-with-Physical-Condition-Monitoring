@@ -15,50 +15,45 @@
 #include <cstdint>
 #include <unistd.h>
 
-class IIC {
+class IIC
+{
 
-    private:
+private:
     int adapter_nr;
     char filename[20];
-    
-    public:
+
+public:
     /**
      * construct of the class
      */
     IIC(int adapter) : adapter_nr(adapter), file(-1) {}
 
-    
     /**
      * Open the I2C device
      * In this case, open the MPU 6050
      */
     void iic_open();
 
-    
     /**
      * Close the I2C device
      */
     void iic_close();
 
-    
     /**
-     * 
-     * @param  {uint8_t} reg     : 
-     * @param  {uint8_t*} buffer : 
-     * @param  {size_t} length   : 
-     * @return {bool}            : 
+     *
+     * @param  {uint8_t} reg     :
+     * @param  {uint8_t*} buffer :
+     * @param  {size_t} length   :
+     * @return {bool}            :
      */
-    bool readRegisters(uint8_t reg, uint8_t* buffer, size_t length);
+    bool readRegisters(uint8_t reg, uint8_t *buffer, size_t length);
     /**
-     * 
-     * @param  {uint8_t} reg   : 
-     * @param  {uint8_t} value : 
+     *
+     * @param  {uint8_t} reg   :
+     * @param  {uint8_t} value :
      */
     void iic_writeRegister(uint8_t reg, uint8_t value);
     int file;
-
-
 };
-
 
 #endif
