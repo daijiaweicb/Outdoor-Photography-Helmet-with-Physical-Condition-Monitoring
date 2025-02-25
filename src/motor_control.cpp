@@ -13,16 +13,16 @@ void MotorControl::onSensorData(float value)
 
         std::cout << "Angle Change: " << angle.RevData <<" New Angle: " << angle.NewData<< "°\n";
 
-        float steps = angle.RevData /5.625;
+        float steps = angle.RevData /0.1758;
         int intSteps = static_cast<int>(round(steps));
 
         if(intSteps > 0)
         {
-            motor.forward(1024);
+            motor.forward(intSteps);
         }
         else if(intSteps < 0)
         {
-            motor.backward(1024);
+            motor.backward(-intSteps);
         }
 
         time_flag = 0;
