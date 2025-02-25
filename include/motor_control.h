@@ -30,7 +30,7 @@ public:
                        { time_flag = 1; });
         if (motor.start(0, 17, 27, 22, 5))
         {
-            cout << "motor init success" << endl;
+            std::cout << "motor init success" << std::endl;
         }
     }
 
