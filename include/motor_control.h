@@ -2,14 +2,13 @@
 #define MOTOR_CONTROL_H
 
 #include "motor_setting.h"
+#include "Timer.h"
 
 class MotorControl : public SensorCallback, public StepperMotor
 {
 private:
     StepperMotor motor;
     std::mutex motor_mutex;
-    std::chrono::steady_clock::time_point last_action_time;
-    std::chrono::milliseconds action_interval{100}; // 默认间隔 100ms
     struct Data
     {
         float PrevData;
@@ -17,11 +16,20 @@ private:
         float RevData;
     };
     Data angle;
+    HighPrecisionTimer timer_1s;
+    int count;
+    bool time_flag;
 
 public:
-    MotorControl();
+    MotorControl()
+    {
+        time_flag = 1;
+        count = 0;
+        angle.PrevData = 0;
+        timer_1s.start(1000, [&]()
+                       { time_flag = 1; });
+    }
     void onSensorData(float value) override;
-    void setActionInterval(int milliseconds);
 };
 
 #endif

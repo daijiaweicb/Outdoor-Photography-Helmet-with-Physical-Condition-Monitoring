@@ -9,7 +9,7 @@ void ThreadMPU::RegisterCallback(SensorCallback *cb)
 void ThreadMPU::calibrate()
 {
     calib = {0};
-    MPU::calibrateSensors(iic, calib, 1000); // 调用基类方法
+    MPU::calibrateSensors(iic, calib, 1000); 
 }
 
 void ThreadMPU::run()
@@ -21,10 +21,9 @@ void ThreadMPU::run()
 
         try
         {
-            // 读取传感器数据
+
             auto data = readMPU6050(iic);
 
-            // 计算角度
             MPU::AngleData angle;
             {
                 std::lock_guard<std::mutex> lock(data_mutex);
@@ -32,14 +31,12 @@ void ThreadMPU::run()
                 prevAngle = angle;
             }
 
-            // 安全获取回调列表
             std::vector<SensorCallback *> local_callbacks;
             {
                 std::lock_guard<std::mutex> lock(callback_mutex);
                 local_callbacks = callback;
             }
 
-            // 触发回调
             for (auto cb : local_callbacks)
             {
                 cb->onSensorData(angle.pitch);
@@ -50,9 +47,8 @@ void ThreadMPU::run()
             std::cerr << "Error: " << e.what() << std::endl;
         }
 
-        // // 精确周期控制
-        // auto elapsed = std::chrono::steady_clock::now() - cycle_start;
-        // std::this_thread::sleep_for(std::chrono::milliseconds(10) - elapsed);
+        auto elapsed = std::chrono::steady_clock::now() - cycle_start;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10) - elapsed);
     }
 }
 
