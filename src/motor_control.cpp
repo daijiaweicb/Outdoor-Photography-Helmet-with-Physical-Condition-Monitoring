@@ -13,7 +13,7 @@ void MotorControl::onSensorData(float value)
 
         std::cout << "Angle Change: " << angle.RevData <<" New Angle: " << angle.NewData<< "°\n";
 
-        float steps = angle.RevData /0.1758;
+        float steps = angle.RevData /0.08789;
         int intSteps = static_cast<int>(round(steps));
 
         if(intSteps > 0)
