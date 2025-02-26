@@ -16,13 +16,13 @@ void MotorControl::onSensorData(float value)
     angle.target_angle += (angle.NewData - angle.PrevData);
  
  
-        
+    float Kp = 2.0, Ki = 0.1, Kd = 0.5;  
     
     float error = angle.target_angle - angle.NewData;
     angle.integral += error;
     float derivative = error - angle.prev_error;
     angle.prev_error = error;
-    float output = angle.Kp * error + angle.Ki * angle.integral + angle.Kd * derivative;
+    float output = Kp * error + Ki * angle.integral + Kd * derivative;
 
     std::cout << 
     " Current Angle: " << angle.NewData
