@@ -29,7 +29,7 @@ public:
         time_flag = 1;
         count = 0;
         angle.PrevData = 0;
-        timer_1s.start(200, [&]()
+        timer_1s.start(250, [&]()
                        { time_flag = 1; });
         if (motor.start(0, 17, 27, 22, 5))
         {
