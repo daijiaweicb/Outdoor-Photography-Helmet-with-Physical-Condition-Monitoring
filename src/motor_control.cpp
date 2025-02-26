@@ -14,7 +14,7 @@ void MotorControl::onSensorData(float value)
         // 或合理更新目标角度（如外部输入）
         // angle.target_angle = external_target;
 
-        const float Kp = 1.0, Ki = 0.01, Kd = 0.2;
+        const float Kp = 0.1, Ki = 0.01, Kd = 0.2;
         const float max_integral = 100.0;
 
         float error = angle.target_angle - angle.NewData;
