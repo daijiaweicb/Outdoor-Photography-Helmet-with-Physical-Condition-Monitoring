@@ -62,6 +62,7 @@ void MotorControl::onSensorData(float value)
        float steps = angle.RevData /0.08789;
        int intSteps = static_cast<int>(round(steps));
 
+       //Motor Control
         if(intSteps > 0)
         {
             motor.forward(intSteps);
