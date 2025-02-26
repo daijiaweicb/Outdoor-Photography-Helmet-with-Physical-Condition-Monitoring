@@ -16,7 +16,7 @@ void MotorControl::onSensorData(float value) {
         const float max_integral = 100.0;
 
         float error = angle.target_angle - angle.NewData;
-        
+        std::cout << "Angle Change: " << angle.RevData <<" New Angle: " << angle.NewData<< "°\n";
         // 积分限幅
         angle.integral = std::clamp(angle.integral + error, -max_integral, max_integral);
         
