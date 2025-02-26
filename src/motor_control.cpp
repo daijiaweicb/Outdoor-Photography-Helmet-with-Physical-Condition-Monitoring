@@ -1,11 +1,13 @@
 #include "motor_control.h"
 #include <cmath>
 
-void MotorControl::onSensorData(float value) {
+void MotorControl::onSensorData(float value)
+{
     std::lock_guard<std::mutex> lock(motor_mutex);
     angle.NewData = value;
 
-    if (time_flag == 1) {
+    if (time_flag == 1)
+    {
         // 固定目标角度（示例值，需根据需求调整）
         // angle.target_angle = 90.0;
 
@@ -16,23 +18,31 @@ void MotorControl::onSensorData(float value) {
         const float max_integral = 100.0;
 
         float error = angle.target_angle - angle.NewData;
-        std::cout << "Angle Change: " << angle.RevData <<" New Angle: " << angle.NewData<< "°\n";
+
         // 积分限幅
         angle.integral = std::clamp(angle.integral + error, -max_integral, max_integral);
-        
+
         float derivative = error - angle.prev_error;
         angle.prev_error = error;
         float output = Kp * error + Ki * angle.integral + Kd * derivative;
-
+        std::cout << "Output: " << output << " New Angle: " << angle.NewData << "°\n";
         // 死区过滤
-        if (fabs(output) > 0.1) {
+        if (fabs(output) > 0.1)
+        {
             int intSteps = static_cast<int>(round(output / 0.08789));
             // 驱动电机...
+            if (intSteps > 0)
+            {
+                motor.backward(intSteps);
+            }
+            else if (intSteps < 0)
+            {
+                motor.forward(-intSteps);
+            }
         }
 
         time_flag = 0;
     }
-
 
     // void MotorControl::onSensorData(float value)
     // {
