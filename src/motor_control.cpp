@@ -13,7 +13,7 @@ void MotorControl::onSensorData(float value)
     {
         
 
-    angle.target_angle += (value - angle.PrevData);
+    angle.target_angle += (angle.NewData - angle.PrevData);
  
  
         
