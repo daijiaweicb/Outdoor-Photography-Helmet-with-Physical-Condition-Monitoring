@@ -17,7 +17,7 @@ void MotorControl::onSensorData(float value)
  
  
         
-    angle.NewData = value;
+    
     float error = target_angle - angle.NewData;
     integral += error;
     float derivative = error - prev_error;
