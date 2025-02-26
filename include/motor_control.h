@@ -14,6 +14,10 @@ private:
         float PrevData;
         float NewData;
         float RevData;
+        float target_angle;
+        float prev_error;
+        float integral;
+        float Kp = 2.0, Ki = 0.1, Kd = 0.5; 
     };
     Data angle;
     HighPrecisionTimer timer_1s;
@@ -22,10 +26,7 @@ private:
 
 
 
-    float target_angle = 0;
-    float prev_error = 0;
-    float integral = 0;
-    float Kp = 2.0, Ki = 0.1, Kd = 0.5; 
+  
 
 
 
