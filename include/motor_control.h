@@ -14,11 +14,19 @@ private:
         float PrevData;
         float NewData;
         float RevData;
+        
+         
     };
     Data angle;
     HighPrecisionTimer timer_1s;
     int count;
     bool time_flag;
+
+
+
+  
+
+
 
 public:
     MotorControl()
