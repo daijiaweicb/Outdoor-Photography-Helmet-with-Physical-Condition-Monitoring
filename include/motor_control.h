@@ -17,18 +17,11 @@ private:
         float target_angle;
         float integral;
         float prev_error;
-         
     };
     Data angle;
     HighPrecisionTimer timer_1s;
     int count;
     bool time_flag;
-
-
-
-  
-
-
 
 public:
     MotorControl()
