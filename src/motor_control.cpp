@@ -3,18 +3,33 @@
 
 void MotorControl::onSensorData(float value)
 {
+
+
+
+
     // std::lock_guard<std::mutex> lock(motor_mutex);
     angle.NewData = value;
     if (time_flag == 1)
     {
         
-        angle.RevData = angle.NewData - angle.PrevData;
-        angle.PrevData = angle.NewData;
 
-        std::cout << "Angle Change: " << angle.RevData <<" New Angle: " << angle.NewData<< "°\n";
+    target_angle += (value - angle.PrevData);
+ 
+ 
+        
+    angle.NewData = value;
+    float error = target_angle - angle.NewData;
+    integral += error;
+    float derivative = error - prev_error;
+    prev_error = error;
+    float output = Kp * error + Ki * integral + Kd * derivative;
 
-        float steps = angle.RevData /0.08789;
-        int intSteps = static_cast<int>(round(steps));
+    std::cout << "PID Output: " << output
+    << " Current Angle: " << angle.NewData
+    << " Target: " << target_angle << "°\n";
+
+
+    int intSteps = static_cast<int>(round(output / 0.08789));
 
         if(intSteps > 0)
         {
@@ -26,5 +41,9 @@ void MotorControl::onSensorData(float value)
         }
 
         time_flag = 0;
+
+
+
+
     }
 }

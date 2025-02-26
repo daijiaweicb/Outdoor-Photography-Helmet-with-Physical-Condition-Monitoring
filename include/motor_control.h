@@ -20,6 +20,15 @@ private:
     int count;
     bool time_flag;
 
+
+
+    float target_angle = 0;
+    float prev_error = 0;
+    float integral = 0;
+    float Kp = 2.0, Ki = 0.1, Kd = 0.5; 
+
+
+
 public:
     MotorControl()
     {
