@@ -28,7 +28,7 @@ void ThreadMPU::run()
 
             for (auto cb : callback)
             {
-                cb->onSensorData(angle.pitch);
+                cb->onSensorData(angle.roll);
             }
         }
         catch (const std::exception &e)
