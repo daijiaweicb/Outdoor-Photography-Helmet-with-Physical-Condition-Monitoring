@@ -17,7 +17,7 @@ void MotorControl::onSensorData(float value)
         int intSteps = static_cast<int>(round(steps));
 
 
-        //motor Control
+        
         if(intSteps > 0)
         {
             motor.forward(intSteps);
