@@ -13,20 +13,20 @@ void MotorControl::onSensorData(float value)
     {
         
 
-    target_angle += (value - angle.PrevData);
+    angle.target_angle += (value - angle.PrevData);
  
  
         
     
-    float error = target_angle - angle.NewData;
-    integral += error;
-    float derivative = error - prev_error;
-    prev_error = error;
-    float output = Kp * error + Ki * integral + Kd * derivative;
+    float error = angle.target_angle - angle.NewData;
+    angle.integral += error;
+    float derivative = error - angle.prev_error;
+    angle.prev_error = error;
+    float output = angle.Kp * error + angle.Ki * angle.integral + angle.Kd * derivative;
 
     std::cout << "PID Output: " << output
     << " Current Angle: " << angle.NewData
-    << " Target: " << target_angle << "°\n";
+    << " Target: " << angle.target_angle << "°\n";
 
 
     int intSteps = static_cast<int>(round(output / 0.08789));
