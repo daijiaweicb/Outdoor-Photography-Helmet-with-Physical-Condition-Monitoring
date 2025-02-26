@@ -14,9 +14,7 @@ private:
         float PrevData;
         float NewData;
         float RevData;
-        float target_angle;
-        float prev_error;
-        float integral;
+        
          
     };
     Data angle;
@@ -24,7 +22,9 @@ private:
     int count;
     bool time_flag;
 
-
+    float target_angle;
+    float prev_error;
+    float integral;
 
   
 
