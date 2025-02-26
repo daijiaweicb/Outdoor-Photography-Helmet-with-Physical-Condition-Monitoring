@@ -55,11 +55,11 @@ void MotorControl::onSensorData(float value)
         int intSteps = static_cast<int>(round(steps));
 
         // Motor Control
-        if (intSteps > 0)
+        if (intSteps > 2)
         {
             motor.backward(intSteps);
         }
-        else if (intSteps < 0)
+        else if (intSteps < -2)
         {
             motor.forward(-intSteps);
         }
