@@ -22,9 +22,7 @@ private:
     int count;
     bool time_flag;
 
-    float target_angle;
-    float prev_error;
-    float integral;
+
 
   
 
