@@ -14,7 +14,9 @@ private:
         float PrevData;
         float NewData;
         float RevData;
-        
+        float target_angle;
+        float integral;
+        float prev_error;
          
     };
     Data angle;
