@@ -18,13 +18,11 @@ private:
         float prev_error;
     };
     Data angle;
-    int count;
 
 public:
     void SensorCallback(float value) override;
     MotorControl()
     {
-        count = 0;
         angle.PrevData = 0;
         if (motor.start())
         {
