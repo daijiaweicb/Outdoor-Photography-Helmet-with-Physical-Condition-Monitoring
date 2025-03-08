@@ -11,6 +11,11 @@
 #include <chrono>
 #include <functional>
 
+/**
+ * It's not going to be used in this project for a while.
+ */
+
+
 class HighPrecisionTimer
 {
 public:

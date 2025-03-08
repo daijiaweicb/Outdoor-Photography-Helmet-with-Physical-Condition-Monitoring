@@ -15,6 +15,11 @@
 #include "MPU_kalman.h"
 #include <memory>
 
+/**
+ * Use Pin 6 as interrupt pin 
+ */
+
+
 #define Interupt_MPU 6
 #define chipNo 0
 
