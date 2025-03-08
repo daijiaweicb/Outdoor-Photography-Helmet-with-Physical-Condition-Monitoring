@@ -4,7 +4,7 @@
 
 using namespace std;
 
-bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
+bool StepperMotor::start()
 {
     chipGPIO = gpiod_chip_open_by_number(chipNo);
     if (!chipGPIO)
@@ -13,10 +13,10 @@ bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
         return false;
     }
 
-    gpio_pins[0] = pin1;
-    gpio_pins[1] = pin2;
-    gpio_pins[2] = pin3;
-    gpio_pins[3] = pin4;
+    gpio_pins[0] = motor_pin1;
+    gpio_pins[1] = motor_pin2;
+    gpio_pins[2] = motor_pin3;
+    gpio_pins[3] = motor_pin4;
 
     for (int i = 0; i < 4; i++)
     {

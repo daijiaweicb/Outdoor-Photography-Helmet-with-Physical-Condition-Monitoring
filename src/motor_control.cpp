@@ -39,31 +39,27 @@
 //         time_flag = 0;
 //     }
 
-void MotorControl::onSensorData(float value)
+void MotorControl::SensorCallback(float value)
 {
     // std::lock_guard<std::mutex> lock(motor_mutex);
     angle.NewData = value;
-    if (time_flag == 1)
+
+    angle.RevData = angle.NewData - angle.PrevData;
+
+    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°\n";
+
+    float steps = angle.RevData / 0.08789;
+    int intSteps = static_cast<int>(round(steps));
+
+    // Motor Control
+    if (intSteps > 10)
     {
-
-        angle.RevData = angle.NewData - angle.PrevData;
-        angle.PrevData = angle.NewData;
-
-        std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°\n";
-
-        float steps = angle.RevData / 0.08789;
-        int intSteps = static_cast<int>(round(steps));
-
-        // Motor Control
-        if (intSteps > 10)
-        {
-            motor.backward(intSteps);
-        }
-        else if (intSteps < -10)
-        {
-            motor.forward(-intSteps);
-        }
-
-        time_flag = 0;
+        motor.backward(intSteps);
     }
+    else if (intSteps < -10)
+    {
+        motor.forward(-intSteps);
+    }
+    
+    angle.PrevData = angle.NewData;
 }

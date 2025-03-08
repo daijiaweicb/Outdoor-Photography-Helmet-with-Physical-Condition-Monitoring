@@ -2,9 +2,8 @@
 #define MOTOR_CONTROL_H
 
 #include "motor_setting.h"
-#include "Timer.h"
 
-class MotorControl : public SensorCallback, public StepperMotor
+class MotorControl : public StepperMotor, public CallbackInterface
 {
 private:
     StepperMotor motor;
@@ -19,19 +18,15 @@ private:
         float prev_error;
     };
     Data angle;
-    HighPrecisionTimer timer_1s;
     int count;
-    bool time_flag;
 
 public:
+    void SensorCallback(float value) override;
     MotorControl()
     {
-        time_flag = 1;
         count = 0;
         angle.PrevData = 0;
-        timer_1s.start(250, [&]()
-                       { time_flag = 1; });
-        if (motor.start(0, 17, 27, 22, 5))
+        if (motor.start())
         {
             std::cout << "motor init success" << std::endl;
         }
@@ -39,10 +34,8 @@ public:
 
     ~MotorControl()
     {
-        timer_1s.stop();
         motor.cleanup();
     }
-    void onSensorData(float value) override;
 };
 
 #endif

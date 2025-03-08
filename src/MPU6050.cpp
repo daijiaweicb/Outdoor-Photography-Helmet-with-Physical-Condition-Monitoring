@@ -1,83 +1,94 @@
 #include "MPU6050.h"
 #include <cmath>
-#include "iic.h"
-
-void Kalman::initKalmanFilter(KalmanFilter &kf)
-{
-    kf.angle = 0.0f;
-    kf.bias = 0.0f;
-    kf.P[0][0] = 0.0f;
-    kf.P[0][1] = 0.0f;
-    kf.P[1][0] = 0.0f;
-    kf.P[1][1] = 0.0f;
-    kf.Q_angle = 0.001f;
-    kf.Q_bias = 0.003f;
-    kf.R_measure = 0.03f;
-}
-
-float Kalman::kalmanUpdate(KalmanFilter &kf, float newRate, float dt, float measuredAngle)
-{
-    kf.angle += dt * (newRate - kf.bias);
-
-    // Updating the error covariance matrix
-    kf.P[0][0] += dt * (dt * kf.P[1][1] - kf.P[0][1] - kf.P[1][0] + kf.Q_angle);
-    kf.P[0][1] -= dt * kf.P[1][1];
-    kf.P[1][0] -= dt * kf.P[1][1];
-    kf.P[1][1] += kf.Q_bias * dt;
-
-    // Update
-    float S = kf.P[0][0] + kf.R_measure;
-    float K0 = kf.P[0][0] / S;
-    float K1 = kf.P[1][0] / S;
-
-    float y = measuredAngle - kf.angle;
-    kf.angle += K0 * y;
-    kf.bias += K1 * y;
-
-    float P00_temp = kf.P[0][0];
-    float P01_temp = kf.P[0][1];
-
-    kf.P[0][0] -= K0 * P00_temp;
-    kf.P[0][1] -= K0 * P01_temp;
-    kf.P[1][0] -= K1 * P00_temp;
-    kf.P[1][1] -= K1 * P01_temp;
-
-    return kf.angle;
-}
-
-// Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
-void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
-{
-    float gx = 0, gy = 0, gz = 0;
-    for (int i = 0; i < samples; i++)
-    {
-        uint8_t buffer[14];
-        if (!iic.readRegisters(0x3B, buffer, 14))
-        {
-            std::cerr << "Calibration read error" << std::endl;
-            continue;
-        }
-        // MPU6050 register 0x43 starts with gyro data (skips temperature register)
-        int16_t gx_raw = (buffer[8] << 8) | buffer[9];
-        int16_t gy_raw = (buffer[10] << 8) | buffer[11];
-        int16_t gz_raw = (buffer[12] << 8) | buffer[13];
-        const float gyroScale = 250.0f / 32768.0f; // ±250°/s
-        gx += gx_raw * gyroScale;
-        gy += gy_raw * gyroScale;
-        gz += gz_raw * gyroScale;
-        usleep(10000); // Sampling interval 10ms
-    }
-    calib.gyroBiasX = gx / samples;
-    calib.gyroBiasY = gy / samples;
-    calib.gyroBiasZ = gz / samples;
-}
 
 void MPU::initMPU6050(IIC &iic)
 {
     iic.iic_writeRegister(0x6B, 0x00); // Wake up
+    iic.iic_writeRegister(0x37, 0x10);
+    iic.iic_writeRegister(0x38, 0x01);
     iic.iic_writeRegister(0x1B, 0x00); //  ±250°/s
     iic.iic_writeRegister(0x1A, 0x03); // LowPass Filter 44Hz
-    iic.iic_writeRegister(0x19, 0x00); // Sampling Rate 1kHz
+    iic.iic_writeRegister(0x19, 0xC7); // Sampling Rate 5hz
+    std::cout << "init success" << std::endl;
+}
+
+void MPU::beginMPU6050()
+{
+    // if(!iic_ptr) {
+    //     iic_ptr = new IIC(1);
+    //     owns_iic = true;
+    //     iic_ptr->iic_open();
+    // }
+
+    
+    iic.iic_open();
+    initMPU6050(iic);
+
+    chipGPIO = gpiod_chip_open_by_number(chipNo);
+    if (!chipGPIO)
+    {
+        throw std::runtime_error("Failed to open GPIO chip");
+    }
+
+    pin = gpiod_chip_get_line(chipGPIO, Interupt_MPU);
+    if (!pin)
+    {
+        gpiod_chip_close(chipGPIO);
+        throw std::runtime_error("Failed to get GPIO line");
+    }
+
+    int ret = gpiod_line_request_rising_edge_events(pin, "Consumer");
+    if (ret < 0)
+    {
+        std::cerr << "Could not request event" << std::endl;
+    }
+
+    calib = {0};
+    calibrateSensors(iic, calib, 1000);
+
+    std::cout << "Calibrate sensor success" << std::endl;
+
+    prevAngle = {0, 0, 0};
+    kal.initKalmanFilter(kfRoll);
+    kal.initKalmanFilter(kfPitch);
+    std::cout << "Kalman init success" << std::endl;
+
+    str = std::thread(&MPU::worker, this);
+    std::cout << "Thread init success" << std::endl;
+}
+
+void MPU::dataReady()
+{
+
+    static bool first_call = true;
+    static auto prevTime = std::chrono::high_resolution_clock::now();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float dt = 0.0f;
+
+    if (!first_call)
+    {
+        dt = std::chrono::duration<float>(currentTime - prevTime).count();
+    }
+    else
+    {
+        first_call = false;
+    }
+    prevTime = currentTime;
+
+    senda = readMPU6050(iic);
+
+    angle = calculateAngle(senda, dt, prevAngle, calib, kfRoll, kfPitch);
+    prevAngle = angle;
+
+    if (callback != nullptr)
+    {
+        callback->SensorCallback(angle.roll);
+    }
+    else
+    {
+        std::cout <<"can not regist callback" << std::endl;
+    }
 }
 
 // Read MPU6050 data: accelerometer and gyro totaling 14 bytes (6 bytes for accelerometer, 2 bytes for temperature, 6 bytes for gyro)
@@ -110,6 +121,33 @@ MPU::SensorData MPU::readMPU6050(IIC &iic)
     return data;
 }
 
+// Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
+void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
+{
+    float gx = 0, gy = 0, gz = 0;
+    for (int i = 0; i < samples; i++)
+    {
+        uint8_t buffer[14];
+        if (!iic.readRegisters(0x3B, buffer, 14))
+        {
+            std::cerr << "Calibration read error" << std::endl;
+            continue;
+        }
+        // MPU6050 register 0x43 starts with gyro data (skips temperature register)
+        int16_t gx_raw = (buffer[8] << 8) | buffer[9];
+        int16_t gy_raw = (buffer[10] << 8) | buffer[11];
+        int16_t gz_raw = (buffer[12] << 8) | buffer[13];
+        const float gyroScale = 250.0f / 32768.0f; // ±250°/s
+        gx += gx_raw * gyroScale;
+        gy += gy_raw * gyroScale;
+        gz += gz_raw * gyroScale;
+        usleep(10000); // Sampling interval 10ms
+    }
+    calib.gyroBiasX = gx / samples;
+    calib.gyroBiasY = gy / samples;
+    calib.gyroBiasZ = gz / samples;
+}
+
 // Calculate Roll and Pitch in degrees using accelerometer data.
 float MPU::getAccRoll(float accelY, float accelZ)
 {
@@ -122,24 +160,31 @@ float MPU::getAccPitch(float accelX, float accelY, float accelZ)
 
 // Calculate Roll, Pitch by fusing gyroscope integration with accelerometer measurements using Kalman filtering (Yaw simply integrates)
 MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const AngleData &prev,
-                                   const AngleData &calib, KalmanFilter &kfRoll, KalmanFilter &kfPitch)
+                                   const AngleData &calib, Kalman::KalmanFilter &kfRoll, Kalman::KalmanFilter &kfPitch)
 {
-    AngleData angle;
-    MPU mpu;
+    MPU::AngleData angle;
+    Kalman kalman;
     // Correct gyro data (remove calibration zero bias)
     float gyroX = data.gyroX - calib.gyroBiasX;
     float gyroY = data.gyroY - calib.gyroBiasY;
     float gyroZ = data.gyroZ - calib.gyroBiasZ;
 
     // Calculation of angles using accelerometers
-    float accRoll = mpu.getAccRoll(data.accelY, data.accelZ);
-    float accPitch = mpu.getAccPitch(data.accelX, data.accelY, data.accelZ);
+    float accRoll = getAccRoll(data.accelY, data.accelZ);
+    float accPitch = getAccPitch(data.accelX, data.accelY, data.accelZ);
 
     // Updating Roll and Pitch with Kalman Filtering
-    angle.roll = kalmanUpdate(kfRoll, gyroX, dt, accRoll);
-    angle.pitch = kalmanUpdate(kfPitch, gyroY, dt, accPitch);
+    angle.roll = kalman.kalmanUpdate(kfRoll, gyroX, dt, accRoll);
+    angle.pitch = kalman.kalmanUpdate(kfPitch, gyroY, dt, accPitch);
     // Yaw using only simple integrals
     angle.yaw = prev.yaw + gyroZ * dt;
 
     return angle;
 }
+
+void MPU ::RegisterSetting(std::shared_ptr<CallbackInterface> cb)
+{
+    callback = cb;
+    std::cout << "register Setting success" << std::endl;
+}
+

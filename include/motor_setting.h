@@ -7,6 +7,11 @@
 #include "MPU6050.h"
 #include <mutex>
 
+#define motor_pin1 17
+#define motor_pin2 27
+#define motor_pin3 22
+#define motor_pin4 5
+
 class StepperMotor
 {
 private:
@@ -16,7 +21,7 @@ private:
     int step_delay = 1000;
 
 public:
-    bool start(int chipNo, int pin1, int pin2, int pin3, int pin4);
+    bool start();
     void forward(int steps);
     void backward(int steps);
     void cleanup();

@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Thread_MPU.h"
 #include "motor_control.h"
+#include "MPU6050.h"
 #include "iic.h"
 #include <vector>
 #include <chrono>
@@ -9,23 +9,12 @@ using namespace std;
 
 int main()
 {
-    IIC iic(1);
-    iic.iic_open();
+    auto myCallback = std::make_shared<MotorControl>();
+    MPU mpu;
+    
 
-    ThreadMPU threadm(iic, 0.01f);
-    threadm.calibrate();
-    std::cout << "Calibration done." << std::endl;
+    mpu.RegisterSetting(myCallback);
+    mpu.beginMPU6050();
 
-    std::cout << "Waiting for sensor stabilization..." << std::endl;
-
-    MotorControl motorc;
-    threadm.RegisterCallback(&motorc);
-    std::cout << "Starting data acquisition..." << std::endl;
-    threadm.start();
-
-    std::cout << "Press ENTER to exit..." << std::endl;
-    std::cin.get();
-
-    threadm.stop();
     return 0;
 }
