@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <gpiod.h>
-#include <unistd.h>
-#include "MPU6050.h"
 #include <mutex>
 
 /**

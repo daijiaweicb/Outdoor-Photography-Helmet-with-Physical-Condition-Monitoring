@@ -2,6 +2,7 @@
 #define MOTOR_CONTROL_H
 
 #include "motor_setting.h"
+#include "MPU6050.h"
 
 class MotorControl : public StepperMotor, public CallbackInterface
 {

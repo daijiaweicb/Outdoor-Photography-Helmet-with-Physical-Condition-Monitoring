@@ -1,19 +1,11 @@
 #ifndef MPU6050_H
 #define MPU6050_H
 
-#include "iic.h"
-#include <iostream>
-#include <fcntl.h>
-#include <linux/i2c-dev.h>
-#include <i2c/smbus.h>
-#include <unistd.h>
-#include <cstring>
-#include <cstdint>
 #include <gpiod.h>
 #include <thread>
-#include <vector>
-#include "MPU_kalman.h"
 #include <memory>
+#include "iic.h"
+#include "MPU_kalman.h"
 
 /**
  * Use Pin 6 as interrupt pin 
