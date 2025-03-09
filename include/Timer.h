@@ -12,7 +12,7 @@
 #include <functional>
 
 /**
- * It's not going to be used in this project for a while.
+ * The project will not use the time for now !!!
  */
 
 
