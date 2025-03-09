@@ -14,13 +14,6 @@ void MPU::initMPU6050(IIC &iic)
 
 void MPU::beginMPU6050()
 {
-    // if(!iic_ptr) {
-    //     iic_ptr = new IIC(1);
-    //     owns_iic = true;
-    //     iic_ptr->iic_open();
-    // }
-
-    
     iic.iic_open();
     initMPU6050(iic);
 
