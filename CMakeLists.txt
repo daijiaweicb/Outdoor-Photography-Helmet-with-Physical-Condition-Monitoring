@@ -10,11 +10,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(${PROJECT_SOURCE_DIR}/include ${GPIOD_INCLUDE_DIRS})
 
 file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
-
 file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*.cpp")
 
 add_executable(motor_mpu_test ${SOURCES} ${TEST_SOURCES})
 
 target_link_libraries(motor_mpu_test PRIVATE i2c ${GPIOD_LIBRARIES})
-
 target_compile_options(motor_mpu_test PRIVATE ${GPIOD_CFLAGS_OTHER})
+
+install(TARGETS motor_mpu_test
+        RUNTIME DESTINATION bin)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+        DESTINATION include
+        FILES_MATCHING PATTERN "*.h")
