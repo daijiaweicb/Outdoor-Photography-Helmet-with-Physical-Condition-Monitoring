@@ -7,7 +7,7 @@ make
 sudo make install
 ```
 
-## structure
+## Structure
 ### Mode 1
 Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road
 
