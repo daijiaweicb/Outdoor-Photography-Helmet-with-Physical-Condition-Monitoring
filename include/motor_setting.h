@@ -4,6 +4,9 @@
 #include <iostream>
 #include <gpiod.h>
 #include <mutex>
+#include <unistd.h> 
+
+#define chipNo 0 
 
 /**
  * The step motor use pin 17, 27, 22, 5 
