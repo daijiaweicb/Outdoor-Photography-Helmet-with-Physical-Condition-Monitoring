@@ -14,7 +14,21 @@ public:
         float R_measure; // Observation noise variance
     };
 
+    /**
+     * @brief init the kalman filter
+     * @param  {KalmanFilter} kf : 
+     */
     void initKalmanFilter(KalmanFilter &kf);
+
+    
+    /**
+     * @brief  update the data
+     * @param  {KalmanFilter} kf     : 
+     * @param  {float} newRate       : 
+     * @param  {float} dt            : 
+     * @param  {float} measuredAngle : 
+     * @return {float}               : 
+     */
     float kalmanUpdate(KalmanFilter &kf, float newRate, float dt, float measuredAngle);
 };
 

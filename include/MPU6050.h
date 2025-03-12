@@ -6,6 +6,7 @@
 #include <memory>
 #include "iic.h"
 #include "MPU_kalman.h"
+#include "Event_callback.h"
 
 /**
  * Use Pin 6 of raspberry pi as interrupt pin
@@ -14,13 +15,20 @@
 #define Interupt_MPU 6
 #define chipNo 0
 
-class CallbackInterface
-{
-public:
-    virtual void SensorCallback(float value) = 0;
-    virtual ~CallbackInterface() = default;
-};
-
+/** 
+* @class MPU
+* @brief MPU6050 6-axis motion sensor control class
+* 
+* This class provides complete control of the MPU6050 sensor, including hardware initialization, data acquisition,
+* Sensor calibration, data fusion (Kalman filtering) and asynchronous data reporting functions.
+* 
+* @note Typical usage flow:
+* 1. Construct the MPU object
+* 2. Call beginMPU6050() to initialize the hardware.
+* 3. Call RegisterSetting() to register the data callback interface.
+* 4. Automatically report the processed sensor data through the worker thread.
+* 
+*/
 class MPU
 {
 public:
@@ -37,18 +45,19 @@ public:
     };
 
     /**
-     * Use this function to start MPU6050
-     * 1. init iic
-     * 2. init MPU6050
-     * 3. open chip and gpio
-     * 4. request rising edge event
-     * 5. init kalman filter
-     * 6. start worker thread
+     * 
+     * @brief MPU6050 control class
+     * 
+     * @note workflow:
+     * 1. beginMPU6050() Initialize hardware
+     * 2. RegisterSetting() Registration Data Callback
+     * 3. Automatic reporting of sensor data via worker threads
      */
     void beginMPU6050();
 
     /**
-     * Registering callback for MPU6050
+     * 
+     * @brief Registering callback for MPU6050
      * @param  {std::shared_ptr<CallbackInterface>} cb : 
      */
     void RegisterSetting(std::shared_ptr<CallbackInterface> cb);
@@ -84,43 +93,51 @@ private:
 
     bool running = false;
 
+    //Sensor Data
     AngleData calib;
     AngleData angle;
     AngleData prevAngle;
     SensorData senda;
 
+    // Filter assembly
     Kalman kal;
     Kalman::KalmanFilter kfRoll;
     Kalman::KalmanFilter kfPitch;
 
+    //callback interface
     std::shared_ptr<CallbackInterface> callback;
 
     std::thread str;
     
     /**
-     * init MPU6050 by writing registers
+     * @brief MPU6050 by writing registers
      * @param  {IIC} iic : 
      */
     void initMPU6050(IIC &iic);
 
     /**
-     * Every time this function is triggered, it means that the data of mpu6050 is read once.
+     * @brief Every time this function is triggered, it means that the data of mpu6050 is read once.
+     * 
+     * @note workflow:
      * 1. calculte the angle
      * 2. send data to callback function
      */
     void dataReady();
 
     /**
-     * Read data from MPU6050 by reading register 0x3B
-     * Can read accelerometer data and gyro data totaling 14 bytes (6 bytes for accelerometer, 2 bytes for temperature, 6 bytes for gyro)
-     * Can also read temperature data if you want
+     * @brief Read data from MPU6050 by reading register 0x3B
+     * 
+     * 
      * @param  {IIC} iic     : 
      * @return {SensorData}  : 
+     * @note data structure:
+     * 1. Can read accelerometer data and gyro data totaling 14 bytes (6 bytes for accelerometer, 2 bytes for temperature, 6 bytes for gyro)
+     * 2. Can also read temperature data if you want
      */
     SensorData readMPU6050(IIC &iic);
 
     /**
-     *  Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
+     *  @brief Calibrate gyroscope: calculate zero bias (requires sensor to be at rest).
      *  success calibrate return true, fail return false
      * @param  {IIC} iic         : 
      * @param  {AngleData} calib : 
@@ -130,7 +147,7 @@ private:
     bool calibrateSensors(IIC &iic, AngleData &calib, int samples);
 
     /**
-     * // Calculate Roll  in degrees using accelerometer data.
+     * @brief Calculate Roll  in degrees using accelerometer data.
      * @param  {float} accelY : 
      * @param  {float} accelZ : 
      * @return {float}        : 
@@ -138,7 +155,7 @@ private:
     float getAccRoll(float accelY, float accelZ);
 
     /**
-     * Calculate Pitch in degrees using accelerometer data.
+     * @brief Calculate Pitch in degrees using accelerometer data.
      * @param  {float} accelX : 
      * @param  {float} accelY : 
      * @param  {float} accelZ : 
@@ -147,7 +164,7 @@ private:
     float getAccPitch(float accelX, float accelY, float accelZ);
     
     /**
-     * Calculate Roll, Pitch by fusing gyroscope integration with accelerometer measurements using Kalman filtering (Yaw simply integrates)
+     * @brief Calculate Roll, Pitch by fusing gyroscope integration with accelerometer measurements using Kalman filtering (Yaw simply integrates)
      * @param  {SensorData} data              : 
      * @param  {float} dt                     : 
      * @param  {AngleData} prev               : 
@@ -159,6 +176,15 @@ private:
     AngleData calculateAngle(const SensorData &data, float dt, const AngleData &prev,
                              const AngleData &calib, Kalman::KalmanFilter &kfRoll, Kalman::KalmanFilter &kfPitch);
 
+     /**
+     * @brief Data Processing Work Thread Entry
+     * 
+     * Workflow:
+     * 1. wait for GPIO interrupt event
+     * 2. Trigger dataReady() when a rising edge is detected.
+     * 
+     * @note Control thread lifecycle by running flag.
+     */
     void worker()
     {
         running = true;

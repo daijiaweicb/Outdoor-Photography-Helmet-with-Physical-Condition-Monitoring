@@ -23,24 +23,22 @@ private:
     char filename[20];
 
 public:
-    /**
-     * construct of the class
-     */
+
     IIC(int adapter) : adapter_nr(adapter), file(-1) {}
 
     /**
-     * Open the I2C device
-     * In this case, open the MPU 6050
+     * @brief open the I2C device
+     * @note In this case, open the MPU 6050
      */
     void iic_open();
 
     /**
-     * Close the I2C device
+     * @brief Close the I2C device
      */
     void iic_close();
 
     /**
-     *
+     * @brief read the register
      * @param  {uint8_t} reg     :
      * @param  {uint8_t*} buffer :
      * @param  {size_t} length   :
@@ -48,7 +46,7 @@ public:
      */
     bool readRegisters(uint8_t reg, uint8_t *buffer, size_t length);
     /**
-     *
+     * @brief wite the register
      * @param  {uint8_t} reg   :
      * @param  {uint8_t} value :
      */
