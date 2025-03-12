@@ -1,7 +1,7 @@
 #include "motor_control.h"
 #include <cmath>
 
-void MotorControl::SensorCallback(float value)
+void MotorControl::MPUCallback(float value)
 {
     // std::lock_guard<std::mutex> lock(motor_mutex);
     angle.NewData = value;

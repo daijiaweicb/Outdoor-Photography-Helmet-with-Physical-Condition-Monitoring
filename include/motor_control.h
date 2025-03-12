@@ -8,7 +8,6 @@ class MotorControl : public StepperMotor, public CallbackInterface
 {
 private:
     StepperMotor motor;
-    std::mutex motor_mutex;
     struct Data
     {
         float PrevData;
@@ -21,7 +20,7 @@ private:
     Data angle;
 
 public:
-    void SensorCallback(float value) override;
+    void MPUCallback(float value)override;
     MotorControl()
     {
         angle.PrevData = 0;

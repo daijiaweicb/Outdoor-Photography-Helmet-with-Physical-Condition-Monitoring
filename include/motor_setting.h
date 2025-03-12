@@ -28,10 +28,35 @@ private:
     int step_delay = 1000;
 
 public:
+    /**
+     * @brief start the motor
+     * @return {bool}  : 
+     */
     bool start();
+    
+    /**
+     * @brief motor move forward
+     * @param  {int} steps : 
+     */
     void forward(int steps);
+
+    
+    /**
+     * @brief motor move backward
+     * @param  {int} steps : 
+     */
     void backward(int steps);
+
+    
+    /**
+     * @brief release pins and close the chip
+     */
     void cleanup();
+    
+    /**
+     * @brief define the step for the step motor
+     * @param  {int [4]} stepPattern : 
+     */
     void step(int stepPattern[4]);
 };
 
