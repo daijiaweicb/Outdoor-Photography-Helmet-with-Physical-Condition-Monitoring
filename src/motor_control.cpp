@@ -16,11 +16,11 @@ void MotorControl::SensorCallback(float value)
     // Motor Control
     if (intSteps > 10)
     {
-        motor.backward(intSteps);
+        motor.forward(intSteps);
     }
     else if (intSteps < -10)
     {
-        motor.forward(-intSteps);
+        motor.backward(-intSteps);
     }
     
     angle.PrevData = angle.NewData;
