@@ -8,7 +8,7 @@
 #include "MPU_kalman.h"
 
 /**
- * Use Pin 6 as interrupt pin
+ * Use Pin 6 of raspberry pi as interrupt pin
  */
 
 #define Interupt_MPU 6
@@ -45,13 +45,12 @@ public:
      * 5. init kalman filter
      * 6. start worker thread
      */
-    
     void beginMPU6050();
 
     /**
-     * Registering callback 
+     * Registering callback for MPU6050
+     * @param  {std::shared_ptr<CallbackInterface>} cb : 
      */
-    
     void RegisterSetting(std::shared_ptr<CallbackInterface> cb);
 
     MPU() : iic(1)
@@ -79,8 +78,10 @@ public:
 
 private:
     IIC iic;
+
     gpiod_chip *chipGPIO = nullptr;
     gpiod_line *pin = nullptr;
+
     bool running = false;
 
     AngleData calib;
@@ -95,19 +96,66 @@ private:
     std::shared_ptr<CallbackInterface> callback;
 
     std::thread str;
-
+    
+    /**
+     * init MPU6050 by writing registers
+     * @param  {IIC} iic : 
+     */
     void initMPU6050(IIC &iic);
 
+    /**
+     * Every time this function is triggered, it means that the data of mpu6050 is read once.
+     * 1. calculte the angle
+     * 2. send data to callback function
+     */
     void dataReady();
 
+    /**
+     * Read data from MPU6050 by reading register 0x3B
+     * Can read accelerometer data and gyro data totaling 14 bytes (6 bytes for accelerometer, 2 bytes for temperature, 6 bytes for gyro)
+     * Can also read temperature data if you want
+     * @param  {IIC} iic     : 
+     * @return {SensorData}  : 
+     */
     SensorData readMPU6050(IIC &iic);
 
+    /**
+     *  Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
+     *  success calibrate return true, fail return false
+     * @param  {IIC} iic         : 
+     * @param  {AngleData} calib : 
+     * @param  {int} samples     : 
+     * @return {bool}            : 
+     */
     bool calibrateSensors(IIC &iic, AngleData &calib, int samples);
 
+    /**
+     * // Calculate Roll  in degrees using accelerometer data.
+     * @param  {float} accelY : 
+     * @param  {float} accelZ : 
+     * @return {float}        : 
+     */
     float getAccRoll(float accelY, float accelZ);
 
+    /**
+     * Calculate Pitch in degrees using accelerometer data.
+     * @param  {float} accelX : 
+     * @param  {float} accelY : 
+     * @param  {float} accelZ : 
+     * @return {float}        : 
+     */
     float getAccPitch(float accelX, float accelY, float accelZ);
     
+    /**
+     * Calculate Roll, Pitch by fusing gyroscope integration with accelerometer measurements using Kalman filtering (Yaw simply integrates)
+     * @param  {SensorData} data              : 
+     * @param  {float} dt                     : 
+     * @param  {AngleData} prev               : 
+     * @param  {AngleData} calib              : 
+     * @param  {Kalman::KalmanFilter} kfRoll  : 
+     * @param  {Kalman::KalmanFilter} kfPitch : 
+     * @return {AngleData}                    : 
+     */
     AngleData calculateAngle(const SensorData &data, float dt, const AngleData &prev,
                              const AngleData &calib, Kalman::KalmanFilter &kfRoll, Kalman::KalmanFilter &kfPitch);
 
