@@ -9,7 +9,6 @@ void MPU::initMPU6050(IIC &iic)
     iic.iic_writeRegister(0x1B, 0x00); //  ±250°/s
     iic.iic_writeRegister(0x1A, 0x03); // LowPass Filter 44Hz
     iic.iic_writeRegister(0x19, 0xF9); // Sampling Rate 4hz
-    std::cout << "init success" << std::endl;
 }
 
 void MPU::beginMPU6050()
@@ -33,21 +32,27 @@ void MPU::beginMPU6050()
     int ret = gpiod_line_request_rising_edge_events(pin, "Consumer");
     if (ret < 0)
     {
-        std::cerr << "Could not request event" << std::endl;
+        gpiod_line_release(pin);
+        gpiod_chip_close(chipGPIO);
+        throw std::runtime_error("Could not request event");
     }
 
     calib = {0};
-    calibrateSensors(iic, calib, 1000);
-
-    std::cout << "Calibrate sensor success" << std::endl;
+    int calib_init = calibrateSensors(iic, calib, 1000);
+    if(!calib_init)
+    {
+        throw std::runtime_error("Calibrate sensor error");
+    }
 
     prevAngle = {0, 0, 0};
     kal.initKalmanFilter(kfRoll);
     kal.initKalmanFilter(kfPitch);
-    std::cout << "Kalman init success" << std::endl;
 
     str = std::thread(&MPU::worker, this);
-    std::cout << "Thread init success" << std::endl;
+    if(!str.joinable())
+    {
+        throw std::runtime_error("Failed to start worker thread");
+    }
 }
 
 void MPU::dataReady()
@@ -115,7 +120,7 @@ MPU::SensorData MPU::readMPU6050(IIC &iic)
 }
 
 // Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
-void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
+bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
 {
     float gx = 0, gy = 0, gz = 0;
     for (int i = 0; i < samples; i++)
@@ -124,7 +129,7 @@ void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
         if (!iic.readRegisters(0x3B, buffer, 14))
         {
             std::cerr << "Calibration read error" << std::endl;
-            continue;
+            return false;
         }
         // MPU6050 register 0x43 starts with gyro data (skips temperature register)
         int16_t gx_raw = (buffer[8] << 8) | buffer[9];
@@ -139,6 +144,7 @@ void MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
     calib.gyroBiasX = gx / samples;
     calib.gyroBiasY = gy / samples;
     calib.gyroBiasZ = gz / samples;
+    return true;
 }
 
 // Calculate Roll and Pitch in degrees using accelerometer data.
