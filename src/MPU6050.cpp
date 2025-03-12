@@ -4,8 +4,8 @@
 void MPU::initMPU6050(IIC &iic)
 {
     iic.iic_writeRegister(0x6B, 0x00); // Wake up
-    iic.iic_writeRegister(0x37, 0x10);
-    iic.iic_writeRegister(0x38, 0x01);
+    iic.iic_writeRegister(0x37, 0x10); // Interrupt pin configuration (active high)
+    iic.iic_writeRegister(0x38, 0x01); // Enable Data Ready Interrupt 
     iic.iic_writeRegister(0x1B, 0x00); //  ±250°/s
     iic.iic_writeRegister(0x1A, 0x03); // LowPass Filter 44Hz
     iic.iic_writeRegister(0x19, 0xF9); // Sampling Rate 4hz
@@ -37,7 +37,7 @@ void MPU::beginMPU6050()
         throw std::runtime_error("Could not request event");
     }
 
-    calib = {0};
+    calib = {0};void dataReady();
     int calib_init = calibrateSensors(iic, calib, 1000);
     if(!calib_init)
     {
@@ -83,13 +83,8 @@ void MPU::dataReady()
     {
         callback->SensorCallback(angle.roll);
     }
-    else
-    {
-        std::cout <<"can not regist callback" << std::endl;
-    }
 }
 
-// Read MPU6050 data: accelerometer and gyro totaling 14 bytes (6 bytes for accelerometer, 2 bytes for temperature, 6 bytes for gyro)
 MPU::SensorData MPU::readMPU6050(IIC &iic)
 {
     SensorData data;
@@ -119,7 +114,6 @@ MPU::SensorData MPU::readMPU6050(IIC &iic)
     return data;
 }
 
-// Calibrate gyroscope: calculate zero bias (requires sensor to be at rest)
 bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
 {
     float gx = 0, gy = 0, gz = 0;
@@ -147,17 +141,16 @@ bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
     return true;
 }
 
-// Calculate Roll and Pitch in degrees using accelerometer data.
 float MPU::getAccRoll(float accelY, float accelZ)
 {
     return atan2(accelY, accelZ) * 180.0f / M_PI;
 }
+
 float MPU::getAccPitch(float accelX, float accelY, float accelZ)
 {
     return atan2(-accelX, sqrt(accelY * accelY + accelZ * accelZ)) * 180.0f / M_PI;
 }
 
-// Calculate Roll, Pitch by fusing gyroscope integration with accelerometer measurements using Kalman filtering (Yaw simply integrates)
 MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const AngleData &prev,
                                    const AngleData &calib, Kalman::KalmanFilter &kfRoll, Kalman::KalmanFilter &kfPitch)
 {
@@ -184,6 +177,10 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
 void MPU ::RegisterSetting(std::shared_ptr<CallbackInterface> cb)
 {
     callback = cb;
+    if(callback == nullptr)
+    {
+        throw std::runtime_error("Callback is null, registration failed");
+    }
     std::cout << "register Setting success" << std::endl;
 }
 
