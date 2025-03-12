@@ -81,7 +81,7 @@ void MPU::dataReady()
 
     if (callback != nullptr)
     {
-        callback->SensorCallback(angle.roll);
+        callback->MPUCallback(angle.roll);
     }
 }
 
