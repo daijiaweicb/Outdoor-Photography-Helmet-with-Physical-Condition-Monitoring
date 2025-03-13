@@ -8,7 +8,7 @@ bool StepperMotor::start()
     chipGPIO = gpiod_chip_open_by_number(chipNo);
     if (!chipGPIO)
     {
-        cout << "Failed to open GPIO chip" << endl;
+        throw std::runtime_error("Failed to open GPIO chip");
         return false;
     }
 
@@ -22,14 +22,14 @@ bool StepperMotor::start()
         pins[i] = gpiod_chip_get_line(chipGPIO, gpio_pins[i]);
         if (!pins[i])
         {
-            cout << "Failed to get GPIO line " << gpio_pins[i] << endl;
+            throw std::runtime_error("Failed to get GPIO line");
             cleanup();
             return false;
         }
 
         if (gpiod_line_request_output(pins[i], "stepper_motor", 0) < 0)
         {
-            cout << "Failed to set GPIO " << gpio_pins[i] << " as output" << endl;
+            throw std::runtime_error("Failed to set GPIO as output");
             cleanup();
             return false;
         }
