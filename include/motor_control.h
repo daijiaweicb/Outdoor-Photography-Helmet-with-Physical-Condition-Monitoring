@@ -8,7 +8,7 @@ class MotorControl : public StepperMotor, public CallbackInterface
 {
 private:
     StepperMotor motor;
-    struct Data
+    struct Data //motor angle control data
     {
         float PrevData;
         float NewData;
