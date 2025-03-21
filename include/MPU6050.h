@@ -4,6 +4,7 @@
 #include <gpiod.h>
 #include <thread>
 #include <memory>
+#include <vector>
 #include "iic.h"
 #include "MPU_kalman.h"
 #include "Event_callback.h"
@@ -60,7 +61,7 @@ public:
      * @brief Registering callback for MPU6050
      * @param  {std::shared_ptr<CallbackInterface>} cb : 
      */
-    void RegisterSetting(std::shared_ptr<CallbackInterface> cb);
+    void RegisterSetting(CallbackInterface* ci);
 
     MPU() : iic(1)
     {
@@ -88,6 +89,7 @@ public:
 private:
     IIC iic;
 
+    std::vector<CallbackInterface*> MPUcallbackinterface;
     gpiod_chip *chipGPIO = nullptr;
     gpiod_line *pin = nullptr;
 
@@ -105,7 +107,7 @@ private:
     Kalman::KalmanFilter kfPitch;
 
     //callback interface
-    std::shared_ptr<CallbackInterface> callback;
+    // std::shared_ptr<CallbackInterface> callback;
 
     std::thread str;
     
@@ -137,8 +139,8 @@ private:
     SensorData readMPU6050(IIC &iic);
 
     /**
-     *  @brief Calibrate gyroscope: calculate zero bias (requires sensor to be at rest).
-     *  success calibrate return true, fail return false
+     * @brief Calibrate gyroscope: calculate zero bias (requires sensor to be at rest).
+     * success calibrate return true, fail return false
      * @param  {IIC} iic         : 
      * @param  {AngleData} calib : 
      * @param  {int} samples     : 
