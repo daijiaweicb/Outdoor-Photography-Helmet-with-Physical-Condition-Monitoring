@@ -20,6 +20,29 @@ void IIC::iic_open()
     std::cout << "i2c device opened: " << filename << std::endl;
 }
 
+
+void IIC::iic_open_BMP()
+{
+    snprintf(filename, sizeof(filename), "/dev/i2c-%d", adapter_nr);
+    file = open(filename, O_RDWR);
+    if (file < 0)
+    {
+        std::cerr << "Can not open i2c device: " << filename << std::endl;
+        exit(1);
+    }
+
+    // Set the address of BMP280
+    if (ioctl(file, I2C_SLAVE, 0x76) < 0)
+    {
+        std::cerr << "Failed to set I2C slave address" << std::endl;
+        exit(1);
+    }
+
+    std::cout << "i2c device opened: " << filename << std::endl;
+}
+
+
+
 void IIC::iic_close()
 {
     if (file >= 0)

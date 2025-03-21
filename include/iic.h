@@ -32,6 +32,8 @@ public:
      */
     void iic_open();
 
+    void iic_open_BMP();
+
     /**
      * @brief Close the I2C device
      */
