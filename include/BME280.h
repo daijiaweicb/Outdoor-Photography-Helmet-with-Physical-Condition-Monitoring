@@ -5,13 +5,14 @@
 #include <cstdint>
 #include <cmath>
 #include <memory>
+#include <vector>
 #include "Event_callback.h"
 #include <thread>
 
-#define BMP280_ADDRESS 0x76
-#define BMP280_ID 0x58
+#define BME280_ADDRESS 0x76
+#define BME280_ID 0x58
 
-class BMP
+class BME
 {
 private:
     IIC iic;
@@ -23,33 +24,42 @@ private:
 
     int32_t t_fine;
 
-    void beginBMP();
+    void beginBME();
 
     void RegisterSetting(std::shared_ptr<CallbackInterface> cb);
 
 public:
-    
-    BMP() : iic(1)
+    BME() : iic(1)
     {
-
     }
 
-    ~BMP()
+    ~BME()
     {
         iic.iic_close();
     }
 
     // Data caclulation for temperature
+    struct BMEresults
+    {
+        float temp;
+        float press;
+    };
 
     float compensateTemp(int32_t adc_T);
-    
 
     float compensatePress(int32_t adc_P);
-    
 
-    void getData(float &temp, float &press);
-  
-    std::shared_ptr<CallbackInterface> callback;
+    void getData(BMEresults &results);
+
+    struct Callbackinterface
+    {
+        virtual void BMECallback(BMEresults &results) =0;
+        virtual ~Callbackinterface() = default;
+    };
+
+    std::vector<Callbackinterface*> BMEcallbackinterface;
+
+    void BMERigister(Callbackinterface* ci);
 };
 
 #endif

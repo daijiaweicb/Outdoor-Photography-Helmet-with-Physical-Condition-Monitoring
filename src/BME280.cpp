@@ -1,6 +1,6 @@
 #include "BME280.h"
 
-void BMP::beginBMP()
+void BME::beginBME()
 {
     dig_T1 = iic.readU16(0x88);
     dig_T2 = iic.readS16(0x8A);
@@ -23,7 +23,7 @@ void BMP::beginBMP()
     t_fine = 0;
 }
 
-float BMP::compensateTemp(int32_t adc_T)
+float BME::compensateTemp(int32_t adc_T)
 {
     double var1 = (adc_T / 16384.0 - dig_T1 / 1024.0) * dig_T2;
     double var2 = pow(adc_T / 131072.0 - dig_T1 / 8192.0, 2) * dig_T3;
@@ -31,7 +31,7 @@ float BMP::compensateTemp(int32_t adc_T)
     return (var1 + var2) / 5120.0;
 }
 
-float BMP::compensatePress(int32_t adc_P)
+float BME::compensatePress(int32_t adc_P)
 {
     double var1 = t_fine / 2.0 - 64000.0;
     double var2 = var1 * var1 * dig_P6 / 32768.0;
@@ -51,7 +51,7 @@ float BMP::compensatePress(int32_t adc_P)
     return p + (var1 + var2 + dig_P7) / 16.0;
 }
 
-void BMP::getData(float &temp, float &press)
+void BME::getData(BMEresults &results)
 {
 
     // Temperature
@@ -59,12 +59,17 @@ void BMP::getData(float &temp, float &press)
     uint8_t temp_lsb = iic.readByte(0xFB);
     uint8_t temp_xlsb = iic.readByte(0xFC);
     int32_t adc_T = (temp_msb << 12) | (temp_lsb << 4) | (temp_xlsb >> 4);
-    temp = compensateTemp(adc_T);
+    results.temp = compensateTemp(adc_T);
 
     // Pressure
     uint8_t press_msb = iic.readByte(0xF7);
     uint8_t press_lsb = iic.readByte(0xF8);
     uint8_t press_xlsb = iic.readByte(0xF9);
     int32_t adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
-    press = compensatePress(adc_P);
+    results.press = compensatePress(adc_P);
+}
+
+void BME::BMERigister(Callbackinterface* ci)
+{
+    BMEcallbackinterface.push_back(ci);
 }
