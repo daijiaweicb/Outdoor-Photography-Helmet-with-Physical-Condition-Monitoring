@@ -8,8 +8,9 @@ int main()
 {
     auto myCallback = std::make_shared<MotorControl>();
     MPU mpu;
+    MotorControl motorapp;
 
-    mpu.RegisterSetting(myCallback);
+    mpu.RegisterSetting(&motorapp);
     mpu.beginMPU6050();
 
     return 0;
