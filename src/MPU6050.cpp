@@ -79,9 +79,9 @@ void MPU::dataReady()
     angle = calculateAngle(senda, dt, prevAngle, calib, kfRoll, kfPitch);
     prevAngle = angle;
 
-    if (callback != nullptr)
+    for(auto &cb: MPUcallbackinterface)
     {
-        callback->MPUCallback(angle.roll);
+        cb->MPUCallback(angle.roll);
     }
 }
 
@@ -174,13 +174,8 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
     return angle;
 }
 
-void MPU ::RegisterSetting(std::shared_ptr<CallbackInterface> cb)
+void MPU ::RegisterSetting(CallbackInterface* ci)
 {
-    callback = cb;
-    if(callback == nullptr)
-    {
-        throw std::runtime_error("Callback is null, registration failed");
-    }
-    std::cout << "register Setting success" << std::endl;
+    MPUcallbackinterface.push_back(ci);
 }
 
