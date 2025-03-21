@@ -23,7 +23,7 @@ private:
     char filename[20];
 
 public:
-
+    int file;
     IIC(int adapter) : adapter_nr(adapter), file(-1) {}
 
     /**
@@ -53,7 +53,14 @@ public:
      * @param  {uint8_t} value :
      */
     void iic_writeRegister(uint8_t reg, uint8_t value);
-    int file;
+
+    uint8_t readByte(uint8_t reg);
+
+    uint16_t readU16(uint8_t reg);
+
+    int16_t readS16(uint8_t reg);
+
+    
 };
 
 #endif
