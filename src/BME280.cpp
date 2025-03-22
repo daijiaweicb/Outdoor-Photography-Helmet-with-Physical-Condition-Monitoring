@@ -75,6 +75,7 @@ void BME::DataReady(BMEresults &results)
     for (auto &cb : BMEcallbackinterface)
     {
         GetData(results);
+        cb->BMECallback(results);
     }
 }
 
