@@ -2,10 +2,10 @@
 
 void BME::beginBME()
 {
+    iic.iic_open();
     dig_T1 = iic.readU16(0x88);
     dig_T2 = iic.readS16(0x8A);
     dig_T3 = iic.readS16(0x8C);
-
     dig_P1 = iic.readU16(0x8E);
     dig_P2 = iic.readS16(0x90);
     dig_P3 = iic.readS16(0x92);
@@ -17,10 +17,11 @@ void BME::beginBME()
     dig_P9 = iic.readS16(0x9E);
 
     iic.iic_writeRegister(0xF4, 0xFF);
-
     iic.iic_writeRegister(0xF5, 0x14);
-
     t_fine = 0;
+
+    timer_1s.start(1000, [&]()
+                   { DataReady(results); });
 }
 
 float BME::compensateTemp(int32_t adc_T)
@@ -51,7 +52,7 @@ float BME::compensatePress(int32_t adc_P)
     return p + (var1 + var2 + dig_P7) / 16.0;
 }
 
-void BME::getData(BMEresults &results)
+void BME::GetData(BMEresults &results)
 {
 
     // Temperature
@@ -69,7 +70,15 @@ void BME::getData(BMEresults &results)
     results.press = compensatePress(adc_P);
 }
 
-void BME::BMERigister(Callbackinterface* ci)
+void BME::DataReady(BMEresults &results)
+{
+    for (auto &cb : BMEcallbackinterface)
+    {
+        GetData(results);
+    }
+}
+
+void BME::BMERigister(Callbackinterface *ci)
 {
     BMEcallbackinterface.push_back(ci);
 }
