@@ -6,7 +6,6 @@ using namespace std;
 
 int main()
 {
-    auto myCallback = std::make_shared<MotorControl>();
     MPU mpu;
     MotorControl motorapp;
 
