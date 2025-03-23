@@ -12,7 +12,7 @@
 #include <functional>
 
 /**
- * The project will not use the time for now !!!
+ * Use timer for BME280
  */
 
 
