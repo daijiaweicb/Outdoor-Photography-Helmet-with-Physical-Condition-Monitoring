@@ -1,6 +1,6 @@
 #include "iic.h"
 
-void IIC::iic_open()
+void IIC::iic_open(uint8_t sensorAddress)
 {
     snprintf(filename, sizeof(filename), "/dev/i2c-%d", adapter_nr);
     file = open(filename, O_RDWR);
@@ -10,13 +10,8 @@ void IIC::iic_open()
         exit(1);
     }
 
-    //Set the address of MPU6050
-    if (ioctl(file, I2C_SLAVE, 0x68) < 0)
-    {
-        std::cerr << "Failed to set I2C slave address" << std::endl;
-        exit(1);
-    }
-    if (ioctl(file, I2C_SLAVE, 0x76) < 0)
+    //Set the address of sensor
+    if (ioctl(file, I2C_SLAVE, sensorAddress) < 0)
     {
         std::cerr << "Failed to set I2C slave address" << std::endl;
         exit(1);

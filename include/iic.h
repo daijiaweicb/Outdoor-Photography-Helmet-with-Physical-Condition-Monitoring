@@ -30,7 +30,7 @@ public:
      * @brief open the I2C device
      * @note In this case, open the MPU 6050
      */
-    void iic_open();
+    void iic_open(uint8_t sensorAddress);
 
     void iic_open_BMP();
 
