@@ -12,7 +12,7 @@
 /**
  * Use Pin 6 of raspberry pi as interrupt pin
  */
-
+#define MPU_ADDRESS 0x68
 #define Interupt_MPU 6
 #define chipNo 0
 
