@@ -2,7 +2,7 @@
 
 void BME::beginBME()
 {
-    iic.iic_open();
+    iic.iic_open(BME280_ADDRESS);
     dig_T1 = iic.readU16(0x88);
     dig_T2 = iic.readS16(0x8A);
     dig_T3 = iic.readS16(0x8C);

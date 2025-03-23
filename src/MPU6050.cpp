@@ -13,7 +13,7 @@ void MPU::initMPU6050(IIC &iic)
 
 void MPU::beginMPU6050()
 {
-    iic.iic_open();
+    iic.iic_open(MPU_ADDRESS);
     initMPU6050(iic);
 
     chipGPIO = gpiod_chip_open_by_number(chipNo);
