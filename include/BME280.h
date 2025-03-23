@@ -4,14 +4,10 @@
 #include "iic.h"
 #include <cstdint>
 #include <cmath>
-#include <memory>
 #include <vector>
-#include "Event_callback.h"
 #include "Timer.h"
-#include <thread>
 
 #define BME280_ADDRESS 0x76
-#define BME280_ID 0x58
 
 class BME
 {
