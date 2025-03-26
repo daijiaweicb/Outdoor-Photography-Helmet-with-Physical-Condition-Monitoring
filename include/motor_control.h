@@ -4,7 +4,7 @@
 #include "motor_setting.h"
 #include "MPU6050.h"
 
-class MotorControl : public MPU, public StepperMotor, public MPU::CallbackInterface
+class MotorControl : public MPU, public MPU::CallbackInterface, public StepperMotor
 {
 private:
     StepperMotor motor;
