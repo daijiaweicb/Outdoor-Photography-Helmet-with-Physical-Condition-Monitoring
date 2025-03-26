@@ -213,7 +213,7 @@ private:
 class MPUCallbackInterface
 {
 public:
-    virtual void MPUCallback(MPU::AngleData &data) = 0;
+    virtual void MPUCallback(float &data) = 0;
     virtual ~MPUCallbackInterface() = default;
 };
 
