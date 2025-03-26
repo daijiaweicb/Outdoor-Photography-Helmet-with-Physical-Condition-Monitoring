@@ -1,10 +1,10 @@
 #include "motor_control.h"
 #include <cmath>
 
-void MotorControl::MPUCallback(float& data)
+void MotorControl::MPUCallback(AngleData& data)
 {
     // std::lock_guard<std::mutex> lock(motor_mutex);
-    angle.NewData = data;
+    angle.NewData = data.roll;
 
     angle.RevData = angle.NewData - angle.PrevData;
 

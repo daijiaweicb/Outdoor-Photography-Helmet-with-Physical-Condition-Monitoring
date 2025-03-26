@@ -6,7 +6,7 @@ void MPU::initMPU6050(IIC &iic)
     iic.iic_writeRegister(0x6B, 0x00); // Wake up
     iic.iic_writeRegister(0x37, 0x10); // Interrupt pin configuration (active high)
     iic.iic_writeRegister(0x38, 0x01); // Enable Data Ready Interrupt
-    iic.iic_writeRegister(0x1B, 0x00); //  ±250°/s
+    iic.iic_writeRegister(0x1B, 0x00); // ±250°/s
     iic.iic_writeRegister(0x1A, 0x03); // LowPass Filter 44Hz
     iic.iic_writeRegister(0x19, 0xF9); // Sampling Rate 4hz
 }
@@ -79,11 +79,12 @@ void MPU::dataReady()
     senda = readMPU6050(iic);
 
     angle = calculateAngle(senda, dt, prevAngle, calib, kfRoll, kfPitch);
+    angle.temp = senda.temp;
     prevAngle = angle;
 
     for (auto &cb : MPUcallback)
     {
-        cb->MPUCallback(angle.roll);
+        cb->MPUCallback(angle);
     }
 }
 

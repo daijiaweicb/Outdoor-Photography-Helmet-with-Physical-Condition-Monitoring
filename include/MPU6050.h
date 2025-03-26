@@ -15,8 +15,6 @@
 #define Interupt_MPU 6
 #define chipNo 0
 
-class MPUCallbackInterface;
-
 /**
  * @class MPU
  * @brief MPU6050 6-axis motion sensor control class
@@ -46,6 +44,12 @@ public:
         float roll, pitch, yaw;
         float gyroBiasX, gyroBiasY, gyroBiasZ;
         float temp;
+    };
+
+    struct MPUCallbackInterface
+    {
+        virtual void MPUCallback(AngleData &data) = 0;
+        virtual ~MPUCallbackInterface() = default;
     };
 
     /**
@@ -94,7 +98,6 @@ private:
     std::vector<MPUCallbackInterface *> MPUcallback;
     gpiod_chip *chipGPIO = nullptr;
     gpiod_line *pin = nullptr;
-
 
     bool running = false;
 
@@ -208,13 +211,6 @@ private:
             }
         }
     }
-};
-
-class MPUCallbackInterface
-{
-public:
-    virtual void MPUCallback(float &data) = 0;
-    virtual ~MPUCallbackInterface() = default;
 };
 
 #endif
