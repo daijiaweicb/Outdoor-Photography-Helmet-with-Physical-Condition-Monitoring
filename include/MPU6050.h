@@ -56,10 +56,10 @@ public:
      */
     void beginMPU6050();
 
+    
     /**
-     * 
-     * @brief Registering callback for MPU6050
-     * @param  {std::shared_ptr<CallbackInterface>} cb : 
+     * @brief Register callback for mpu6050
+     * @param  {CallbackInterface*} ci : 
      */
     void RegisterSetting(CallbackInterface* ci);
 
@@ -107,7 +107,6 @@ private:
     Kalman::KalmanFilter kfPitch;
 
     //callback interface
-    // std::shared_ptr<CallbackInterface> callback;
 
     std::thread str;
     
