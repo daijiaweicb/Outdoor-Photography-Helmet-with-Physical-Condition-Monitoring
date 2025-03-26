@@ -59,11 +59,7 @@ void MPU::beginMPU6050()
 void MPU::dataReady()
 {
 
-    
-
-    for (auto &cb : MPUcallbackinterface)
-    {
-        static bool first_call = true;
+    static bool first_call = true;
     static auto prevTime = std::chrono::high_resolution_clock::now();
 
     auto currentTime = std::chrono::high_resolution_clock::now();
@@ -83,7 +79,13 @@ void MPU::dataReady()
 
     angle = calculateAngle(senda, dt, prevAngle, calib, kfRoll, kfPitch);
     prevAngle = angle;
-        cb->MPUCallback(angle);
+
+    for (auto &cb : MPUcallbackinterface)
+    {
+        if (cb)
+        {
+            cb->MPUCallback(angle); 
+        }
     }
 }
 
