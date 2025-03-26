@@ -50,6 +50,7 @@ void MPU::beginMPU6050()
     kal.initKalmanFilter(kfPitch);
 
     str = std::thread(&MPU::worker, this);
+    std::cout << "thread start success" << std::endl;
     if (!str.joinable())
     {
         throw std::runtime_error("Failed to start worker thread");
