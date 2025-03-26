@@ -18,7 +18,7 @@
 class MPUCallbackInterface
 {
 public:
-    virtual void MPUCallback(MPU::AngleData &data) = 0;
+    virtual void MPUCallback(MPU::AngleData &data, MPU::SensorData &tmp) = 0;
     virtual ~MPUCallbackInterface() = default;
 };
 
@@ -46,11 +46,12 @@ public:
         float temp;
     };
 
+    SensorData sensor;
+
     struct AngleData
     {
         float roll, pitch, yaw;
         float gyroBiasX, gyroBiasY, gyroBiasZ;
-        float temp;
     };
 
     /**

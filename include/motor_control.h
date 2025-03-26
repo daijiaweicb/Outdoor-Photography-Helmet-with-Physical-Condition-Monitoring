@@ -20,7 +20,7 @@ private:
     Data angle;
 
 public:
-    void MPUCallback(AngleData& data)override;
+    void MPUCallback(AngleData& data, SensorData& tmp)override;
     MotorControl()
     {
         angle.PrevData = 0;

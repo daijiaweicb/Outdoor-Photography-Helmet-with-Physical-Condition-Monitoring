@@ -82,7 +82,7 @@ void MPU::dataReady()
 
     for (auto &cb : MPUcallbackinterface)
     {
-        cb->MPUCallback(angle);
+        cb->MPUCallback(angle,sensor);
     }
 }
 
@@ -174,7 +174,6 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
     angle.pitch = kalman.kalmanUpdate(kfPitch, gyroY, dt, accPitch);
     // Yaw using only simple integrals
     angle.yaw = prev.yaw + gyroZ * dt;
-    angle.temp =  data.temp;
 
     return angle;
 }
