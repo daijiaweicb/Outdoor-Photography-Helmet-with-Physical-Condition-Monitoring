@@ -1,14 +1,14 @@
 #include "motor_control.h"
 #include <cmath>
 
-void MotorControl::MPUCallback(float value)
+void MotorControl::MPUCallback(AngleData& data)
 {
     // std::lock_guard<std::mutex> lock(motor_mutex);
-    angle.NewData = value;
+    angle.NewData = data.roll;
 
     angle.RevData = angle.NewData - angle.PrevData;
 
-    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°\n";
+    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " tempeature is: " << data.temp << std::endl;
 
     float steps = angle.RevData / 0.08789;
     int intSteps = static_cast<int>(round(steps));

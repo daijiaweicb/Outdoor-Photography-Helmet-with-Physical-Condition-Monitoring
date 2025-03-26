@@ -1,11 +1,11 @@
 #include "MPU6050.h"
 #include <cmath>
-//MPU6050
+// MPU6050
 void MPU::initMPU6050(IIC &iic)
 {
     iic.iic_writeRegister(0x6B, 0x00); // Wake up
     iic.iic_writeRegister(0x37, 0x10); // Interrupt pin configuration (active high)
-    iic.iic_writeRegister(0x38, 0x01); // Enable Data Ready Interrupt 
+    iic.iic_writeRegister(0x38, 0x01); // Enable Data Ready Interrupt
     iic.iic_writeRegister(0x1B, 0x00); //  ±250°/s
     iic.iic_writeRegister(0x1A, 0x03); // LowPass Filter 44Hz
     iic.iic_writeRegister(0x19, 0xF9); // Sampling Rate 4hz
@@ -37,9 +37,10 @@ void MPU::beginMPU6050()
         throw std::runtime_error("Could not request event");
     }
 
-    calib = {0};void dataReady();
+    calib = {0};
+    void dataReady();
     int calib_init = calibrateSensors(iic, calib, 1000);
-    if(!calib_init)
+    if (!calib_init)
     {
         throw std::runtime_error("Calibrate sensor error");
     }
@@ -49,7 +50,7 @@ void MPU::beginMPU6050()
     kal.initKalmanFilter(kfPitch);
 
     str = std::thread(&MPU::worker, this);
-    if(!str.joinable())
+    if (!str.joinable())
     {
         throw std::runtime_error("Failed to start worker thread");
     }
@@ -79,9 +80,9 @@ void MPU::dataReady()
     angle = calculateAngle(senda, dt, prevAngle, calib, kfRoll, kfPitch);
     prevAngle = angle;
 
-    for(auto &cb: MPUcallbackinterface)
+    for (auto &cb : MPUcallbackinterface)
     {
-        cb->MPUCallback(angle.roll);
+        cb->MPUCallback(data);
     }
 }
 
@@ -101,6 +102,9 @@ MPU::SensorData MPU::readMPU6050(IIC &iic)
     data.accelX = ax_raw * accelScale;
     data.accelY = ay_raw * accelScale;
     data.accelZ = az_raw * accelScale;
+
+    int16_t temperature = (buffer[6] << 8) | buffer[7];
+    data.temp = temperature / 340.0 + 36.53;
 
     // Gyro data (starting at register 0x43)
     int16_t gx_raw = (buffer[8] << 8) | buffer[9];
@@ -170,12 +174,12 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
     angle.pitch = kalman.kalmanUpdate(kfPitch, gyroY, dt, accPitch);
     // Yaw using only simple integrals
     angle.yaw = prev.yaw + gyroZ * dt;
+    angle.temp =  data.temp;
 
     return angle;
 }
 
-void MPU ::RegisterSetting(CallbackInterface* ci)
+void MPU ::RegisterSetting(CallbackInterface *ci)
 {
     MPUcallbackinterface.push_back(ci);
 }
-
