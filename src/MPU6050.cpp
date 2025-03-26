@@ -82,10 +82,7 @@ void MPU::dataReady()
 
     for (auto &cb : MPUcallbackinterface)
     {
-        if (cb)
-        {
-            cb->MPUCallback(angle); 
-        }
+        cb->MPUCallback(angle);
     }
 }
 
@@ -182,7 +179,7 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
     return angle;
 }
 
-void MPU ::RegisterSetting(CallbackInterface *ci)
+void MPU ::RegisterSetting(MPUCallbackInterface *ci)
 {
     MPUcallbackinterface.push_back(ci);
 }
