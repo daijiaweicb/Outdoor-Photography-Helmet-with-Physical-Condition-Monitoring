@@ -82,7 +82,7 @@ void MPU::dataReady()
 
     for (auto &cb : MPUcallbackinterface)
     {
-        cb->MPUCallback(data);
+        cb->MPUCallback(angle);
     }
 }
 
