@@ -1,6 +1,6 @@
 #include "MPU6050.h"
 #include <cmath>
-
+//MPU6050
 void MPU::initMPU6050(IIC &iic)
 {
     iic.iic_writeRegister(0x6B, 0x00); // Wake up

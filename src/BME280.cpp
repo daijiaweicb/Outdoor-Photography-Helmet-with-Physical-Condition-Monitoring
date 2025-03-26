@@ -1,5 +1,6 @@
 #include "BME280.h"
 
+// Initialize BME280 sensor
 void BME::beginBME()
 {
     iic.iic_open(BME280_ADDRESS);
@@ -23,7 +24,7 @@ void BME::beginBME()
     timer_1s.start(1000, [&]()
                    { DataReady(results); });
 }
-
+// Temperature compensation algorithm
 float BME::compensateTemp(int32_t adc_T)
 {
     double var1 = (adc_T / 16384.0 - dig_T1 / 1024.0) * dig_T2;
@@ -31,7 +32,7 @@ float BME::compensateTemp(int32_t adc_T)
     t_fine = var1 + var2;
     return (var1 + var2) / 5120.0;
 }
-
+// Pressure compensation algorithm
 float BME::compensatePress(int32_t adc_P)
 {
     double var1 = t_fine / 2.0 - 64000.0;
@@ -51,7 +52,7 @@ float BME::compensatePress(int32_t adc_P)
     var2 = p * dig_P8 / 32768.0;
     return p + (var1 + var2 + dig_P7) / 16.0;
 }
-
+// Get sensor data and process
 void BME::GetData(BMEresults &results)
 {
 
@@ -69,7 +70,7 @@ void BME::GetData(BMEresults &results)
     int32_t adc_P = (press_msb << 12) | (press_lsb << 4) | (press_xlsb >> 4);
     results.press = compensatePress(adc_P);
 }
-
+// Data ready notification handler
 void BME::DataReady(BMEresults &results)
 {
     for (auto &cb : BMEcallbackinterface)
