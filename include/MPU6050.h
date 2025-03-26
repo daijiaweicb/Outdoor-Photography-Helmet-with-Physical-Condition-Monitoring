@@ -15,7 +15,6 @@
 #define Interupt_MPU 6
 #define chipNo 0
 
-class MotorControl;
 class MPUCallbackInterface;
 
 /**
