@@ -15,12 +15,7 @@
 #define Interupt_MPU 6
 #define chipNo 0
 
-class MPUCallbackInterface
-{
-public:
-    virtual void MPUCallback(MPU::AngleData &data, MPU::SensorData &tmp) = 0;
-    virtual ~MPUCallbackInterface() = default;
-};
+class MPUCallbackInterface;
 
 /**
  * @class MPU
@@ -46,12 +41,11 @@ public:
         float temp;
     };
 
-    SensorData sensor;
-
     struct AngleData
     {
         float roll, pitch, yaw;
         float gyroBiasX, gyroBiasY, gyroBiasZ;
+        float temp;
     };
 
     /**
@@ -214,6 +208,13 @@ private:
             }
         }
     }
+};
+
+class MPUCallbackInterface
+{
+public:
+    virtual void MPUCallback(MPU::AngleData &data) = 0;
+    virtual ~MPUCallbackInterface() = default;
 };
 
 #endif

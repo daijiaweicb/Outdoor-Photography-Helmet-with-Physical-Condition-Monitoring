@@ -4,7 +4,7 @@
 #include "motor_setting.h"
 #include "MPU6050.h"
 
-class MotorControl : public MPU, public MPUCallbackInterface, public StepperMotor
+class MotorControl : public MPU, public StepperMotor, public MPUCallbackInterface
 {
 private:
     StepperMotor motor;
@@ -20,7 +20,7 @@ private:
     Data angle;
 
 public:
-    void MPUCallback(AngleData& data, SensorData& tmp)override;
+    void MPUCallback(AngleData& data)override;
     MotorControl()
     {
         angle.PrevData = 0;
