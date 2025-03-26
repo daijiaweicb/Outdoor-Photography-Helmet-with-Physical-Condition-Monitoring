@@ -7,6 +7,7 @@
 #include <vector>
 #include "iic.h"
 #include "MPU_kalman.h"
+#include "motor_control.h"
 
 /**
  * Use Pin 6 of raspberry pi as interrupt pin
