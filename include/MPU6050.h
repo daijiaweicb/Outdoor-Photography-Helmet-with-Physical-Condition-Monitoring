@@ -91,7 +91,7 @@ public:
 private:
     IIC iic;
 
-    std::vector<MPUCallbackInterface *> MPUcallbackinterface;
+    std::vector<MPUCallbackInterface *> MPUcallback;
     gpiod_chip *chipGPIO = nullptr;
     gpiod_line *pin = nullptr;
 

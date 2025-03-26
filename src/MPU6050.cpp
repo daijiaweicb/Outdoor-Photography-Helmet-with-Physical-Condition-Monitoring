@@ -81,7 +81,7 @@ void MPU::dataReady()
     angle = calculateAngle(senda, dt, prevAngle, calib, kfRoll, kfPitch);
     prevAngle = angle;
 
-    for (auto &cb : MPUcallbackinterface)
+    for (auto &cb : MPUcallback)
     {
         cb->MPUCallback(angle.roll);
     }
@@ -181,5 +181,5 @@ MPU::AngleData MPU::calculateAngle(const SensorData &data, float dt, const Angle
 
 void MPU ::RegisterSetting(MPUCallbackInterface *ci)
 {
-    MPUcallbackinterface.push_back(ci);
+    MPUcallback.push_back(ci);
 }

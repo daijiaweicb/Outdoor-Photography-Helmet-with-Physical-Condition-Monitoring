@@ -8,7 +8,7 @@ class MotorControl : public MPU, public StepperMotor, public MPUCallbackInterfac
 {
 private:
     StepperMotor motor;
-    struct Data //motor angle control data
+    struct Data // motor angle control data
     {
         float PrevData;
         float NewData;
@@ -20,7 +20,7 @@ private:
     Data angle;
 
 public:
-    void MPUCallback(float& data)override;
+    void MPUCallback(float &data) override;
     MotorControl()
     {
         angle.PrevData = 0;
