@@ -8,12 +8,19 @@ using namespace std;
 int main()
 {
 
-    MotorControl motorapp;
+    MotorControl motorapp; 
 
-    motorapp.start_mg90s();
-    motorapp.beginMPU6050();
-    motorapp.RegisterSetting(&motorapp);
-    motorapp.startWorker();
+    MG90S& motor = motorapp; 
+    motor.start_mg90s();
+
+    MPU& mpu = motorapp;  
+    mpu.RegisterSetting(&motorapp); 
+    mpu.beginMPU6050(); 
+
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     return 0;
 }
