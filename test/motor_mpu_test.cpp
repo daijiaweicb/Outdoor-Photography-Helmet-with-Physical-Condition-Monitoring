@@ -7,14 +7,13 @@ using namespace std;
 
 int main()
 {
-    MPU mpu;
-    MG90S motor;
+
     MotorControl motorapp;
 
-    motor.start_mg90s();
-    mpu.beginMPU6050();
-    mpu.RegisterSetting(&motorapp);
-    mpu.startWorker();
+    motorapp.start_mg90s();
+    motorapp.beginMPU6050();
+    motorapp.RegisterSetting(&motorapp);
+    motorapp.startWorker();
 
     return 0;
 }

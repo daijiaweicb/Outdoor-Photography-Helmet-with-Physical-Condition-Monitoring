@@ -11,54 +11,54 @@ void MPU::initMPU6050(IIC &iic)
     iic.iic_writeRegister(0x19, 0xF9); // Sampling Rate 4hz
 }
 
-void MPU::beginMPU6050()
-{
-    iic.iic_open(MPU_ADDRESS);
-    initMPU6050(iic);
-
-    chipGPIO = gpiod_chip_open_by_number(chipNo);
-    if (!chipGPIO)
+    void MPU::beginMPU6050()
     {
-        throw std::runtime_error("Failed to open GPIO chip");
+        iic.iic_open(MPU_ADDRESS);
+        initMPU6050(iic);
+
+        chipGPIO = gpiod_chip_open_by_number(chipNo);
+        if (!chipGPIO)
+        {
+            throw std::runtime_error("Failed to open GPIO chip");
+        }
+
+        pin = gpiod_chip_get_line(chipGPIO, Interupt_MPU);
+        if (!pin)
+        {
+            gpiod_chip_close(chipGPIO);
+            throw std::runtime_error("Failed to get GPIO line");
+        }
+
+        int ret = gpiod_line_request_rising_edge_events(pin, "Consumer");
+        if (ret < 0)
+        {
+            gpiod_line_release(pin);
+            gpiod_chip_close(chipGPIO);
+            throw std::runtime_error("Could not request event");
+        }
+
+        calib = {0};
+        void dataReady();
+        int calib_init = calibrateSensors(iic, calib, 1000);
+        if (!calib_init)
+        {
+            throw std::runtime_error("Calibrate sensor error");
+        }
+
+        prevAngle = {0, 0, 0};
+        kal.initKalmanFilter(kfRoll);
+        kal.initKalmanFilter(kfPitch);
     }
 
-    pin = gpiod_chip_get_line(chipGPIO, Interupt_MPU);
-    if (!pin)
+    void MPU::startWorker()
     {
-        gpiod_chip_close(chipGPIO);
-        throw std::runtime_error("Failed to get GPIO line");
+        str = std::thread(&MPU::worker, this);
+        std::cout << "thread start success" << std::endl;
+        if (!str.joinable())
+        {
+            throw std::runtime_error("Failed to start worker thread");
+        }
     }
-
-    int ret = gpiod_line_request_rising_edge_events(pin, "Consumer");
-    if (ret < 0)
-    {
-        gpiod_line_release(pin);
-        gpiod_chip_close(chipGPIO);
-        throw std::runtime_error("Could not request event");
-    }
-
-    calib = {0};
-    void dataReady();
-    int calib_init = calibrateSensors(iic, calib, 1000);
-    if (!calib_init)
-    {
-        throw std::runtime_error("Calibrate sensor error");
-    }
-
-    prevAngle = {0, 0, 0};
-    kal.initKalmanFilter(kfRoll);
-    kal.initKalmanFilter(kfPitch);
-}
-
-void MPU::startWorker()
-{
-    str = std::thread(&MPU::worker, this);
-    std::cout << "thread start success" << std::endl;
-    if (!str.joinable())
-    {
-        throw std::runtime_error("Failed to start worker thread");
-    }
-}
 
 void MPU::dataReady()
 {
