@@ -1,6 +1,6 @@
 #include <iostream>
 #include "motor_control.h"
-#include "motor_setting.h"
+#include "MG90S_setting.h"
 #include "MPU6050.h"
 
 using namespace std;
@@ -8,10 +8,10 @@ using namespace std;
 int main()
 {
     MPU mpu;
-    StepperMotor motor;
+    MG90S motor;
     MotorControl motorapp;
 
-    motor.start();
+    motor.start_mg90s();
     mpu.RegisterSetting(&motorapp);
     mpu.beginMPU6050();
 
