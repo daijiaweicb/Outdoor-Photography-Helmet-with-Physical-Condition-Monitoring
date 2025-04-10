@@ -7,7 +7,6 @@
 class MotorControl : public MPU, public MPU::MPUCallbackInterface, public MG90S 
 {
 private:
-    MG90S motor;
     struct Data // motor angle control data
     {
         float PrevData;

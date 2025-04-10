@@ -1,7 +1,7 @@
 #include "motor_control.h"
 #include <cmath>
 
-void MotorControl::MPUCallback(AngleData& data)
+void MotorControl::MPUCallback(AngleData &data)
 {
     // std::lock_guard<std::mutex> lock(motor_mutex);
     angle.NewData = data.roll;
@@ -9,16 +9,15 @@ void MotorControl::MPUCallback(AngleData& data)
     angle.RevData = angle.NewData - angle.PrevData;
 
     // std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " tempeature is: " << data.temp << std::endl;
-    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " Temp: " << data.temp << "℃" <<std::endl;
-    if(angle.RevData > 0)
+    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " Temp: " << data.temp << "℃" << std::endl;
+    if (angle.RevData > 0)
     {
-        motor.setAngle(135);
+        setAngle(135);
     }
     else
     {
-        motor.setAngle(45);
+        setAngle(45);
     }
 
-    
     angle.PrevData = angle.NewData;
 }
