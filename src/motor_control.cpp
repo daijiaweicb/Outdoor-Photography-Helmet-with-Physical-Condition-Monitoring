@@ -10,7 +10,7 @@ void MotorControl::MPUCallback(AngleData &data)
 
     // std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " tempeature is: " << data.temp << std::endl;
     std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " Temp: " << data.temp << "℃" << std::endl;
-    setAngle(90+angle.RevData);
+    setAngle(90+angle.NewData);
 
     angle.PrevData = angle.NewData;
 }
