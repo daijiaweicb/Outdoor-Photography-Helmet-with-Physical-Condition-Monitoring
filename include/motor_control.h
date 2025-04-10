@@ -1,13 +1,13 @@
 #ifndef MOTOR_CONTROL_H
 #define MOTOR_CONTROL_H
 
-#include "motor_setting.h"
+#include "MG90S_setting.h"
 #include "MPU6050.h"
 
-class MotorControl : public MPU, public MPU::MPUCallbackInterface, public StepperMotor 
+class MotorControl : public MPU, public MPU::MPUCallbackInterface, public MG90S 
 {
 private:
-    StepperMotor motor;
+    MG90S motor;
     struct Data // motor angle control data
     {
         float PrevData;

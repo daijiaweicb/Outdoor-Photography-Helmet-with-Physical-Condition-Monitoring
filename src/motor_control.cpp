@@ -10,18 +10,15 @@ void MotorControl::MPUCallback(AngleData& data)
 
     // std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " tempeature is: " << data.temp << std::endl;
     std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" <<std::endl;
-    float steps = angle.RevData / 0.08789;
-    int intSteps = static_cast<int>(round(steps));
+    if(angle.RevData >= 90)
+    {
+        motor.setAngle(angle.RevData - 90);
+    }
+    else if(angle.RevData < 90)
+    {
+        motor.setAngle(angle.RevData);
+    }
 
-    // Motor Control
-    if (intSteps > 10)
-    {
-        motor.forward(intSteps);
-    }
-    else if (intSteps < -10)
-    {
-        motor.backward(-intSteps);
-    }
     
     angle.PrevData = angle.NewData;
 }
