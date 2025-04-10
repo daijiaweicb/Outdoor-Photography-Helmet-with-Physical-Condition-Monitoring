@@ -3,17 +3,22 @@
 
 void MotorControl::MPUCallback(AngleData& data)
 {
+    // std::lock_guard<std::mutex> lock(motor_mutex);
     angle.NewData = data.roll;
+
     angle.RevData = angle.NewData - angle.PrevData;
 
-    std::cout << "Roll: " << angle.NewData << "°" << " Δ: " << angle.RevData
-              << " Temp: " << data.temp << "℃" << std::endl;
+    // std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " tempeature is: " << data.temp << std::endl;
+    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " Temp: " << data.temp << "℃" <<std::endl;
+    if(angle.RevData > 0)
+    {
+        motor.setAngle(135);
+    }
+    else
+    {
+        motor.setAngle(45);
+    }
 
-    float mapped_angle = angle.NewData + 90;  // 把 [-90,90] -> [0,180]
-    if (mapped_angle < 0) mapped_angle = 0;
-    if (mapped_angle > 180) mapped_angle = 180;
-
-    motor.setAngle(static_cast<int>(mapped_angle));
-
+    
     angle.PrevData = angle.NewData;
 }
