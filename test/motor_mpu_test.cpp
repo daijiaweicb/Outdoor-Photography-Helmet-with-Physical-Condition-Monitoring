@@ -6,19 +6,14 @@
 using namespace std;
 
 int main()
-{ 
+{
+    MPU mpu;
     MG90S motor;
+    MotorControl motorapp;
+
     motor.start_mg90s();
-
-    MPU mpu;  
-    mpu.RegisterSetting(&mpu);  
-    mpu.beginMPU6050();              
-
-    while (true)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
+    mpu.RegisterSetting(&motorapp);
+    mpu.beginMPU6050();
 
     return 0;
 }
-
