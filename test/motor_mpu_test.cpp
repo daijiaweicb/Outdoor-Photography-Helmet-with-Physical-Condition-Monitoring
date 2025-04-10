@@ -7,13 +7,20 @@ using namespace std;
 
 int main()
 {
-    MPU mpu;
-    MG90S motor;
-    MotorControl motorapp;
+    MotorControl motorapp;  
 
+    MG90S& motor = motorapp; 
     motor.start_mg90s();
-    mpu.RegisterSetting(&motorapp);
-    mpu.beginMPU6050();
+
+    MPU& mpu = motorapp;  
+    mpu.RegisterSetting(&motorapp);  
+    mpu.beginMPU6050();              
+
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     return 0;
 }
+
