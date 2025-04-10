@@ -12,8 +12,9 @@ int main()
     MotorControl motorapp;
 
     motor.start_mg90s();
-    mpu.RegisterSetting(&motorapp);
     mpu.beginMPU6050();
+    mpu.RegisterSetting(&motorapp);
+    mpu.startWorker();
 
     return 0;
 }

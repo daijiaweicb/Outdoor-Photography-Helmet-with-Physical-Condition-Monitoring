@@ -63,6 +63,8 @@ public:
      */
     void beginMPU6050();
 
+    void startWorker();
+
     /**
      * @brief Register callback for mpu6050
      * @param  {CallbackInterface*} ci :

@@ -48,7 +48,10 @@ void MPU::beginMPU6050()
     prevAngle = {0, 0, 0};
     kal.initKalmanFilter(kfRoll);
     kal.initKalmanFilter(kfPitch);
+}
 
+void MPU::startWorker()
+{
     str = std::thread(&MPU::worker, this);
     std::cout << "thread start success" << std::endl;
     if (!str.joinable())
