@@ -6,14 +6,12 @@
 using namespace std;
 
 int main()
-{
-    MotorControl motorapp;  
-
-    MG90S& motor = motorapp; 
+{ 
+    MG90S motor;
     motor.start_mg90s();
 
-    MPU& mpu = motorapp;  
-    mpu.RegisterSetting(&motorapp);  
+    MPU mpu;  
+    mpu.RegisterSetting(&mpu);  
     mpu.beginMPU6050();              
 
     while (true)
