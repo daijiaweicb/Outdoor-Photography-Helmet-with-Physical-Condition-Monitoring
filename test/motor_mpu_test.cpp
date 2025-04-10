@@ -16,6 +16,7 @@ int main()
     MPU& mpu = motorapp;  
     mpu.RegisterSetting(&motorapp); 
     mpu.beginMPU6050(); 
+    mpu.startWorker();
 
     while (true)
     {
