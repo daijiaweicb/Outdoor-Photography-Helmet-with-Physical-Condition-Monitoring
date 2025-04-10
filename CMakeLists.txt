@@ -17,9 +17,5 @@ add_executable(motor_mpu_test ${SOURCES} ${PROJECT_SOURCE_DIR}/test/motor_mpu_te
 target_link_libraries(motor_mpu_test PRIVATE i2c ${GPIOD_LIBRARIES})
 target_compile_options(motor_mpu_test PRIVATE ${GPIOD_CFLAGS_OTHER})
 
-add_executable(bme_test ${SOURCES} ${PROJECT_SOURCE_DIR}/test/bme_test.cpp)
-target_link_libraries(bme_test PRIVATE i2c ${GPIOD_LIBRARIES})
-target_compile_options(bme_test PRIVATE ${GPIOD_CFLAGS_OTHER})
-
-install(TARGETS motor_mpu_test bme_test
+install(TARGETS motor_mpu_test 
         RUNTIME DESTINATION bin)
