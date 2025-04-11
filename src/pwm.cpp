@@ -1,5 +1,5 @@
 #include "pwm.h"
-
+//Raspberry pi pwm control
 int PWM::start_pwm(int channel, int frequency, float duty_cycle, int chip)
 {
     chippath = "/sys/class/pwm/pwmchip" + to_string(chip);
