@@ -30,11 +30,24 @@
    <widget class="QWidget" name="VideoContainer" native="true">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>30</y>
+      <x>290</x>
+      <y>20</y>
       <width>601</width>
       <height>391</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_status">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>400</y>
+      <width>66</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
   </widget>

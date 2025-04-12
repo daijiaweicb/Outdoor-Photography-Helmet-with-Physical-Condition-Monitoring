@@ -3,43 +3,42 @@
 #include <QImage>
 #include <QPixmap>
 #include <QPainter>
-#include "Stepmotor_setting.h"
+#include "motor_thread.h"
+#include "Mode.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_pushButton_rotate_clicked);
-
-    // ui->VideoContainer->installEventFilter(this);
-
-    // cap.open(0);
-    // if (!cap.isOpened()) {
-    //     qDebug("Cannot open camera");
-    //     return;
-    // }
-
-    // timer = new QTimer(this);
-    // connect(timer, &QTimer::timeout, this, &MainWindow::readFrame);
-    // timer->start(60);
 }
+
 MainWindow::~MainWindow()
 {
-    // cap.release();
     delete ui;
 }
 
 void MainWindow::on_pushButton_rotate_clicked()
 {
-    StepperMotor motor;
-    if (!motor.start(0, 17, 18, 27, 22)) {
-        qDebug("Init stepmotor falied");
+    if (motorThread && motorThread->isRunning()) {
+        qDebug() << "motor is running. Ignore operation.";
         return;
     }
 
-    motor.forward(113);
+    motorThread = new MotorThread(this);
+    connect(motorThread, &MotorThread::finished, motorThread, &QObject::deleteLater);
+    connect(motorThread, &MotorThread::modeChanged, this, &MainWindow::onModeChanged);
+    motorThread->start();
+}
 
-    motor.cleanup();
+void MainWindow::onModeChanged(SystemMode newMode)
+{
+    if (newMode == SystemMode::Normal)
+        ui->label_status->setText("Current Mode：Normal");
+    else if (newMode == SystemMode::FatigueDetection)
+        ui->label_status->setText("Current Mode：FatigueDetection");
 }
 
 // void MainWindow::readFrame()

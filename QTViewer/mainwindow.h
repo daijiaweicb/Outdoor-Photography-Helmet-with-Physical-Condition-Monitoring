@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
+#include "Mode.h"
+#include "motor_thread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,10 +21,12 @@ public:
 
 private slots:
     void on_pushButton_rotate_clicked();
+    void onModeChanged(SystemMode newMode);
 //     void readFrame();
 
 private:
     Ui::MainWindow *ui;
+    MotorThread *motorThread = nullptr;
     // QTimer *timer;
     // cv::VideoCapture cap;
     // QImage currentFrame;
