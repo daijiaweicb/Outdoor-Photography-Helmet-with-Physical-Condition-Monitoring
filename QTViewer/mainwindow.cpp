@@ -28,8 +28,15 @@ void MainWindow::on_ChangeMode_clicked()
     }
 
     motorThread = new MotorThread(this);
-    connect(motorThread, &MotorThread::finished, motorThread, &QObject::deleteLater);
-    connect(motorThread, &MotorThread::modeChanged, this, &MainWindow::onModeChanged);
+
+    connect(motorThread, &MotorThread::modeChanged,
+            this, &MainWindow::onModeChanged);
+
+    connect(motorThread, &MotorThread::finished, this, [this]() {
+        motorThread->deleteLater();
+        motorThread = nullptr;
+    });
+
     motorThread->start();
 }
 
