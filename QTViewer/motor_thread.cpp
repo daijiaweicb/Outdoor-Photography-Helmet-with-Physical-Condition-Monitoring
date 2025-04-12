@@ -12,7 +12,7 @@ MotorThread::~MotorThread()
 
 void MotorThread::run()
 {
-    if (!motor.start(0, 17, 18, 27, 22)) {
+    if (!motor.start(0, 17, 19, 27, 22)) {
         qDebug() << "Stepmotor init failed";
         return;
     }
