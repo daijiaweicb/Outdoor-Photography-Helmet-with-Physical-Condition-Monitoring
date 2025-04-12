@@ -13,13 +13,18 @@ set(PROJECT_SOURCES
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    motor_thread.cpp
+    motor_thread.h
     ${CMAKE_SOURCE_DIR}/src/Stepmotor_setting.cpp
+    ${CMAKE_SOURCE_DIR}/src/Mode.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QT_HELMET
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        motor_thread.h
+        motor_thread.cpp
     )
 else()
     add_executable(QT_HELMET
