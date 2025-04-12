@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_pushButton_rotate_clicked);
+    connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_rotate_clicked()
+void MainWindow::on_ChangeMode_clicked()
 {
     if (motorThread && motorThread->isRunning()) {
         qDebug() << "motor is running. Ignore operation.";

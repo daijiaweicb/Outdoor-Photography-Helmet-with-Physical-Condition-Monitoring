@@ -18,10 +18,10 @@ void MotorThread::run()
     }
 
     if (g_systemMode == SystemMode::Normal) {
-        motor.forward(113);
+        motor.forward(2048);
         g_systemMode = SystemMode::FatigueDetection;
     } else if (g_systemMode == SystemMode::FatigueDetection) {
-        motor.backward(113);
+        motor.backward(2048);
         g_systemMode = SystemMode::Normal;
     }
 
