@@ -24,6 +24,9 @@ Keep the camera at a certain elevation angle with horizontal level to record the
 
 ### Social media
 
-
+### Features
+- Stabilized outdoor photography with helmet-mounted camera
+- Real-time fatigue detection through eye and mouth movement
+- Smart environment sensing
 
 
