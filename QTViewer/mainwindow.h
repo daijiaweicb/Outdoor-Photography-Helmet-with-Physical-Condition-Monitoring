@@ -20,7 +20,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_rotate_clicked();
+    void on_ChangeMode_clicked();
     void onModeChanged(SystemMode newMode);
 //     void readFrame();
 
