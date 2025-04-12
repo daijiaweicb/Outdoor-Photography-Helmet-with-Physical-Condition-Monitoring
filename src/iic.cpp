@@ -1,5 +1,5 @@
 #include "iic.h"
-
+//iic part
 void IIC::iic_open(uint8_t sensorAddress)
 {
     snprintf(filename, sizeof(filename), "/dev/i2c-%d", adapter_nr);
