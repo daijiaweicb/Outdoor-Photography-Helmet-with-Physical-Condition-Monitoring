@@ -23,6 +23,11 @@
       <height>101</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Change The Mode</string>
     </property>
@@ -30,8 +35,8 @@
    <widget class="QWidget" name="VideoContainer" native="true">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>20</y>
+      <x>10</x>
+      <y>10</y>
       <width>601</width>
       <height>391</height>
      </rect>
@@ -40,11 +45,16 @@
    <widget class="QLabel" name="label_status">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>10</x>
       <y>400</y>
-      <width>211</width>
+      <width>251</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>13</pointsize>
+     </font>
     </property>
     <property name="lineWidth">
      <number>2</number>
@@ -56,14 +66,37 @@
    <widget class="QPushButton" name="Exit">
     <property name="geometry">
      <rect>
-      <x>727</x>
-      <y>445</y>
+      <x>760</x>
+      <y>430</y>
       <width>131</width>
       <height>101</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
     <property name="text">
      <string>Exit</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_time">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>10</y>
+      <width>241</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Time: - -</string>
     </property>
    </widget>
   </widget>
