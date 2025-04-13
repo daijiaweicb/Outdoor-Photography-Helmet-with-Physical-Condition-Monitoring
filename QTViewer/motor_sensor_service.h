@@ -6,7 +6,7 @@
 class MotorSensorService
 {
 public:
-    MotorSensorService(MG90S *sharedServo);
+    MotorSensorService();
     void start();
     void stop();
 
