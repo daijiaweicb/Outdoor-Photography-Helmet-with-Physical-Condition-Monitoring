@@ -32,7 +32,6 @@ private:
     MotorThread *motorThread = nullptr;
     MotorSensorService *service = nullptr;
     QTimer *timer;
-    MG90S* sharedServo = nullptr;
     // cv::VideoCapture cap;
     // QImage currentFrame;
 
