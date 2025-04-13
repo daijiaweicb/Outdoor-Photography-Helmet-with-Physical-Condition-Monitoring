@@ -1,7 +1,7 @@
 #include "motor_thread.h"
 #include <QDebug>
 
-MotorThread::MotorThread(MG90S* sharedServo,QObject *parent)
+MotorThread::MotorThread(QObject *parent)
     : QThread(parent)
 {
 }
