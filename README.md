@@ -1,12 +1,32 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
 
 
-# Project
+# Project Introduction 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/05bc4ca6-dca0-45ce-85ae-d13045f83054" alt="LOGO" width="200"/>
 </p>
 
+The project is a helmet photography platform that has real-time camera stabilization and fatigue detection. It is based on raspberry pi using c++ under Linux.  
+
+#Project detail 
+Hardware
+1. Raspberry Pi 5 × 1
+2. MPU 6050       × 1
+3. MG90S motor    × 1
+4. 2BYJ-48 motor  × 1
+5. Raspberry Pi official camera V3 × 1
+
 ## Installation
+The required library 
+1. libopencv-dev
+2. libgpio
+3. dlib
+4. liblapack-dev libblas-dev
+5. libcamera-dev
+6. libqwt-qt5-dev
+
+
+
 ```bash
 cmake .
 make
