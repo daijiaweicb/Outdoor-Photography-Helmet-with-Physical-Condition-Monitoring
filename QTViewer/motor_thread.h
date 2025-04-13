@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include "Stepmotor_setting.h"
+#include "MG90S_setting.h"
 #include "Mode.h"
 
 class MotorThread : public QThread
@@ -19,6 +20,7 @@ signals:
 
 private:
     StepperMotor motor;
+    MG90S servo;
 };
 
 #endif // MOTOR_THREAD_H
