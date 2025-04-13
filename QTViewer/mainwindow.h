@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include "Mode.h"
 #include "motor_thread.h"
+#include "motor_sensor_service.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,11 +23,13 @@ public:
 private slots:
     void on_ChangeMode_clicked();
     void onModeChanged(SystemMode newMode);
+    void on_Exit_clicked();
 //     void readFrame();
 
 private:
     Ui::MainWindow *ui;
     MotorThread *motorThread = nullptr;
+    MotorSensorService *service = nullptr;
     // QTimer *timer;
     // cv::VideoCapture cap;
     // QImage currentFrame;

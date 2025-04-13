@@ -6,12 +6,15 @@
 #include "motor_thread.h"
 #include "Mode.h"
 #include <QDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    // service = new MotorSensorService();
+    // service->start();
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
 }
 
@@ -23,7 +26,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_ChangeMode_clicked()
 {
     if (motorThread && motorThread->isRunning()) {
-        qDebug() << "motor is running. Ignore operation.";
+        qDebug() << "motor is running....Do not operate....";
         return;
     }
 
@@ -46,6 +49,15 @@ void MainWindow::onModeChanged(SystemMode newMode)
         ui->label_status->setText("Current Mode：Normal");
     else if (newMode == SystemMode::FatigueDetection)
         ui->label_status->setText("Current Mode：FatigueDetection");
+}
+
+void MainWindow::on_Exit_clicked()
+{
+    auto reply = QMessageBox::question(this, "Exit Confirmation", "Are you sure you want to exit?",
+                                       QMessageBox::No | QMessageBox::Yes);
+    if (reply == QMessageBox::Yes) {
+        QApplication::quit();
+    }
 }
 
 // void MainWindow::readFrame()
