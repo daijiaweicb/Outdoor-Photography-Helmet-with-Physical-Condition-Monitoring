@@ -58,7 +58,7 @@ void MainWindow::onModeChanged(SystemMode newMode)
     else if (newMode == SystemMode::FatigueDetection)
         ui->label_status->setText("Current Mode：FatigueDetection");
     else if(newMode == SystemMode::Temp)
-        ui->label_status->setText("");
+        ui->label_status->setText("Mode is changing");
 }
 
 void MainWindow::on_Exit_clicked()
