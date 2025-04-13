@@ -32,7 +32,7 @@ Keep the camera at a certain elevation angle with horizontal level to record the
 ### Social media
 | Follow me 🔔 |  
 |:--------:|  
-| [<img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/TikTok_icon.png" width="30"/> TikTok](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1) |
+| [<img src="[https://upload.wikimedia.org/wikipedia/commons/2/2f/TikTok_icon.png](https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tiktok.svg)" width="30"/> TikTok](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1) |
 
 
 
