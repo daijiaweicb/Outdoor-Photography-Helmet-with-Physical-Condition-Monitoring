@@ -24,8 +24,7 @@ void MotorThread::run()
     } else if (g_systemMode == SystemMode::FatigueDetection) {
         g_systemMode = SystemMode::Temp;
         motor.backward(2048);
-        servo.start_mg90s();
-        QThread::sleep(1);
+        servo.setAngle(90);
         g_systemMode = SystemMode::Normal;
     }
 
