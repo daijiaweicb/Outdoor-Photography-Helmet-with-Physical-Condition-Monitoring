@@ -25,6 +25,7 @@ void MotorThread::run()
         g_systemMode = SystemMode::Temp;
         motor.backward(2048);
         servo.setAngle(90);
+        QThread::sleep(1);
         g_systemMode = SystemMode::Normal;
     }
 
