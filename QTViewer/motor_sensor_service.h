@@ -6,11 +6,12 @@
 class MotorSensorService
 {
 public:
-    MotorSensorService();
+    MotorSensorService(MG90S *sharedServo);
     void start();
     void stop();
 
 private:
+    MG90S *servo;
     MotorControl motorapp;
 };
 

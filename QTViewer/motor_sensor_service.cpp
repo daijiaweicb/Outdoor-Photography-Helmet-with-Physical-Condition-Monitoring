@@ -1,12 +1,11 @@
 #include "motor_sensor_service.h"
 
-MotorSensorService::MotorSensorService() {}
+MotorSensorService::MotorSensorService(MG90S* sharedServo)
+:   servo(sharedServo)
+{}
 
 void MotorSensorService::start()
 {
-    MG90S& motor = motorapp;
-    motor.start_mg90s();
-
     MPU& mpu = motorapp;
     mpu.RegisterSetting(&motorapp);
     mpu.beginMPU6050();

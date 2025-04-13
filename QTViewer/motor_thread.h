@@ -10,7 +10,7 @@ class MotorThread : public QThread
 {
     Q_OBJECT
 public:
-    MotorThread(QObject *parent = nullptr);
+    MotorThread(QObject *parent = nullptr,MG90S* sharedServo);
     ~MotorThread();
 
     void run() override;
@@ -20,7 +20,7 @@ signals:
 
 private:
     StepperMotor motor;
-    MG90S servo;
+    MG90S *servo = nullptr;
 };
 
 #endif // MOTOR_THREAD_H
