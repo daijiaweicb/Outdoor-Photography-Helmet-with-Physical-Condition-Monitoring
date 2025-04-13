@@ -15,8 +15,15 @@ set(PROJECT_SOURCES
     mainwindow.ui
     motor_thread.cpp
     motor_thread.h
+    motor_sensor_service.cpp
+    motor_sensor_service.h
     ${CMAKE_SOURCE_DIR}/src/Stepmotor_setting.cpp
     ${CMAKE_SOURCE_DIR}/src/Mode.cpp
+    ${CMAKE_SOURCE_DIR}/src/MPU6050.cpp
+    ${CMAKE_SOURCE_DIR}/src/motor_control.cpp
+    ${CMAKE_SOURCE_DIR}/src/pwm.cpp
+    ${CMAKE_SOURCE_DIR}/src/iic.cpp
+    ${CMAKE_SOURCE_DIR}/src/MPU_kalman.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -25,6 +32,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         motor_thread.h
         motor_thread.cpp
+        motor_sensor_service.h
+        motor_sensor_service.cpp
     )
 else()
     add_executable(QT_HELMET
