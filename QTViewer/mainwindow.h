@@ -7,6 +7,7 @@
 #include "Mode.h"
 #include "motor_thread.h"
 #include "motor_sensor_service.h"
+#include "MG90S_setting.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,6 +32,7 @@ private:
     MotorThread *motorThread = nullptr;
     MotorSensorService *service = nullptr;
     QTimer *timer;
+    MG90S* sharedServo = nullptr;
     // cv::VideoCapture cap;
     // QImage currentFrame;
 

@@ -14,18 +14,27 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     ui->label_status->setText("Current Mode：Normal");
+
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
+
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [=]() {
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         ui->label_time->setText("Time:" + now);
     });
     timer->start(1000);
-    service = new MotorSensorService();
+
+    sharedServo = new MG90S();          
+    sharedServo->start_mg90s();         
+
+    service = new MotorSensorService(sharedServo);
     service->start();
 
+    onModeChanged(g_systemMode);
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -39,7 +48,7 @@ void MainWindow::on_ChangeMode_clicked()
         return;
     }
 
-    motorThread = new MotorThread(this);
+    motorThread = new MotorThread(sharedServo, this);
 
     connect(motorThread, &MotorThread::modeChanged,
             this, &MainWindow::onModeChanged);

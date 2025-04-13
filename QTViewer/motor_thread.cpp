@@ -1,8 +1,8 @@
 #include "motor_thread.h"
 #include <QDebug>
 
-MotorThread::MotorThread(QObject *parent)
-    : QThread(parent)
+MotorThread::MotorThread(MG90S* sharedServo,QObject *parent)
+    : QThread(parent),servo(sharedServo)
 {
 }
 
@@ -18,12 +18,17 @@ void MotorThread::run()
     }
     if (g_systemMode == SystemMode::Normal) {
         g_systemMode = SystemMode::Temp;
+        emit modeChanged(g_systemMode);
         motor.forward(2048);
         g_systemMode = SystemMode::FatigueDetection;
+        emit modeChanged(g_systemMode);
     } else if (g_systemMode == SystemMode::FatigueDetection) {
         g_systemMode = SystemMode::Temp;
+        emit modeChanged(g_systemMode);
         motor.backward(2048);
+        servo.setAngle(90);
         g_systemMode = SystemMode::Normal;
+        emit modeChanged(g_systemMode);
     }
 
     emit modeChanged(g_systemMode);
