@@ -1,5 +1,7 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
 
+
+# Our logo 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/05bc4ca6-dca0-45ce-85ae-d13045f83054" alt="LOGO" width="200"/>
 </p>
