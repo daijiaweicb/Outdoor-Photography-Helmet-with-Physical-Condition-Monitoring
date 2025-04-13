@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->label_time->setText("Time:" + now);
     });
     timer->start(1000);
-    // service = new MotorSensorService();
-    // service->start();
+    service = new MotorSensorService();
+    service->start();
 
 }
 
