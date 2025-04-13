@@ -7,6 +7,15 @@
 </p>
 
 The project is a helmet photography platform that has real-time camera stabilization and fatigue detection. It is based on raspberry pi using c++ under Linux.  
+The button of the Qt window could change the mode of the photography platform.
+### Mode 1 Front view capture
+1. Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road
+2. Take vedios of the view
+
+### Mode 2 Selfie and condition monitoring
+1. Identify the Fatigue level of users by the camera (Eye blinking)
+2. Combine pervious data with the current temperature, humidity and give advice to user
+3. Take selfie video
 
 #Project detail 
 Hardware
@@ -15,6 +24,7 @@ Hardware
 3. MG90S motor    × 1
 4. 2BYJ-48 motor  × 1
 5. Raspberry Pi official camera V3 × 1
+6. 7-inch screen  × 1
 
 ## Installation
 The required library 
@@ -33,16 +43,6 @@ make
 sudo make install
 ```
 
-## Structure
-### Mode 1
-Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road
-
-
-### Mode 2
-1. Identify the Fatigue level of users by the camera (Eye blinking and Mouth opening and closing)
-
-2. Combine pervious data with the current temperature, humidity and give advice to user
-
 
 ### Frame
 ![1e670894-2de2-45d7-86f5-565f9e828a4b](https://github.com/user-attachments/assets/6487dc9f-63e7-45f8-b6ee-b69a6d64750a)
@@ -54,9 +54,6 @@ Keep the camera at a certain elevation angle with horizontal level to record the
 | Follow me 🔔 |  
 |:--------:|  
 | [<img src="https://github.com/user-attachments/assets/aea9b545-b5d0-4563-9a56-6cd11e22de6e" width="30"/> TikTok](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1) |
-
-
-
 
 
 ### Features
