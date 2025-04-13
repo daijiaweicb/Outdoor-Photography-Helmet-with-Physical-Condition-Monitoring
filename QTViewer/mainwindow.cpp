@@ -14,8 +14,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    #ifdef __aarch64__
     // service = new MotorSensorService();
     // service->start();
+    #endif
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [=]() {
