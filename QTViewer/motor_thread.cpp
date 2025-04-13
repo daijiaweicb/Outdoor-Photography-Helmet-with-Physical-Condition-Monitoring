@@ -26,7 +26,6 @@ void MotorThread::run()
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
         motor.backward(2048);
-        servo.setAngle(90);
         g_systemMode = SystemMode::Normal;
         emit modeChanged(g_systemMode);
     }

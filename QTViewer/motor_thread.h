@@ -20,7 +20,6 @@ signals:
 
 private:
     StepperMotor motor;
-    MG90S *servo = nullptr;
 };
 
 #endif // MOTOR_THREAD_H
