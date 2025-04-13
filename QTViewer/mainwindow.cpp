@@ -14,10 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    #ifdef __aarch64__
-    // service = new MotorSensorService();
-    // service->start();
-    #endif
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [=]() {
@@ -25,6 +21,11 @@ MainWindow::MainWindow(QWidget *parent)
         ui->label_time->setText("Time:" + now);
     });
     timer->start(1000);
+    #if defined(__aarch64__) || defined(__arm__)
+    // service = new MotorSensorService();
+    // service->start();
+    #endif
+
 }
 
 MainWindow::~MainWindow()
@@ -59,7 +60,7 @@ void MainWindow::onModeChanged(SystemMode newMode)
     else if (newMode == SystemMode::FatigueDetection)
         ui->label_status->setText("Current Mode：FatigueDetection");
     else if(newMode == SystemMode::Temp)
-        ui->label_status->setText("Mode is changing");
+        ui->label_status->setText("");
 }
 
 void MainWindow::on_Exit_clicked()
