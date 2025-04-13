@@ -21,10 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->label_time->setText("Time:" + now);
     });
     timer->start(1000);
-    #if defined(__aarch64__) || defined(__arm__)
     // service = new MotorSensorService();
     // service->start();
-    #endif
 
 }
 
