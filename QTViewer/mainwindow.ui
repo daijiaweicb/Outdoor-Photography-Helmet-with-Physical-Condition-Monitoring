@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>933</width>
-    <height>611</height>
+    <width>958</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,12 +41,15 @@
       <height>391</height>
      </rect>
     </property>
+    <property name="cursor">
+     <cursorShape>ArrowCursor</cursorShape>
+    </property>
    </widget>
    <widget class="QLabel" name="label_status">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>400</y>
+      <y>410</y>
       <width>251</width>
       <height>20</height>
      </rect>
@@ -55,6 +58,9 @@
      <font>
       <pointsize>13</pointsize>
      </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LayoutDirection::LeftToRight</enum>
     </property>
     <property name="lineWidth">
      <number>2</number>
@@ -66,8 +72,8 @@
    <widget class="QPushButton" name="Exit">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>430</y>
+      <x>790</x>
+      <y>440</y>
       <width>131</width>
       <height>101</height>
      </rect>
@@ -84,9 +90,9 @@
    <widget class="QLabel" name="label_time">
     <property name="geometry">
      <rect>
-      <x>690</x>
+      <x>650</x>
       <y>10</y>
-      <width>241</width>
+      <width>261</width>
       <height>31</height>
      </rect>
     </property>
@@ -105,7 +111,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>933</width>
+     <width>958</width>
      <height>23</height>
     </rect>
    </property>
