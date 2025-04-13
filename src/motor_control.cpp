@@ -15,6 +15,10 @@ void MotorControl::MPUCallback(AngleData &data)
     {
         setAngle(90 - angle.NewData);
     }
+    else if(g_systemMode == SystemMode::FatigueDetection)
+    {
+        setAngle(90);
+    }
 
     angle.PrevData = angle.NewData;
 }

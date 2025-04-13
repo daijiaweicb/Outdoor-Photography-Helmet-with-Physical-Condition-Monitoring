@@ -16,7 +16,6 @@ void MotorThread::run()
         qDebug() << "Stepmotor init failed";
         return;
     }
-
     if (g_systemMode == SystemMode::Normal) {
         g_systemMode = SystemMode::Temp;
         motor.forward(2048);
@@ -24,7 +23,6 @@ void MotorThread::run()
     } else if (g_systemMode == SystemMode::FatigueDetection) {
         g_systemMode = SystemMode::Temp;
         motor.backward(2048);
-        servo.setAngle(90);
         g_systemMode = SystemMode::Normal;
     }
 
