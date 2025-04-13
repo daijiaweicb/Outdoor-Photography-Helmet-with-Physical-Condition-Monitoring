@@ -7,6 +7,7 @@
 #include "Mode.h"
 #include <QDebug>
 #include <QMessageBox>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
     // service = new MotorSensorService();
     // service->start();
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [=]() {
+        QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        ui->label_time->setText("Time:" + now);
+    });
+    timer->start(1000);
 }
 
 MainWindow::~MainWindow()

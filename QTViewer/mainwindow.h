@@ -30,7 +30,7 @@ private:
     Ui::MainWindow *ui;
     MotorThread *motorThread = nullptr;
     MotorSensorService *service = nullptr;
-    // QTimer *timer;
+    QTimer *timer;
     // cv::VideoCapture cap;
     // QImage currentFrame;
 
