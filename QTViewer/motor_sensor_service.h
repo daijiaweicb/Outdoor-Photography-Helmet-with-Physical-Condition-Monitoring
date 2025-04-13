@@ -2,8 +2,6 @@
 #define MOTOR_SENSOR_SERVICE_H
 
 #include "motor_control.h"
-#include "MG90S_setting.h"
-#include "MPU6050.h"
 
 class MotorSensorService
 {
