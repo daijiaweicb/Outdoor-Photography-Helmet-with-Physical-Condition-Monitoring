@@ -1,5 +1,5 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
-
+![LOGO](https://github.com/user-attachments/assets/05bc4ca6-dca0-45ce-85ae-d13045f83054)
 ## Installation
 ```bash
 cmake .
@@ -20,6 +20,7 @@ Keep the camera at a certain elevation angle with horizontal level to record the
 
 ### Frame
 ![1e670894-2de2-45d7-86f5-565f9e828a4b](https://github.com/user-attachments/assets/6487dc9f-63e7-45f8-b6ee-b69a6d64750a)
+
 
 
 ### Social media
