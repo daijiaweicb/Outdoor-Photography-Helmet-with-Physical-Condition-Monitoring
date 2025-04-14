@@ -9,28 +9,30 @@
 #include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->label_status->setText("Current Mode：Normal");
     ui->label_video->setScaledContents(true);
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [=]() {
+    connect(timer, &QTimer::timeout, this, [=]()
+            {
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-        ui->label_time->setText("Time:" + now);
-    });
-    
+        ui->label_time->setText("Time:" + now); });
+
     service = new MotorSensorService();
     service->start();
     connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
-        this, [=](float temp){
-            ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1));
-        });
+            this, [=](float temp)
+            { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
+
+    connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
+            this, [=](float angle)
+            { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
 
     timer->start(1000);
-    
+
     cam = new Libcam2OpenCV();
     cam->registerCallback(this);
     cam->start();
@@ -38,7 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    if (cam) {
+    if (cam)
+    {
         cam->stop();
         delete cam;
     }
@@ -47,7 +50,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_ChangeMode_clicked()
 {
-    if (motorThread && motorThread->isRunning()) {
+    if (motorThread && motorThread->isRunning())
+    {
         qDebug() << "motor is running....Do not operate....";
         return;
     }
@@ -57,10 +61,10 @@ void MainWindow::on_ChangeMode_clicked()
     connect(motorThread, &MotorThread::modeChanged,
             this, &MainWindow::onModeChanged);
 
-    connect(motorThread, &MotorThread::finished, this, [this]() {
+    connect(motorThread, &MotorThread::finished, this, [this]()
+            {
         motorThread->deleteLater();
-        motorThread = nullptr;
-    });
+        motorThread = nullptr; });
 
     motorThread->start();
 }
@@ -71,7 +75,7 @@ void MainWindow::onModeChanged(SystemMode newMode)
         ui->label_status->setText("Current Mode：Normal");
     else if (newMode == SystemMode::FatigueDetection)
         ui->label_status->setText("Current Mode：FatigueDetection");
-    else if(newMode == SystemMode::Temp)
+    else if (newMode == SystemMode::Temp)
         ui->label_status->setText("Mode is changing .......");
 }
 
@@ -79,7 +83,8 @@ void MainWindow::on_Exit_clicked()
 {
     auto reply = QMessageBox::question(this, "Exit Confirmation", "Are you sure you want to exit?",
                                        QMessageBox::No | QMessageBox::Yes);
-    if (reply == QMessageBox::Yes) {
+    if (reply == QMessageBox::Yes)
+    {
         QApplication::quit();
     }
 }
@@ -89,7 +94,6 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     cv::Mat rgb;
     cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
     QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
-    currentFrame = qimg.copy(); 
+    currentFrame = qimg.copy();
     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
 }
-

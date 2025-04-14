@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>958</width>
-    <height>616</height>
+    <width>1069</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,15 +17,17 @@
    <widget class="QPushButton" name="ChangeMode">
     <property name="geometry">
      <rect>
-      <x>700</x>
-      <y>220</y>
+      <x>690</x>
+      <y>500</y>
       <width>181</width>
       <height>91</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>System-ui</family>
       <pointsize>14</pointsize>
+      <bold>true</bold>
      </font>
     </property>
     <property name="text">
@@ -35,15 +37,17 @@
    <widget class="QLabel" name="label_status">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>180</y>
+      <x>660</x>
+      <y>470</y>
       <width>251</width>
       <height>20</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>System-ui</family>
       <pointsize>13</pointsize>
+      <bold>true</bold>
      </font>
     </property>
     <property name="layoutDirection">
@@ -59,25 +63,31 @@
    <widget class="QPushButton" name="Exit">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>480</y>
+      <x>930</x>
+      <y>500</y>
       <width>101</width>
-      <height>81</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>14</pointsize>
+      <family>System-ui</family>
+      <pointsize>16</pointsize>
+      <italic>false</italic>
+      <bold>true</bold>
      </font>
     </property>
     <property name="text">
      <string>Exit</string>
     </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="label_time">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>790</x>
       <y>10</y>
       <width>261</width>
       <height>31</height>
@@ -85,6 +95,7 @@
     </property>
     <property name="font">
      <font>
+      <family>System-ui</family>
       <pointsize>14</pointsize>
      </font>
     </property>
@@ -95,14 +106,15 @@
    <widget class="QLabel" name="label_temp">
     <property name="geometry">
      <rect>
-      <x>650</x>
-      <y>60</y>
+      <x>790</x>
+      <y>50</y>
       <width>171</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>System-ui</family>
       <pointsize>14</pointsize>
      </font>
     </property>
@@ -114,7 +126,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>40</y>
+      <y>50</y>
       <width>640</width>
       <height>480</height>
      </rect>
@@ -124,6 +136,11 @@
       <width>640</width>
       <height>480</height>
      </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>System-ui</family>
+     </font>
     </property>
     <property name="text">
      <string>Waiting for images......</string>
@@ -135,13 +152,32 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label_angle">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>90</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>System-ui</family>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Angle:</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>958</width>
+     <width>1069</width>
      <height>23</height>
     </rect>
    </property>
