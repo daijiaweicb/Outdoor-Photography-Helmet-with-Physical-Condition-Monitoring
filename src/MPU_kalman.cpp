@@ -27,7 +27,7 @@ float Kalman::kalmanUpdate(KalmanFilter &kf, float newRate, float dt, float meas
     float S = kf.P[0][0] + kf.R_measure;
     float K0 = kf.P[0][0] / S;
     float K1 = kf.P[1][0] / S;
-    // Calculate residual and update state estimate
+    // Calculate residual and update state estimate    
     float y = measuredAngle - kf.angle;
     kf.angle += K0 * y;
     kf.bias += K1 * y;
@@ -35,7 +35,7 @@ float Kalman::kalmanUpdate(KalmanFilter &kf, float newRate, float dt, float meas
     float P00_temp = kf.P[0][0];
     float P01_temp = kf.P[0][1];
     // Calculate Kalman gain
-    // P = F * P * F^T + Q 
+    // P = F * P * F^T + Q
     kf.P[0][0] -= K0 * P00_temp;
     kf.P[0][1] -= K0 * P01_temp;
     kf.P[1][0] -= K1 * P00_temp;
