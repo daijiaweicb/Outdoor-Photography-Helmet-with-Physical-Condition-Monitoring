@@ -1,10 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "libcam2opencv.h"
 #include <QImage>
 #include <QPixmap>
 #include <QPainter>
-#include "motor_thread.h"
-#include "Mode.h"
 #include <QDebug>
 #include <QMessageBox>
 #include <QDateTime>
@@ -15,12 +14,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->label_status->setText("Current Mode：Normal");
+    ui->label_video->setScaledContents(true);
     connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [=]() {
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         ui->label_time->setText("Time:" + now);
     });
+    
     service = new MotorSensorService();
     service->start();
     connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
@@ -30,11 +31,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     timer->start(1000);
     
-
+    cam = new Libcam2OpenCV();
+    cam->registerCallback(this);
+    cam->start();
 }
 
 MainWindow::~MainWindow()
 {
+    if (cam) {
+        cam->stop();
+        delete cam;
+    }
     delete ui;
 }
 
@@ -77,25 +84,12 @@ void MainWindow::on_Exit_clicked()
     }
 }
 
-// void MainWindow::readFrame()
-// {
-//     cv::Mat frame;
-//     cap >> frame;
-//     if (frame.empty()) return;
-
-//     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-//     currentFrame = QImage(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888).copy();
-
-//     ui->VideoContainer->update();
-// }
-
-// bool MainWindow::eventFilter(QObject *watched, QEvent *event)
-// {
-//     if (watched == ui->VideoContainer && event->type() == QEvent::Paint && !currentFrame.isNull()) {
-//         QPainter painter(ui->VideoContainer);
-//         painter.drawImage(ui->VideoContainer->rect(), currentFrame);
-//         return true;
-//     }
-//     return QMainWindow::eventFilter(watched, event);
-// }
+void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
+{
+    cv::Mat rgb;
+    cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
+    QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
+    currentFrame = qimg.copy(); 
+    ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+}
 
