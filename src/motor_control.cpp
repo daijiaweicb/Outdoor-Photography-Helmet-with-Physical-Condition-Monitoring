@@ -2,6 +2,12 @@
 #include <cmath>
 #include "Mode.h"
 
+MotorControl::MotorControl(QObject* parent)
+    : QObject(parent)
+{
+    angle.PrevData = 0;
+}
+
 void MotorControl::MPUCallback(AngleData &data)
 {
 
@@ -19,6 +25,6 @@ void MotorControl::MPUCallback(AngleData &data)
     {
         setAngle(90);
     }
-
+    emit temperatureUpdated(data.temp);
     angle.PrevData = angle.NewData;
 }
