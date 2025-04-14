@@ -27,7 +27,7 @@ public:
 
     void MPUCallback(AngleData &data) override;
 
-signals:
+Q_SIGNALS:
     void temperatureUpdated(float temp);
 };
 

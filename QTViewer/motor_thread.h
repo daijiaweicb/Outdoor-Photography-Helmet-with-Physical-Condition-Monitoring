@@ -15,7 +15,7 @@ public:
 
     void run() override;
 
-signals:
+Q_SIGNALS:
     void modeChanged(SystemMode newMode);
 
 private:
