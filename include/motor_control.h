@@ -3,20 +3,14 @@
 
 #include "MG90S_setting.h"
 #include "MPU6050.h"
-#include <QObject>
 
-#pragma once
+//Just as a test, not for displaying in the QT interface
 
-#include <QObject>
-#include "MG90S_setting.h"
-#include "MPU6050.h"
-
-class MotorControl : public QObject, public MPU, public MPU::MPUCallbackInterface, public MG90S
+class MotorControl : public MPU, public MPU::MPUCallbackInterface, public MG90S 
 {
-    Q_OBJECT
-
 private:
-    struct Data {
+    struct Data // motor angle control data
+    {
         float PrevData;
         float NewData;
         float RevData;
@@ -27,13 +21,11 @@ private:
     Data angle;
 
 public:
-    explicit MotorControl(QObject* parent = nullptr);
-
     void MPUCallback(AngleData &data) override;
-
-signals:
-    void temperatureUpdated(float temp);
+    MotorControl()
+    {
+        angle.PrevData = 0;
+    }
 };
-
 
 #endif
