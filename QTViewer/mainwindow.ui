@@ -17,10 +17,10 @@
    <widget class="QPushButton" name="ChangeMode">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>440</y>
-      <width>221</width>
-      <height>101</height>
+      <x>700</x>
+      <y>220</y>
+      <width>181</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
@@ -32,24 +32,11 @@
      <string>Change The Mode</string>
     </property>
    </widget>
-   <widget class="QWidget" name="VideoContainer" native="true">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>601</width>
-      <height>391</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>ArrowCursor</cursorShape>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_status">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>410</y>
+      <x>650</x>
+      <y>180</y>
       <width>251</width>
       <height>20</height>
      </rect>
@@ -72,10 +59,10 @@
    <widget class="QPushButton" name="Exit">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>440</y>
-      <width>131</width>
-      <height>101</height>
+      <x>830</x>
+      <y>480</y>
+      <width>101</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="font">
@@ -121,6 +108,31 @@
     </property>
     <property name="text">
      <string>Temp: </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_video">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>640</width>
+      <height>480</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>640</width>
+      <height>480</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Waiting for images......</string>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
   </widget>
