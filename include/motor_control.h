@@ -3,12 +3,20 @@
 
 #include "MG90S_setting.h"
 #include "MPU6050.h"
+#include <QObject>
 
-class MotorControl : public MPU, public MPU::MPUCallbackInterface, public MG90S 
+#pragma once
+
+#include <QObject>
+#include "MG90S_setting.h"
+#include "MPU6050.h"
+
+class MotorControl : public QObject, public MPU, public MPU::MPUCallbackInterface, public MG90S
 {
+    Q_OBJECT
+
 private:
-    struct Data // motor angle control data
-    {
+    struct Data {
         float PrevData;
         float NewData;
         float RevData;
@@ -19,11 +27,13 @@ private:
     Data angle;
 
 public:
+    explicit MotorControl(QObject* parent = nullptr);
+
     void MPUCallback(AngleData &data) override;
-    MotorControl()
-    {
-        angle.PrevData = 0;
-    }
+
+signals:
+    void temperatureUpdated(float temp);
 };
+
 
 #endif
