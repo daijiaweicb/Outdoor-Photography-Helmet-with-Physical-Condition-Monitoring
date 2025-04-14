@@ -13,6 +13,12 @@ void MotorSensorService::start()
     mpu.startWorker();
 }
 
+MotorControlQT* MotorSensorService::getMotorControl()
+{
+    return &motorapp;
+}
+
+
 void MotorSensorService::stop() //Used to expand rollout logic
 {
 
