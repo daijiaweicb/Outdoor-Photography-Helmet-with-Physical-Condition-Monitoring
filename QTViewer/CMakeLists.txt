@@ -17,10 +17,11 @@ set(PROJECT_SOURCES
     motor_thread.h
     motor_sensor_service.cpp
     motor_sensor_service.h
+    motor_control_QT.cpp
+    motor_control_QT.h
     ${CMAKE_SOURCE_DIR}/src/Stepmotor_setting.cpp
     ${CMAKE_SOURCE_DIR}/src/Mode.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU6050.cpp
-    ${CMAKE_SOURCE_DIR}/src/motor_control.cpp
     ${CMAKE_SOURCE_DIR}/src/pwm.cpp
     ${CMAKE_SOURCE_DIR}/src/iic.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU_kalman.cpp
