@@ -1,12 +1,20 @@
 project(QT_HELMET VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(QT_NO_KEYWORDS ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(OpenCV REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET libcamera)
+pkg_check_modules(GPIOD REQUIRED IMPORTED_TARGET libgpiod)
+
+set(LIBCAMERA_HEADER_DIR ${CMAKE_SOURCE_DIR}/libcamera)
 
 set(PROJECT_SOURCES
     main.cpp
@@ -25,27 +33,17 @@ set(PROJECT_SOURCES
     ${CMAKE_SOURCE_DIR}/src/pwm.cpp
     ${CMAKE_SOURCE_DIR}/src/iic.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU_kalman.cpp
+    ${LIBCAMERA_HEADER_DIR}/libcam2opencv.cpp
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(QT_HELMET
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        motor_thread.h
-        motor_thread.cpp
-        motor_sensor_service.h
-        motor_sensor_service.cpp
-    )
-else()
-    add_executable(QT_HELMET
-        ${PROJECT_SOURCES}
-    )
-endif()
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GPIOD REQUIRED libgpiod)
+add_executable(QT_HELMET ${PROJECT_SOURCES})
 
 target_include_directories(QT_HELMET PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${LIBCAMERA_HEADER_DIR}            
+    ${LIBCAMERA_INCLUDE_DIRS} 
     ${GPIOD_INCLUDE_DIRS}
 )
 
@@ -53,20 +51,10 @@ target_link_libraries(QT_HELMET
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     ${OpenCV_LIBS}
-    ${GPIOD_LIBRARIES}
-)
-
-target_include_directories(QT_HELMET
-    PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    PkgConfig::LIBCAMERA
+    PkgConfig::GPIOD
 )
 
 install(TARGETS QT_HELMET
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(QT_HELMET)
-endif()
