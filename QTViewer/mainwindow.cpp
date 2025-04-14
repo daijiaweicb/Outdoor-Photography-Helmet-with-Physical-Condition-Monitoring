@@ -92,7 +92,7 @@ void MainWindow::on_Exit_clicked()
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
     cv::Mat rgb;
-    cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
+    // cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
     QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
     currentFrame = qimg.copy();
     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
