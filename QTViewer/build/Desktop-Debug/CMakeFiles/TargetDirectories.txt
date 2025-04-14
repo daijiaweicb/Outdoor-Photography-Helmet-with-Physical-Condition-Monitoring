@@ -1,9 +1,0 @@
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/QT_HELMET.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/edit_cache.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/rebuild_cache.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/list_install_components.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/install.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/install/local.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/install/strip.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/QT_HELMET_autogen_timestamp_deps.dir
-/home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/CMakeFiles/QT_HELMET_autogen.dir

@@ -1,2 +1,0 @@
-set(__QT_DEPLOY_TARGET_QT_HELMET_FILE /home/zha-yixuan/Desktop/QT/QT_HELMET/build/Desktop-Debug/QT_HELMET)
-set(__QT_DEPLOY_TARGET_QT_HELMET_TYPE EXECUTABLE)
