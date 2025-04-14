@@ -25,6 +25,12 @@ MainWindow::MainWindow(QWidget *parent)
     //     this, [=](float temp){
     //         ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1));
     //     });
+    connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
+    this, [=](float temp){
+        if (ui && ui->label_temp) {
+            ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1));
+        }
+    });
     timer->start(1000);
     service = new MotorSensorService();
     service->start();
