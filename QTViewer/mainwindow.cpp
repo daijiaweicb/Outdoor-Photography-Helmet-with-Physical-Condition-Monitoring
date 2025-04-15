@@ -109,7 +109,8 @@ void MainWindow::on_btn_record_clicked()
     if (!isRecording) {
         QString filename = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".avi";
         QString saveDir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-        int fps = 30;
+        QString fullPath = saveDir + "/" + filename;
+        int fps = 60;
         QSize size = currentFrame.size();
 
         videoWriter.open(filename.toStdString(),
