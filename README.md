@@ -9,10 +9,12 @@
 The project is a helmet photography platform that has real-time camera stabilization and fatigue detection. It is based on raspberry pi using c++ under Linux.  
 The button of the Qt window could change the mode of the photography platform.
 ### Mode 1 Front view capture
+![image](https://github.com/user-attachments/assets/9de4fa92-fb1c-4261-8e1e-c0fe95a3aa8d)
 1. Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road
 2. Take vedios of the view
 
 ### Mode 2 Selfie and condition monitoring
+![image](https://github.com/user-attachments/assets/bdd2dea1-08a3-4b30-9a46-625c4f827f6e)
 1. Identify the Fatigue level of users by the camera (Eye blinking)
 2. Combine pervious data with the current temperature, humidity and give advice to user
 3. Take selfie video
