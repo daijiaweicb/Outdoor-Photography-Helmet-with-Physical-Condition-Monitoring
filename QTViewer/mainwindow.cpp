@@ -98,20 +98,25 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     currentFrame = qimg.copy();
     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
 
-    if (isRecording) {
+    if (isRecording)
+    {
         cv::Mat bgr;
-        cv::cvtColor(clone, bgr, cv::COLOR_RGB2BGR); 
+        cv::cvtColor(clone, bgr, cv::COLOR_RGB2BGR);
         videoWriter.write(bgr);
     }
 }
 
 void MainWindow::on_btn_record_clicked()
 {
-    if (!isRecording) {
+    if (!isRecording)
+    {
         QString filename = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".avi";
         QString saveDir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-        QDir().mkpath(saveDir); 
+        QDir().mkpath(saveDir);
         QString fullPath = saveDir + "/" + filename;
+        qDebug() << "saveDir =" << saveDir;
+        qDebug() << "fullPath =" << fullPath;
+
         int fps = 60;
         QSize size = currentFrame.size();
 
@@ -120,16 +125,20 @@ void MainWindow::on_btn_record_clicked()
                          fps,
                          cv::Size(size.width(), size.height()));
 
-        if (!videoWriter.isOpened()) {
+        if (!videoWriter.isOpened())
+        {
             qDebug() << "Failed to open video file for writing.";
             return;
         }
 
         isRecording = true;
         ui->btn_record->setText("Stop Recording");
-    } else {
+    }
+    else
+    {
         isRecording = false;
-        if (videoWriter.isOpened()) {
+        if (videoWriter.isOpened())
+        {
             videoWriter.release();
         }
         ui->btn_record->setText("Start Recording");
@@ -137,4 +146,3 @@ void MainWindow::on_btn_record_clicked()
         QMessageBox::information(this, "Recording Saved", "Video has been saved.");
     }
 }
-
