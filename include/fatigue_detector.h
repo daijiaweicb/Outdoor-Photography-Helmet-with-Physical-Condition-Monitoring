@@ -11,7 +11,7 @@
 
 class FatigueDetector {
 public:
-    FatigueDetector(const std::string& model_path = "models/shape_predictor_68_face_landmarks.dat");
+    FatigueDetector(const std::string& model_path = "../../models/shape_predictor_68_face_landmarks.dat");
     bool detect(const cv::Mat& frame, cv::Mat& output);
 
 private:
