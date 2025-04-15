@@ -98,10 +98,9 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     currentFrame = qimg.copy();
     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
 
-    if (isRecording)
-    {
+    if (isRecording && videoWriter.isOpened()) {
         cv::Mat bgr;
-        cv::cvtColor(clone, bgr, cv::COLOR_RGB2BGR);
+        cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
         videoWriter.write(bgr);
     }
 }
@@ -122,7 +121,7 @@ void MainWindow::on_btn_record_clicked()
         qDebug() << "saveDir =" << saveDir;
         qDebug() << "fullPath =" << fullPath;
 
-        int fps = 60;
+        int fps = 30;
         QSize size = currentFrame.size();
 
         videoWriter.open(fullPath.toStdString(),
