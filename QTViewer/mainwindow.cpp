@@ -108,7 +108,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         std::thread([this, input]()
                     {
         cv::Mat flipped,output;
-        cv::flip(input, flipped, 1);
+        cv::flip(input, flipped, 0);
         bool drowsy = detector.detect(flipped, output);
 
         if (output.empty()) {
