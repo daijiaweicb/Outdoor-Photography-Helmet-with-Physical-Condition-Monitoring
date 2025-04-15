@@ -9,6 +9,7 @@ set(QT_NO_KEYWORDS ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(OpenCV REQUIRED)
+find_package(dlib REQUIRED)
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET libcamera)
@@ -33,6 +34,7 @@ set(PROJECT_SOURCES
     ${CMAKE_SOURCE_DIR}/src/pwm.cpp
     ${CMAKE_SOURCE_DIR}/src/iic.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU_kalman.cpp
+    ${CMAKE_SOURCE_DIR}/src/fatigue_detector.cpp
     ${LIBCAMERA_HEADER_DIR}/libcam2opencv.cpp
 )
 
@@ -51,6 +53,7 @@ target_link_libraries(QT_HELMET
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     ${OpenCV_LIBS}
+    dlib::dlib
     PkgConfig::LIBCAMERA
     PkgConfig::GPIOD
 )
