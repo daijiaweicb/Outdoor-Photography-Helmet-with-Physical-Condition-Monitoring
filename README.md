@@ -1,10 +1,10 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
-
-
-# 1. Project Introduction 
-<p align="left">
+<p align="middle">
   <img src="https://github.com/user-attachments/assets/05bc4ca6-dca0-45ce-85ae-d13045f83054" alt="LOGO" width="100"/>
 </p>
+
+# 1. Project Introduction 
+
 
 The project is a helmet photography platform that has real-time camera stabilization and fatigue detection. It is based on raspberry pi using c++ under Linux.  
 
@@ -95,6 +95,19 @@ In the project, the shape_predictor_68_face_landmarks.dat file is needed for the
 | [<img src="https://github.com/user-attachments/assets/aea9b545-b5d0-4563-9a56-6cd11e22de6e" width="30"/> TikTok](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1) |
 
 
+# 5. Authors
+
+Yixuan Zha
+
+Boang Tian
+
+Chang Sun
+
+Qiming Cao
+
+yihang Hou
+
+# 5. Acknowledgements
 
 
 
