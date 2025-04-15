@@ -108,7 +108,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             videoWriter.write(flipped);  
         }
 
-        if (++frameCounter % 1 != 0 || busy)
+        if (++frameCounter % 5 != 0 || busy)
             return;
 
         busy = true;
