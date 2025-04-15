@@ -103,10 +103,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         cv::Mat flipped;
         cv::flip(frame, flipped, 0);
 
-        QImage qimg(flipped.data, flipped.cols, flipped.rows, flipped.step, QImage::Format_RGB888);
-        currentFrame = qimg.copy();
-        ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
-
+        
         if (isRecording && videoWriter.isOpened()) {
             videoWriter.write(flipped);  
         }
@@ -121,7 +118,12 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             cv::Mat output;
             bool drowsy = detector.detect(detectInput, output);
 
+            QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+        
+            QImage safeFrame = qimg.copy();
+
             QMetaObject::invokeMethod(this, [this, drowsy]() {
+                ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
                 ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
                 busy = false;
             });
