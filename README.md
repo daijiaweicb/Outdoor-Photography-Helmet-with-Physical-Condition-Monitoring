@@ -53,9 +53,6 @@ The reason for choosing the Raspberry Pi camera V3 wide range version is to bett
 
 In this project, two motors are used: MG90S and 2BYJ-48 stepper motor. The team first try to use the 2BYJ-48 stepper motor to do the angle retainer but found it moves slower than expected. For a better real time performance, the team use MG90S to replace it. However, the MG90S motor could only turn 180 degree which makes it not suitable for mode changing. So, the final plan in the project is to combine the two motors: MG90S for angle retainer and 2BYJ-48 for mode changing.
 
-
-
-
 ## 2.2 Hardware Connection
 
 ### Frame
@@ -86,7 +83,7 @@ make
 sudo make install
 ```
 
-
+In the project, the shape_predictor_68_face_landmarks.dat file is needed for the fatigue detection part.
 
 
 
