@@ -2,15 +2,13 @@
 #include <iostream>
 #include <chrono>
 
-FatigueDetector::FatigueDetector()
+FatigueDetector::FatigueDetector(const std::string& model_path)
 {
     face_detector = dlib::get_frontal_face_detector();
 
     try
     {
-        QString modelPath = QCoreApplication::applicationDirPath() + "/../models/shape_predictor_68_face_landmarks.dat";
-        dlib::deserialize(modelPath.toStdString()) >> predictor;
-        dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> predictor;
+        dlib::deserialize(model_path) >> predictor;
     }
     catch (std::exception &e)
     {
