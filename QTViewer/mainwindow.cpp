@@ -96,63 +96,57 @@ void MainWindow::on_Exit_clicked()
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
     static std::atomic<bool> busy = false;
-    
+    static int frameCounter = 0;
+
     if (g_systemMode == SystemMode::FatigueDetection)
     {
-        if (busy)
-            return;
-        busy = true;
+        cv::Mat flipped;
+        cv::flip(frame, flipped, 0);
 
-        cv::Mat input = frame.clone();
-
-        std::thread([this, input]()
-                    {
-        cv::Mat flipped,output;
-        cv::flip(input, flipped, 0);
-        bool drowsy = detector.detect(flipped, output);
-
-        if (output.empty()) {
-            busy = false;
-            return;
-        }
-
-        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
-        QImage safeFrame = qimg.copy();
-
-
-        QMetaObject::invokeMethod(this, [this, safeFrame, drowsy,output]() {
-            currentFrame = safeFrame;
-            ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
-            ui->label_fati->setText(drowsy ? "Fatigue Detected " : "Normal ");
-
-            if (isRecording && videoWriter.isOpened()) {
-                cv::Mat bgr;
-                cv::cvtColor(output, bgr, cv::COLOR_RGB2BGR);
-                videoWriter.write(bgr);
-            }
-
-            busy = false;
-        }); })
-            .detach();
-    }
-    else if(g_systemMode == SystemMode::Normal)
-    {
-        cv::Mat clone = frame.clone();
-        QImage qimg(clone.data, clone.cols, clone.rows, clone.step, QImage::Format_RGB888);
+        cv::Mat rgb;
+        cv::cvtColor(flipped, rgb, cv::COLOR_BGR2RGB);
+        QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
         currentFrame = qimg.copy();
         ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
-        if (isRecording && videoWriter.isOpened())
-        {
-            cv::Mat bgr;
-            cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
-            videoWriter.write(bgr);
+
+        if (isRecording && videoWriter.isOpened()) {
+            videoWriter.write(flipped);  
+        }
+
+        if (++frameCounter % 5 != 0 || busy)
+            return;
+
+        busy = true;
+        cv::Mat detectInput = flipped.clone(); 
+
+        std::thread([this, detectInput]() {
+            cv::Mat output;
+            bool drowsy = detector.detect(detectInput, output);
+
+            QMetaObject::invokeMethod(this, [this, drowsy]() {
+                ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
+                busy = false;
+            });
+        }).detach();
+    }
+    else if (g_systemMode == SystemMode::Normal)
+    {
+        cv::Mat rgb;
+        cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
+        QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
+        currentFrame = qimg.copy();
+        ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+
+        if (isRecording && videoWriter.isOpened()) {
+            videoWriter.write(frame);
         }
     }
-    else if(g_systemMode == SystemMode::Temp)
+    else if (g_systemMode == SystemMode::Temp)
     {
         ui->label_video->setText("Mode is changing, please wait .....");
     }
 }
+
 
 void MainWindow::on_btn_record_clicked()
 {
