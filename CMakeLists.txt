@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
-find_package(OpenCV REQUIRED)
-find_package(dlib REQUIRED)
 pkg_check_modules(GPIOD REQUIRED libgpiod)
 
 set(LIBCAMERA_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libcamera)
@@ -19,6 +17,7 @@ include_directories(
 )
 
 file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/fatigue_detector.cpp")
 file(GLOB TEST_FILES "${PROJECT_SOURCE_DIR}/test/*.cpp")
 
 add_executable(motor_mpu_test
