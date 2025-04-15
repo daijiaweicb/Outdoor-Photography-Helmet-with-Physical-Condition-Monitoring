@@ -103,9 +103,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         cv::Mat flipped;
         cv::flip(frame, flipped, 0);
 
-        cv::Mat rgb;
-        cv::cvtColor(flipped, rgb, cv::COLOR_BGR2RGB);
-        QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
+        QImage qimg(flipped.data, flipped.cols, flipped.rows, flipped.step, QImage::Format_RGB888);
         currentFrame = qimg.copy();
         ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
 
