@@ -109,6 +109,7 @@ void MainWindow::on_btn_record_clicked()
     if (!isRecording) {
         QString filename = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".avi";
         QString saveDir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+        QDir().mkpath(saveDir); 
         QString fullPath = saveDir + "/" + filename;
         int fps = 60;
         QSize size = currentFrame.size();
@@ -127,7 +128,9 @@ void MainWindow::on_btn_record_clicked()
         ui->btn_record->setText("Stop Recording");
     } else {
         isRecording = false;
-        videoWriter.release();
+        if (videoWriter.isOpened()) {
+            videoWriter.release();
+        }
         ui->btn_record->setText("Start Recording");
 
         QMessageBox::information(this, "Recording Saved", "Video has been saved.");
