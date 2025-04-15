@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(dlib REQUIRED)
 pkg_check_modules(GPIOD REQUIRED libgpiod)
 
 set(LIBCAMERA_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libcamera)
@@ -13,6 +15,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/libcamera
     ${GPIOD_INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS} 
 )
 
 file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
