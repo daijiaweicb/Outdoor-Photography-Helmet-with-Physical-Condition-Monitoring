@@ -110,6 +110,11 @@ void MainWindow::on_btn_record_clicked()
 {
     if (!isRecording)
     {
+        if (currentFrame.isNull() || currentFrame.width() <= 0 || currentFrame.height() <= 0) {
+            QMessageBox::warning(this, "Recording Error", "No video frame available. Please wait for camera feed.");
+            return;
+        }
+
         QString filename = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".avi";
         QString saveDir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
         QDir().mkpath(saveDir);
