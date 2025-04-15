@@ -97,7 +97,9 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
 
     if (isRecording) {
-        videoWriter.write(currentFrame);
+        cv::Mat bgr;
+        cv::cvtColor(clone, bgr, cv::COLOR_RGB2BGR); 
+        videoWriter.write(bgr);
     }
 }
 
