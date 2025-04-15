@@ -119,10 +119,10 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             bool drowsy = detector.detect(detectInput, output);
 
             QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
-        
             QImage safeFrame = qimg.copy();
+            
 
-            QMetaObject::invokeMethod(this, [this, drowsy]() {
+            QMetaObject::invokeMethod(this, [this, drowsy,safeFrame]() {
                 ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
                 ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
                 busy = false;
