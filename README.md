@@ -45,7 +45,7 @@ sudo make install
 
 
 ### Frame
-![1e670894-2de2-45d7-86f5-565f9e828a4b](https://github.com/user-attachments/assets/6487dc9f-63e7-45f8-b6ee-b69a6d64750a)
+![image](https://github.com/user-attachments/assets/0d391542-6c58-4638-bdd6-689b8dd0681f)
 
 
 
