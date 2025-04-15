@@ -9,7 +9,7 @@
 #include "motor_thread.h"
 #include "motor_sensor_service.h"
 #include "libcam2opencv.h"
-
+#include "fatigue_detector.h"
 
 // To avoid macro conflicts between Qt and libcamera on keywords like signals, slots, and emit, you should set:
 // set(QT_NO_KEYWORDS ON) in CMakeLists.txt.
@@ -53,6 +53,6 @@ private:
     QImage currentFrame;
     cv::VideoWriter videoWriter;
     bool isRecording = false;
-
+    FatigueDetector detector;
 };
 #endif // MAINWINDOW_H

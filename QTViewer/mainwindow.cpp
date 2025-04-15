@@ -9,6 +9,8 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QDir>
+#include <atomic>
+#include <thread>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -93,15 +95,62 @@ void MainWindow::on_Exit_clicked()
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
-    cv::Mat clone = frame.clone();
-    QImage qimg(clone.data, clone.cols, clone.rows, clone.step, QImage::Format_RGB888);
-    currentFrame = qimg.copy();
-    ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+    static std::atomic<bool> busy = false;
+    
+    if (g_systemMode == SystemMode::FatigueDetection)
+    {
+        if (busy)
+            return;
+        busy = true;
 
-    if (isRecording && videoWriter.isOpened()) {
-        cv::Mat bgr;
-        cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
-        videoWriter.write(bgr);
+        cv::Mat input = frame.clone();
+
+        std::thread([this, input]()
+                    {
+        cv::Mat flipped,output;
+        cv::flip(input, flipped, 1);
+        bool drowsy = detector.detect(flipped, output);
+
+        if (output.empty()) {
+            busy = false;
+            return;
+        }
+
+        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
+
+
+        QMetaObject::invokeMethod(this, [this, safeFrame, drowsy,output]() {
+            currentFrame = safeFrame;
+            ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+            ui->label_fati->setText(drowsy ? "Fatigue Detected " : "Normal ");
+
+            if (isRecording && videoWriter.isOpened()) {
+                cv::Mat bgr;
+                cv::cvtColor(output, bgr, cv::COLOR_RGB2BGR);
+                videoWriter.write(bgr);
+            }
+
+            busy = false;
+        }); })
+            .detach();
+    }
+    else if(g_systemMode == SystemMode::Normal)
+    {
+        cv::Mat clone = frame.clone();
+        QImage qimg(clone.data, clone.cols, clone.rows, clone.step, QImage::Format_RGB888);
+        currentFrame = qimg.copy();
+        ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+        if (isRecording && videoWriter.isOpened())
+        {
+            cv::Mat bgr;
+            cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
+            videoWriter.write(bgr);
+        }
+    }
+    else if(g_systemMode == SystemMode::Temp)
+    {
+        ui->label_video->setText("Mode is changing, please wait .....");
     }
 }
 
@@ -109,7 +158,8 @@ void MainWindow::on_btn_record_clicked()
 {
     if (!isRecording)
     {
-        if (currentFrame.isNull() || currentFrame.width() <= 0 || currentFrame.height() <= 0) {
+        if (currentFrame.isNull() || currentFrame.width() <= 0 || currentFrame.height() <= 0)
+        {
             QMessageBox::warning(this, "Recording Error", "No video frame available. Please wait for camera feed.");
             return;
         }
