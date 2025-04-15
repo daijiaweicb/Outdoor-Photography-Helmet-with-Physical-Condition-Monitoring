@@ -115,7 +115,7 @@ void MainWindow::on_btn_record_clicked()
         int fps = 60;
         QSize size = currentFrame.size();
 
-        videoWriter.open(filename.toStdString(),
+        videoWriter.open(fullPath.toStdString(),
                          cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
                          fps,
                          cv::Size(size.width(), size.height()));
