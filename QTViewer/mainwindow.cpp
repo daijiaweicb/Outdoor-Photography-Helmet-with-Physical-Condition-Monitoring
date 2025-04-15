@@ -95,4 +95,35 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     QImage qimg(clone.data, clone.cols, clone.rows, clone.step, QImage::Format_RGB888);
     currentFrame = qimg.copy();
     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+
+    if (isRecording) {
+        videoWriter.write(frame);
+    }
 }
+
+void MainWindow::on_btn_record_clicked()
+{
+    if (!isRecording) {
+        QString filename = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".avi";
+        int fps = 30;
+        QSize size = currentFrame.size();
+
+        videoWriter.open(filename.toStdString(),
+                         cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+                         fps,
+                         cv::Size(size.width(), size.height()));
+
+        if (!videoWriter.isOpened()) {
+            qDebug() << "Failed to open video file for writing.";
+            return;
+        }
+
+        isRecording = true;
+        ui->btn_record->setText("Stop Recording");
+    } else {
+        isRecording = false;
+        videoWriter.release();
+        ui->btn_record->setText("Start Recording");
+    }
+}
+

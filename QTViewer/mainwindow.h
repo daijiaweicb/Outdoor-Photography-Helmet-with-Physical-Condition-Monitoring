@@ -4,10 +4,10 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
+#include <opencv2/videoio.hpp>
 #include "Mode.h"
 #include "motor_thread.h"
 #include "motor_sensor_service.h"
-#include "MG90S_setting.h"
 #include "libcam2opencv.h"
 
 
@@ -42,6 +42,7 @@ private Q_SLOTS:
     void on_ChangeMode_clicked();
     void onModeChanged(SystemMode newMode);
     void on_Exit_clicked();
+    void on_btn_record_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -50,6 +51,8 @@ private:
     QTimer *timer;
     Libcam2OpenCV *cam = nullptr; 
     QImage currentFrame;
+    cv::VideoWriter videoWriter;
+    bool isRecording = false;
 
 };
 #endif // MAINWINDOW_H
