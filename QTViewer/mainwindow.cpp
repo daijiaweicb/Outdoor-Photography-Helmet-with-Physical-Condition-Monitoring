@@ -98,12 +98,21 @@ void MainWindow::on_Exit_clicked()
 }
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
+    cv::Mat rgb;
+    cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
+    QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
+    QImage safeFrame = qimg.copy();
+    ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+    currentFrame = safeFrame;
+
     static std::atomic<bool> busy = false;
-    static int frameCounter = 0;
+    static auto last = std::chrono::steady_clock::now();
 
-    if (++frameCounter % 5 != 0) return;
-
+    auto now = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() < 500) return;
     if (busy) return;
+
+    last = now;
     busy = true;
 
     cv::Mat detectInput = frame.clone();
@@ -112,22 +121,12 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
-        if (output.empty()) {
-            QMetaObject::invokeMethod(this, [this]() {
-                busy = false;
-            });
-            return;
-        }
-
-        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
-        QImage safeFrame = qimg.copy();
-
-        QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
-            ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+        QMetaObject::invokeMethod(this, [this, output, drowsy]() {
             busy = false;
         });
     }).detach();
 }
+
 
 
 
