@@ -26,8 +26,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class Libcam2OpenCV;
-
 class MainWindow : public QMainWindow,public Libcam2OpenCV::Callback
 {
     Q_OBJECT
