@@ -25,15 +25,15 @@ MainWindow::MainWindow(QWidget *parent)
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         ui->label_time->setText("Time:" + now); });
 
-    service = new MotorSensorService();
-    service->start();
-    connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
-            this, [=](float temp)
-            { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
+    // service = new MotorSensorService();
+    // service->start();
+    // connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
+    //         this, [=](float temp)
+    //         { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
 
-    connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
-            this, [=](float angle)
-            { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
+    // connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
+    //         this, [=](float angle)
+    //         { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
 
     timer->start(1000);
 
@@ -111,7 +111,8 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 
 void MainWindow::startDetectionThread()
 {
-    detectionThread = std::thread([this]() {
+    detectionThread = std::thread([this]()
+                                  {
         int frameCounter = 0;
         while (running) {
             if (analyzing.load()) {
@@ -128,55 +129,49 @@ void MainWindow::startDetectionThread()
 
             SystemMode mode = g_systemMode;
 
-            if (mode == SystemMode::Normal) {
-                QImage qimg(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
-                QImage safeFrame = qimg.copy();
+            // if (mode == SystemMode::Normal) {
+            //     QImage qimg(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
+            //     QImage safeFrame = qimg.copy();
 
-                if (isRecording && videoWriter.isOpened()) {
-                    videoWriter.write(frameCopy);
-                }
+            //     if (isRecording && videoWriter.isOpened()) {
+            //         videoWriter.write(frameCopy);
+            //     }
 
-                QMetaObject::invokeMethod(this, [this, safeFrame]() {
-                    ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
-                });
+            //     QMetaObject::invokeMethod(this, [this, safeFrame]() {
+            //         ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+            //     });
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(30)); 
-            }
-            else if (mode == SystemMode::FatigueDetection) {
-                frameCounter++;
-                
-                if (frameCounter % 3 != 0) {
-                    QImage preview(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
-                    QImage preFrame = preview.copy();
-                    QMetaObject::invokeMethod(this, [this, preFrame]() {
-                        ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
-                    });
-                    continue;
-                }
-            
-                if (analyzing) continue; 
-                analyzing = true;
-            
-                cv::Mat detectInput = frameCopy.clone();
-            
-                threadPool.enqueue([this, detectInput]() {
-                    cv::Mat output;
-                    bool drowsy = detector.detect(detectInput, output);
-            
-                    QMetaObject::invokeMethod(this, [this, drowsy]() {
-                        ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
-                    });
-                    analyzing = false;
-                });
-            }
-            else if (mode == SystemMode::Temp) {
-                QMetaObject::invokeMethod(this, [this]() {
-                    ui->label_video->setText("Mode is changing, please wait .....");
-                });
-                std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
-            }
-        }
+            //     std::this_thread::sleep_for(std::chrono::milliseconds(30)); 
+            // }
+            // else if (mode == SystemMode::FatigueDetection) {
+                // frameCounter++;
+                QImage img(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
+    QImage preFrame = img.copy();
+    QMetaObject::invokeMethod(this, [this, preFrame]() {
+        ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
     });
+
+    cv::Mat detectInput = frameCopy.clone();
+
+    threadPool.enqueue([this, detectInput]() {
+        cv::Mat output;
+        bool drowsy = detector.detect(detectInput, output);
+
+        QMetaObject::invokeMethod(this, [this, drowsy]() {
+            ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
+        });
+
+        // ✅ 放到检测任务末尾，检测真正完成后才释放 analyzing
+        analyzing = false;
+    });
+            // }
+            // else if (mode == SystemMode::Temp) {
+            //     QMetaObject::invokeMethod(this, [this]() {
+            //         ui->label_video->setText("Mode is changing, please wait .....");
+            //     });
+            //     std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
+            // }
+        } });
 }
 
 void MainWindow::on_btn_record_clicked()
