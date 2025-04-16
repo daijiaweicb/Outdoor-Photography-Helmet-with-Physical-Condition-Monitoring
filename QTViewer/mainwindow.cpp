@@ -142,19 +142,19 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 
         QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
             ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+            ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
             busy = false;
 
-           
-            static int displayCount = 0;
-            static auto lastDisplay = std::chrono::steady_clock::now();
+            // static int displayCount = 0;
+            // static auto lastDisplay = std::chrono::steady_clock::now();
 
-            displayCount++;
-            auto nowDisplay = std::chrono::steady_clock::now();
-            if (std::chrono::duration_cast<std::chrono::seconds>(nowDisplay - lastDisplay).count() >= 1) {
-                qDebug() << "Display FPS:" << displayCount;
-                displayCount = 0;
-                lastDisplay = nowDisplay;
-            }
+            // displayCount++;
+            // auto nowDisplay = std::chrono::steady_clock::now();
+            // if (std::chrono::duration_cast<std::chrono::seconds>(nowDisplay - lastDisplay).count() >= 1) {
+            //     qDebug() << "Display FPS:" << displayCount;
+            //     displayCount = 0;
+            //     lastDisplay = nowDisplay;
+            // }
         }); })
             .detach();
     }
