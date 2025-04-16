@@ -105,6 +105,8 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
+
+        std::lock_guard<std::mutex> lock(writerMutex);
         if (isRecording && videoWriter.isOpened())
         {
             cv::Mat bgr;
@@ -139,6 +141,8 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
+
+        std::lock_guard<std::mutex> lock(writerMutex);
         if (isRecording && videoWriter.isOpened())
         {
             cv::Mat bgr;
@@ -187,7 +191,7 @@ void MainWindow::on_btn_record_clicked()
         qDebug() << "saveDir =" << saveDir;
         qDebug() << "fullPath =" << fullPath;
 
-        int fps = (g_systemMode == SystemMode::FatigueDetection) ? 10 : 20;
+        int fps = (g_systemMode == SystemMode::FatigueDetection) ? 10 : 30;
         QSize size = currentFrame.size();
 
         videoWriter.open(fullPath.toStdString(),
@@ -207,6 +211,7 @@ void MainWindow::on_btn_record_clicked()
     else
     {
         isRecording = false;
+        std::lock_guard<std::mutex> lock(writerMutex);
         if (videoWriter.isOpened())
         {
             videoWriter.release();
