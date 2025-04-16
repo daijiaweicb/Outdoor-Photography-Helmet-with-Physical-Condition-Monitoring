@@ -106,9 +106,10 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
 
-        std::lock_guard<std::mutex> lock(writerMutex);
+        
         if (isRecording && videoWriter.isOpened())
         {
+            std::lock_guard<std::mutex> lock(writerMutex);
             cv::Mat bgr;
             cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
             videoWriter.write(bgr);
@@ -142,9 +143,10 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
 
-        std::lock_guard<std::mutex> lock(writerMutex);
+        
         if (isRecording && videoWriter.isOpened())
         {
+            std::lock_guard<std::mutex> lock(writerMutex);
             cv::Mat bgr;
             cv::cvtColor(detectInput, bgr, cv::COLOR_RGB2BGR);
             videoWriter.write(bgr);
