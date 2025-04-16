@@ -107,7 +107,9 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 
         if (isRecording && videoWriter.isOpened())
         {
-            videoWriter.write(frame);
+            cv::Mat bgr;
+            cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
+            videoWriter.write(bgr);
         }
 
         QMetaObject::invokeMethod(this, [this, safeFrame]()
@@ -123,7 +125,9 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         busy = true;
         if (isRecording && videoWriter.isOpened())
         {
-            videoWriter.write(detectInput);
+            cv::Mat bgr;
+            cv::cvtColor(detectInput, bgr, cv::COLOR_RGB2BGR);
+            videoWriter.write(bgr);
         }
 
         std::thread([this, detectInput]()
