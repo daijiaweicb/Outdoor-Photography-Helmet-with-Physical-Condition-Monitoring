@@ -96,12 +96,12 @@ void MainWindow::on_Exit_clicked()
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
-    // static std::atomic<bool> busy = false;
+    static std::atomic<bool> busy = false;
 
     // if (g_systemMode == SystemMode::FatigueDetection)
     // {
-        // if (busy) return;
-        // busy = true;
+        if (busy) return;
+        busy = true;
         
         // cv::Mat flipped;
         // cv::flip(frame, flipped, 0);
@@ -117,10 +117,10 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             cv::Mat output;
             bool drowsy = detector.detect(detectInput, output);
 
-            // if (output.empty()) {
-            //     busy = false;
-            //     return;
-            // }
+            if (output.empty()) {
+                busy = false;
+                return;
+            }
 
             QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
             QImage safeFrame = qimg.copy();
@@ -128,7 +128,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 
             QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
                 ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
-                // busy = false;
+                busy = false;
             });
         }).detach();
     // }
