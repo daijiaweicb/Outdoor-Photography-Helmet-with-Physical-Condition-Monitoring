@@ -154,7 +154,7 @@ void MainWindow::startDetectionThread()
                     QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
                     QImage safeFrame = qimg.copy();
 
-                    QMetaObject::invokeMethod(this, [this, safeFrame]() {
+                    QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
                         ui->label_fati->setText(drowsy ? "Fatigue Detected " : "Normal ");
                     });
                 }
