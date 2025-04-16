@@ -104,7 +104,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     {
         QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
-
+        currentFrame = safeFrame;
         if (isRecording && videoWriter.isOpened())
         {
             cv::Mat bgr;
@@ -123,12 +123,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         if (busy)
             return;
         busy = true;
-        if (isRecording && videoWriter.isOpened())
-        {
-            cv::Mat bgr;
-            cv::cvtColor(detectInput, bgr, cv::COLOR_RGB2BGR);
-            videoWriter.write(bgr);
-        }
+        
 
         std::thread([this, detectInput]()
                     {
@@ -143,7 +138,13 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         }     
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
-
+        currentFrame = safeFrame;
+        if (isRecording && videoWriter.isOpened())
+        {
+            cv::Mat bgr;
+            cv::cvtColor(detectInput, bgr, cv::COLOR_RGB2BGR);
+            videoWriter.write(bgr);
+        }
         QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
             ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
             ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
