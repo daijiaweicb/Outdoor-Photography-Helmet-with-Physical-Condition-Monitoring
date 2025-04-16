@@ -97,62 +97,38 @@ void MainWindow::on_Exit_clicked()
     }
 }
 
-void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
-{
+void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
     static std::atomic<bool> busy = false;
+    static int frameCounter = 0;
 
-    // if (g_systemMode == SystemMode::FatigueDetection)
-    // {
-        if (busy) return;
-        busy = true;
-        
-        // cv::Mat flipped;
-        // cv::flip(frame, flipped, 0);
+    if (++frameCounter % 5 != 0) return;
 
-        
-        // if (isRecording && videoWriter.isOpened()) {
-        //     videoWriter.write(flipped);  
-        // }
+    if (busy) return;
+    busy = true;
 
-        cv::Mat detectInput = frame.clone(); 
+    cv::Mat detectInput = frame.clone();
 
-        std::thread([this, detectInput]() {
-            cv::Mat output;
-            bool drowsy = detector.detect(detectInput, output);
+    std::thread([this, detectInput]() {
+        cv::Mat output;
+        bool drowsy = detector.detect(detectInput, output);
 
-            if (output.empty()) {
-                QMetaObject::invokeMethod(this, [this]() {
-                    busy = false;
-                });
-                return;
-            }
-
-            QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
-            QImage safeFrame = qimg.copy();
-            
-
-            QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
-                ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+        if (output.empty()) {
+            QMetaObject::invokeMethod(this, [this]() {
                 busy = false;
             });
-        }).detach();
-    // }
-    // else if (g_systemMode == SystemMode::Normal)
-    // {
-        
-    //     QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
-    //     currentFrame = qimg.copy();
-    //     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+            return;
+        }
 
-    //     if (isRecording && videoWriter.isOpened()) {
-    //         videoWriter.write(frame);
-    //     }
-    // }
-    // else if (g_systemMode == SystemMode::Temp)
-    // {
-    //     ui->label_video->setText("Mode is changing, please wait .....");
-    // }
+        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
+
+        QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
+            ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+            busy = false;
+        });
+    }).detach();
 }
+
 
 
 void MainWindow::on_btn_record_clicked()
