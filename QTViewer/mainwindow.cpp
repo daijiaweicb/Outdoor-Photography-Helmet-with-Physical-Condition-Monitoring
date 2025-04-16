@@ -125,7 +125,6 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         {
             videoWriter.write(detectInput);
         }
-        cv::Mat detectInput = frame.clone();
 
         std::thread([this, detectInput]()
                     {
