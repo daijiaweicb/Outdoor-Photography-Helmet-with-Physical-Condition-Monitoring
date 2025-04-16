@@ -142,6 +142,11 @@ void MainWindow::startDetectionThread()
                 });
             }
             else if (mode == SystemMode::FatigueDetection) {
+                QImage img(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
+                QImage PreFrame = img.copy();
+                QMetaObject::invokeMethod(this, [this, PreFrame]() {
+                    ui->label_video->setPixmap(QPixmap::fromImage(PreFrame));
+                });
                 cv::Mat output;
                 bool drowsy = detector.detect(frameCopy, output);
 
@@ -150,7 +155,6 @@ void MainWindow::startDetectionThread()
                     QImage safeFrame = qimg.copy();
 
                     QMetaObject::invokeMethod(this, [this, safeFrame]() {
-                        ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
                         ui->label_fati->setText(drowsy ? "Fatigue Detected " : "Normal ");
                     });
                 }
