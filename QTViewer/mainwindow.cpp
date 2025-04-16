@@ -102,22 +102,23 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         if (busy) return;
         busy = true;
         
-        cv::Mat flipped;
-        cv::flip(frame, flipped, 0);
+        // cv::Mat flipped;
+        // cv::flip(frame, flipped, 0);
 
         
-        if (isRecording && videoWriter.isOpened()) {
-            videoWriter.write(flipped);  
-        }
+        // if (isRecording && videoWriter.isOpened()) {
+        //     videoWriter.write(flipped);  
+        // }
 
-        cv::Mat detectInput = flipped.clone(); 
+        cv::Mat detectInput = frame.clone(); 
 
         std::thread([this, detectInput]() {
             cv::Mat output;
             bool drowsy = detector.detect(detectInput, output);
 
             if (output.empty()) {
-                output = detectInput.clone();
+                busy = false;
+                return;
             }
 
             QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
