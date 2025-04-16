@@ -2,7 +2,7 @@
 #define MG90S_SETTING_H
 
 #include "pwm.h"
-
+// MG90S Servo Control
 class MG90S
 {
     public:
@@ -11,7 +11,7 @@ class MG90S
     {
         pwm.start_pwm(2,50,7.5,2);
     }
-
+    //Set servo angle
     void setAngle(int angle)
     {
         int duty_ns = angleToDutyNs(angle);
@@ -21,7 +21,7 @@ class MG90S
 
     private:
     PWM pwm;
-
+    //Angle to duty cycle conversion
     int angleToDutyNs(int angle)
     {
         if(angle < 0)
