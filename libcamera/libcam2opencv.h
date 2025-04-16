@@ -13,10 +13,9 @@
 #include <memory>
 #include <chrono>
 #include <thread>
-#include <vector>
 #include <memory>
 #include <sys/mman.h>
-#include <opencv4/opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 // need to undefine QT defines here as libcamera uses the same expressions (!).
 #undef signals
@@ -25,7 +24,7 @@
 #undef foreach
 
 #include <libcamera/libcamera.h>
-    
+
 /**
  * Settings
  **/
@@ -91,7 +90,7 @@ private:
     std::unique_ptr<libcamera::CameraManager> cm;
     std::vector<std::unique_ptr<libcamera::Request>> requests;
     libcamera::ControlList controls;
-    
+
     std::vector<libcamera::Span<uint8_t>> Mmap(libcamera::FrameBuffer *buffer) const
     {
 	auto item = mapped_buffers.find(buffer);
