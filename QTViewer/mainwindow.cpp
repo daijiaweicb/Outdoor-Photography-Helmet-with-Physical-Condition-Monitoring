@@ -102,12 +102,12 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     static std::atomic<bool> busy = false;
     if (g_systemMode == SystemMode::Normal)
     {
-        QImage qimg(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
+        QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
 
         if (isRecording && videoWriter.isOpened())
         {
-            videoWriter.write(frameCopy);
+            videoWriter.write(frame);
         }
 
         QMetaObject::invokeMethod(this, [this, safeFrame]()
@@ -121,7 +121,10 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         if (busy)
             return;
         busy = true;
-
+        if (isRecording && videoWriter.isOpened())
+        {
+            videoWriter.write(detectInput);
+        }
         cv::Mat detectInput = frame.clone();
 
         std::thread([this, detectInput]()
