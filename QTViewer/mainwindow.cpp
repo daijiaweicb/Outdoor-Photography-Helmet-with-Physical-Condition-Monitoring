@@ -187,7 +187,7 @@ void MainWindow::on_btn_record_clicked()
         qDebug() << "saveDir =" << saveDir;
         qDebug() << "fullPath =" << fullPath;
 
-        int fps = 20;
+        int fps = (g_systemMode == SystemMode::FatigueDetection) ? 10 : 20;
         QSize size = currentFrame.size();
 
         videoWriter.open(fullPath.toStdString(),
