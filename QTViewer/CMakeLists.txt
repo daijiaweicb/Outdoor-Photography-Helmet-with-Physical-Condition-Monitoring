@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
     motor_sensor_service.h
     motor_control_QT.cpp
     motor_control_QT.h
+    threadpool.cpp
+    threadpool.h
     ${CMAKE_SOURCE_DIR}/src/Stepmotor_setting.cpp
     ${CMAKE_SOURCE_DIR}/src/Mode.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU6050.cpp
