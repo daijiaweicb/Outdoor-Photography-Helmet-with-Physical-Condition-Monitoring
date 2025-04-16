@@ -25,15 +25,15 @@ MainWindow::MainWindow(QWidget *parent)
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         ui->label_time->setText("Time:" + now); });
 
-    // service = new MotorSensorService();
-    // service->start();
-    // connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
-    //         this, [=](float temp)
-    //         { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
+    service = new MotorSensorService();
+    service->start();
+    connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
+            this, [=](float temp)
+            { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
 
-    // connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
-    //         this, [=](float angle)
-    //         { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
+    connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
+            this, [=](float angle)
+            { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
 
     timer->start(1000);
 
@@ -125,9 +125,8 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             QImage safeFrame = qimg.copy();
             
 
-            QMetaObject::invokeMethod(this, [this, drowsy,safeFrame]() {
+            QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
                 ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
-                ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
                 busy = false;
             });
         }).detach();
