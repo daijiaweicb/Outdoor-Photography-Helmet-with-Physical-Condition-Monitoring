@@ -17,16 +17,18 @@
 // signals: should be replaced with Q_SIGNALS:
 // slots: should be replaced with Q_SLOTS:
 // emit should be replaced with Q_EMIT
-// This allows you to safely include libcamera-related headers in .h files, while preserving Qt’s signal-slot mechanism and avoiding compilation errors. 
+// This allows you to safely include libcamera-related headers in .h files, while preserving Qt’s signal-slot mechanism and avoiding compilation errors.
 // This approach is recommended when integrating libcamera with a Qt application.
 // Reference: https://forums.raspberrypi.com/viewtopic.php?t=331741#p1985489
 
-
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui
+{
+    class MainWindow;
+}
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow,public Libcam2OpenCV::Callback
+class MainWindow : public QMainWindow, public Libcam2OpenCV::Callback
 {
     Q_OBJECT
 
@@ -41,16 +43,23 @@ private Q_SLOTS:
     void onModeChanged(SystemMode newMode);
     void on_Exit_clicked();
     void on_btn_record_clicked();
+    void startDetectionThread();
 
 private:
     Ui::MainWindow *ui;
     MotorThread *motorThread = nullptr;
     MotorSensorService *service = nullptr;
     QTimer *timer;
-    Libcam2OpenCV *cam = nullptr; 
+    Libcam2OpenCV *cam = nullptr;
     QImage currentFrame;
     cv::VideoWriter videoWriter;
     bool isRecording = false;
     FatigueDetector detector;
+
+    std::thread detectionThread;
+    std::atomic<bool> running = true;
+    std::atomic<bool> analyzing = false;
+    std::mutex latestFrameMutex;
+    cv::Mat latestFrame;
 };
 #endif // MAINWINDOW_H
