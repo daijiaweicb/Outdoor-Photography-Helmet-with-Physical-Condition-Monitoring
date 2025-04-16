@@ -16,26 +16,26 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    // ui->label_status->setText("Current Mode：Normal");
+    ui->label_status->setText("Current Mode：Normal");
     ui->label_video->setScaledContents(true);
-    // connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
-    // timer = new QTimer(this);
-    // connect(timer, &QTimer::timeout, this, [=]()
-    //         {
-    //     QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-    //     ui->label_time->setText("Time:" + now); });
+    connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [=]()
+            {
+        QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        ui->label_time->setText("Time:" + now); });
 
-    // service = new MotorSensorService();
-    // service->start();
-    // connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
-    //         this, [=](float temp)
-    //         { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
+    service = new MotorSensorService();
+    service->start();
+    connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
+            this, [=](float temp)
+            { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
 
-    // connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
-    //         this, [=](float angle)
-    //         { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
+    connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
+            this, [=](float angle)
+            { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
 
-    // timer->start(1000);
+    timer->start(1000);
 
     cam = new Libcam2OpenCV();
     cam->registerCallback(this);
@@ -97,14 +97,35 @@ void MainWindow::on_Exit_clicked()
     }
 }
 
-void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
+void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
+{
     static std::atomic<bool> busy = false;
-    if (busy) return;
-    busy = true;
+    if (g_systemMode == SystemMode::Normal)
+    {
+        QImage qimg(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
 
-    cv::Mat detectInput = frame.clone(); 
+        if (isRecording && videoWriter.isOpened())
+        {
+            videoWriter.write(frameCopy);
+        }
 
-    std::thread([this, detectInput]() {
+        QMetaObject::invokeMethod(this, [this, safeFrame]()
+                                  { ui->label_video->setPixmap(QPixmap::fromImage(safeFrame)); });
+    }
+    else if (g_systemMode == SystemMode::FatigueDetection)
+    {
+        cv::Mat flipped;
+        cv::flip(frame, flipped, -1);
+        cv::Mat detectInput = flipped;
+        if (busy)
+            return;
+        busy = true;
+
+        cv::Mat detectInput = frame.clone();
+
+        std::thread([this, detectInput]()
+                    {
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
@@ -113,10 +134,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
                 busy = false;
             });
             return;
-        }
-
-       
-        
+        }     
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
 
@@ -135,15 +153,15 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
                 displayCount = 0;
                 lastDisplay = nowDisplay;
             }
-        });
-    }).detach();
+        }); })
+            .detach();
+    }
+    else if (g_systemMode == SystemMode::Temp)
+    {
+        QMetaObject::invokeMethod(this, [this]()
+                                  { ui->label_video->setText("Mode is changing, please wait ....."); });
+    }
 }
-
-
-
-
-
-
 
 void MainWindow::on_btn_record_clicked()
 {
