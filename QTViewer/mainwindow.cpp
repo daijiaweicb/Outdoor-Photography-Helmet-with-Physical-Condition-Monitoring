@@ -121,9 +121,15 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
-        QMetaObject::invokeMethod(this, [this, output, drowsy]() {
+        QMetaObject::invokeMethod(this, [this, drowsy]() {
+            if (drowsy) {
+                ui->label_status->setText("DROWSINESS ALERT!");
+            } else {
+                ui->label_status->setText("Normal");
+            }
             busy = false;
         });
+        
     }).detach();
 }
 
