@@ -40,7 +40,10 @@ MainWindow::MainWindow(QWidget *parent)
     cam = new Libcam2OpenCV();
     cam->registerCallback(this);
     Libcam2OpenCVSettings settings;
-    cam->start();
+    settings.width = 640;
+    settings.height = 480;
+    settings.framerate = 30;
+    cam->start(settings);
 }
 
 MainWindow::~MainWindow()
