@@ -97,8 +97,8 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
     static std::atomic<bool> busy = false;
 
-    if (g_systemMode == SystemMode::FatigueDetection)
-    {
+    // if (g_systemMode == SystemMode::FatigueDetection)
+    // {
         if (busy) return;
         busy = true;
         
@@ -130,22 +130,22 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
                 busy = false;
             });
         }).detach();
-    }
-    else if (g_systemMode == SystemMode::Normal)
-    {
+    // }
+    // else if (g_systemMode == SystemMode::Normal)
+    // {
         
-        QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
-        currentFrame = qimg.copy();
-        ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
+    //     QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+    //     currentFrame = qimg.copy();
+    //     ui->label_video->setPixmap(QPixmap::fromImage(currentFrame));
 
-        if (isRecording && videoWriter.isOpened()) {
-            videoWriter.write(frame);
-        }
-    }
-    else if (g_systemMode == SystemMode::Temp)
-    {
-        ui->label_video->setText("Mode is changing, please wait .....");
-    }
+    //     if (isRecording && videoWriter.isOpened()) {
+    //         videoWriter.write(frame);
+    //     }
+    // }
+    // else if (g_systemMode == SystemMode::Temp)
+    // {
+    //     ui->label_video->setText("Mode is changing, please wait .....");
+    // }
 }
 
 
