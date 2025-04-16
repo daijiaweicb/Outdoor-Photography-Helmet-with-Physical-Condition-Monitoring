@@ -16,9 +16,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->label_status->setText("Current Mode：Normal");
+    // ui->label_status->setText("Current Mode：Normal");
     ui->label_video->setScaledContents(true);
-    connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
+    // connect(ui->ChangeMode, &QPushButton::clicked, this, &MainWindow::on_ChangeMode_clicked);
     // timer = new QTimer(this);
     // connect(timer, &QTimer::timeout, this, [=]()
     //         {
