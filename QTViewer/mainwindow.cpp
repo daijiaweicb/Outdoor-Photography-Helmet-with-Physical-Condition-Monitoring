@@ -142,22 +142,25 @@ void MainWindow::startDetectionThread()
                 });
             }
             else if (mode == SystemMode::FatigueDetection) {
+                // 显示预览帧
                 QImage img(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
-                QImage PreFrame = img.copy();
-                QMetaObject::invokeMethod(this, [this, PreFrame]() {
-                    ui->label_video->setPixmap(QPixmap::fromImage(PreFrame));
+                QImage preFrame = img.copy();
+                QMetaObject::invokeMethod(this, [this, preFrame]() {
+                    ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
                 });
-                cv::Mat output;
-                bool drowsy = detector.detect(frameCopy, output);
-
-                if (!output.empty()) {
-                    QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
-                    QImage safeFrame = qimg.copy();
-
-                    QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
-                        ui->label_fati->setText(drowsy ? "Fatigue Detected " : "Normal ");
+            
+                // 准备检测用的输入帧
+                cv::Mat detectInput = frameCopy.clone();
+            
+                // 并发检测
+                threadPool.enqueue([this, detectInput]() {
+                    cv::Mat output;
+                    bool drowsy = detector.detect(detectInput, output);
+            
+                    QMetaObject::invokeMethod(this, [this, drowsy]() {
+                        ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
                     });
-                }
+                });
             }
             else if (mode == SystemMode::Temp) {
                 QMetaObject::invokeMethod(this, [this]() {

@@ -10,6 +10,7 @@
 #include "motor_sensor_service.h"
 #include "libcam2opencv.h"
 #include "fatigue_detector.h"
+#include "threadpool.h"
 
 // To avoid macro conflicts between Qt and libcamera on keywords like signals, slots, and emit, you should set:
 // set(QT_NO_KEYWORDS ON) in CMakeLists.txt.
@@ -55,7 +56,7 @@ private:
     cv::VideoWriter videoWriter;
     bool isRecording = false;
     FatigueDetector detector;
-
+    ThreadPool threadPool{20};
     std::thread detectionThread;
     std::atomic<bool> running = true;
     std::atomic<bool> analyzing = false;
