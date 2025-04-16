@@ -98,6 +98,17 @@ void MainWindow::on_Exit_clicked()
 }
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
+    static int frameCount = 0;
+    static auto last = std::chrono::steady_clock::now();
+    
+    frameCount++;
+    auto now = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(now - last).count() >= 1) {
+        qDebug() << "FPS:" << frameCount;
+        frameCount = 0;
+        last = now;
+    }
+    
     static std::atomic<bool> busy = false;
     if (busy) return;
     busy = true;
