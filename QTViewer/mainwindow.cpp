@@ -116,7 +116,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
         }
 
        
-        cv::cvtColor(output, output, cv::COLOR_BGR2RGB);
+        
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
 
