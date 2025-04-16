@@ -143,20 +143,26 @@ void MainWindow::startDetectionThread()
                 std::this_thread::sleep_for(std::chrono::milliseconds(30)); 
             }
             else if (mode == SystemMode::FatigueDetection) {
-                QImage img(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
-                QImage preFrame = img.copy();
-                QMetaObject::invokeMethod(this, [this, preFrame]() {
-                    ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
-                });
                 frameCounter++;
-                if (frameCounter % 3 != 0) continue;
-                cv::Mat detectInput = frameCopy.clone();
+                
+                if (frameCounter % 3 != 0) {
+                    QImage preview(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
+                    QImage preFrame = preview.copy();
+                    QMetaObject::invokeMethod(this, [this, preFrame]() {
+                        ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
+                    });
+                    continue;
+                }
+            
+                if (analyzing) continue; 
                 analyzing = true;
-
+            
+                cv::Mat detectInput = frameCopy.clone();
+            
                 threadPool.enqueue([this, detectInput]() {
                     cv::Mat output;
                     bool drowsy = detector.detect(detectInput, output);
-
+            
                     QMetaObject::invokeMethod(this, [this, drowsy]() {
                         ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
                     });
