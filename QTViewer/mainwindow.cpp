@@ -99,48 +99,46 @@ void MainWindow::on_Exit_clicked()
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
     static std::atomic<bool> busy = false;
-
-    
-    static int frameCount = 0;
-    static auto fpsLast = std::chrono::steady_clock::now();
-    frameCount++;
-    auto fpsNow = std::chrono::steady_clock::now();
-    if (std::chrono::duration_cast<std::chrono::seconds>(fpsNow - fpsLast).count() >= 1) {
-        qDebug() << "FPS:" << frameCount;
-        frameCount = 0;
-        fpsLast = fpsNow;
-    }
-
-   
-    static auto detectLast = std::chrono::steady_clock::now();
-    auto detectNow = std::chrono::steady_clock::now();
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(detectNow - detectLast).count() < 500 || busy) {
-        return;
-    }
-    detectLast = detectNow;
+    if (busy) return;
     busy = true;
 
-    
-    cv::Mat detectInput = frame.clone();
+    cv::Mat detectInput = frame.clone(); 
+
     std::thread([this, detectInput]() {
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
         if (output.empty()) {
-            QMetaObject::invokeMethod(this, [this]() { busy = false; });
+            QMetaObject::invokeMethod(this, [this]() {
+                busy = false;
+            });
             return;
         }
 
+       
         cv::cvtColor(output, output, cv::COLOR_BGR2RGB);
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
 
-        QMetaObject::invokeMethod(this, [this, safeFrame]() {
+        QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
             ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
             busy = false;
+
+           
+            static int displayCount = 0;
+            static auto lastDisplay = std::chrono::steady_clock::now();
+
+            displayCount++;
+            auto nowDisplay = std::chrono::steady_clock::now();
+            if (std::chrono::duration_cast<std::chrono::seconds>(nowDisplay - lastDisplay).count() >= 1) {
+                qDebug() << "Display FPS:" << displayCount;
+                displayCount = 0;
+                lastDisplay = nowDisplay;
+            }
         });
     }).detach();
 }
+
 
 
 
