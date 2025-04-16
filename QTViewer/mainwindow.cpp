@@ -98,22 +98,16 @@ void MainWindow::on_Exit_clicked()
 }
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
-    cv::Mat rgb;
-    cv::cvtColor(frame, rgb, cv::COLOR_BGR2RGB);
-    QImage qimg(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888);
-    QImage safeFrame = qimg.copy();
-    ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
-    currentFrame = safeFrame;
-
     static std::atomic<bool> busy = false;
-    static auto last = std::chrono::steady_clock::now();
-
-    auto now = std::chrono::steady_clock::now();
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() < 500) return;
     if (busy) return;
-
-    last = now;
     busy = true;
+    static auto last = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() < 500) {
+        busy = false;
+        return;
+    }
+    last = now;
 
     cv::Mat detectInput = frame.clone();
 
@@ -121,17 +115,26 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
-        QMetaObject::invokeMethod(this, [this, drowsy]() {
-            if (drowsy) {
-                ui->label_status->setText("DROWSINESS ALERT!");
-            } else {
-                ui->label_status->setText("Normal");
-            }
+        if (output.empty()) {
+            QMetaObject::invokeMethod(this, [this]() {
+                busy = false;
+            });
+            return;
+        }
+
+        
+        cv::cvtColor(output, output, cv::COLOR_BGR2RGB);
+
+        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
+
+        QMetaObject::invokeMethod(this, [this, safeFrame]() {
+            ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
             busy = false;
         });
-        
     }).detach();
 }
+
 
 
 
