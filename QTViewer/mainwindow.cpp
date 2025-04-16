@@ -98,44 +98,40 @@ void MainWindow::on_Exit_clicked()
 }
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) {
-    static int frameCount = 0;
-    static auto last = std::chrono::steady_clock::now();
+    static std::atomic<bool> busy = false;
+
     
+    static int frameCount = 0;
+    static auto fpsLast = std::chrono::steady_clock::now();
     frameCount++;
-    auto now = std::chrono::steady_clock::now();
-    if (std::chrono::duration_cast<std::chrono::seconds>(now - last).count() >= 1) {
+    auto fpsNow = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(fpsNow - fpsLast).count() >= 1) {
         qDebug() << "FPS:" << frameCount;
         frameCount = 0;
-        last = now;
+        fpsLast = fpsNow;
     }
-    
-    static std::atomic<bool> busy = false;
-    if (busy) return;
-    busy = true;
-    static auto last = std::chrono::steady_clock::now();
-    auto now = std::chrono::steady_clock::now();
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() < 500) {
-        busy = false;
+
+   
+    static auto detectLast = std::chrono::steady_clock::now();
+    auto detectNow = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(detectNow - detectLast).count() < 500 || busy) {
         return;
     }
-    last = now;
+    detectLast = detectNow;
+    busy = true;
 
+    
     cv::Mat detectInput = frame.clone();
-
     std::thread([this, detectInput]() {
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
         if (output.empty()) {
-            QMetaObject::invokeMethod(this, [this]() {
-                busy = false;
-            });
+            QMetaObject::invokeMethod(this, [this]() { busy = false; });
             return;
         }
 
-        
         cv::cvtColor(output, output, cv::COLOR_BGR2RGB);
-
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
 
@@ -145,6 +141,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &) 
         });
     }).detach();
 }
+
 
 
 
