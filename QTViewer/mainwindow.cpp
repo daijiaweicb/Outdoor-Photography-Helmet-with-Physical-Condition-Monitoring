@@ -111,10 +111,10 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 
 void MainWindow::startDetectionThread()
 {
-    detectionThread = std::thread([this]()
-                                  {
+    detectionThread = std::thread([this]() {
+        int frameCounter = 0;
         while (running) {
-            if (analyzing) {
+            if (analyzing.load()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 continue;
             }
@@ -126,7 +126,6 @@ void MainWindow::startDetectionThread()
                 frameCopy = latestFrame.clone();
             }
 
-            analyzing = true;
             SystemMode mode = g_systemMode;
 
             if (mode == SystemMode::Normal) {
@@ -140,36 +139,49 @@ void MainWindow::startDetectionThread()
                 QMetaObject::invokeMethod(this, [this, safeFrame]() {
                     ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
                 });
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(30)); // 控制帧率
             }
             else if (mode == SystemMode::FatigueDetection) {
-                // 显示预览帧
+                frameCounter++;
+                if (frameCounter % 3 != 0) continue;
+
                 QImage img(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
                 QImage preFrame = img.copy();
                 QMetaObject::invokeMethod(this, [this, preFrame]() {
                     ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
                 });
-            
-                // 准备检测用的输入帧
+
                 cv::Mat detectInput = frameCopy.clone();
-            
-                // 并发检测
+                analyzing = true; // 设置为忙状态，防止堆积
+
                 threadPool.enqueue([this, detectInput]() {
                     cv::Mat output;
                     bool drowsy = detector.detect(detectInput, output);
-            
+
                     QMetaObject::invokeMethod(this, [this, drowsy]() {
                         ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
                     });
+
+                    if (!output.empty()) {
+                        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+                        QImage safeFrame = qimg.copy();
+
+                        QMetaObject::invokeMethod(this, [this, safeFrame]() {
+                            ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+                        });
+                    }
+                    analyzing = false;
                 });
             }
             else if (mode == SystemMode::Temp) {
                 QMetaObject::invokeMethod(this, [this]() {
                     ui->label_video->setText("Mode is changing, please wait .....");
                 });
+                std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
             }
-
-            analyzing = false;
-        } });
+        }
+    });
 }
 
 void MainWindow::on_btn_record_clicked()
