@@ -117,8 +117,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             bool drowsy = detector.detect(detectInput, output);
 
             if (output.empty()) {
-                busy = false;
-                return;
+                output = detectInput.clone();
             }
 
             QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
