@@ -40,9 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     cam = new Libcam2OpenCV();
     cam->registerCallback(this);
     Libcam2OpenCVSettings settings;
-    settings.width = 800;
-    settings.height = 600;
-    settings.framerate = 30;
     cam->start();
 }
 
@@ -101,39 +98,52 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
     static std::atomic<bool> busy = false;
 
-    // if (g_systemMode == SystemMode::FatigueDetection)
-    // {
-        if (busy) return;
-        busy = true;
+    // // if (g_systemMode == SystemMode::FatigueDetection)
+    // // {
+    //     if (busy) return;
+    //     busy = true;
         
-        // cv::Mat flipped;
-        // cv::flip(frame, flipped, 0);
+    //     // cv::Mat flipped;
+    //     // cv::flip(frame, flipped, 0);
 
         
-        // if (isRecording && videoWriter.isOpened()) {
-        //     videoWriter.write(flipped);  
-        // }
+    //     // if (isRecording && videoWriter.isOpened()) {
+    //     //     videoWriter.write(flipped);  
+    //     // }
 
-        cv::Mat detectInput = frame.clone(); 
+    //     cv::Mat detectInput = frame.clone(); 
 
-        std::thread([this, detectInput]() {
-            cv::Mat output;
-            bool drowsy = detector.detect(detectInput, output);
+    //     std::thread([this, detectInput]() {
+    //         cv::Mat output;
+    //         bool drowsy = detector.detect(detectInput, output);
 
-            if (output.empty()) {
-                busy = false;
-                return;
-            }
+    //         if (output.empty()) {
+    //             busy = false;
+    //             return;
+    //         }
 
-            QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
-            QImage safeFrame = qimg.copy();
+    //         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+    //         QImage safeFrame = qimg.copy();
             
 
-            QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
-                ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
-                busy = false;
-            });
-        }).detach();
+    //         QMetaObject::invokeMethod(this, [this, safeFrame,drowsy]() {
+    //             ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+    //             busy = false;
+    //         });
+    //     }).detach();
+    std::thread([this, detectInput]() {
+        cv::Mat output;
+        detector.detect(detectInput, output);
+    
+        if (output.empty()) return;
+    
+        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
+    
+        QMetaObject::invokeMethod(this, [this, safeFrame]() {
+            ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+        });
+    }).detach();
     // }
     // else if (g_systemMode == SystemMode::Normal)
     // {
