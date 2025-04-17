@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>768</height>
+    <width>1030</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <widget class="QLabel" name="label_time">
     <property name="geometry">
      <rect>
-      <x>680</x>
+      <x>700</x>
       <y>10</y>
-      <width>291</width>
+      <width>271</width>
       <height>26</height>
      </rect>
     </property>
@@ -36,8 +36,8 @@
    <widget class="QLabel" name="label_video">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>122</y>
+      <x>10</x>
+      <y>70</y>
       <width>681</width>
       <height>480</height>
      </rect>
@@ -67,7 +67,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>600</y>
+      <y>570</y>
       <width>391</width>
       <height>31</height>
      </rect>
@@ -92,8 +92,8 @@
    <widget class="QPushButton" name="ChangeMode">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>640</y>
+      <x>150</x>
+      <y>600</y>
       <width>321</width>
       <height>71</height>
      </rect>
@@ -132,8 +132,8 @@
    <widget class="QPushButton" name="Exit">
     <property name="geometry">
      <rect>
-      <x>700</x>
-      <y>640</y>
+      <x>710</x>
+      <y>600</y>
       <width>271</width>
       <height>71</height>
      </rect>
@@ -157,7 +157,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>20</y>
       <width>640</width>
       <height>50</height>
      </rect>
@@ -182,9 +182,9 @@
    <widget class="QLabel" name="label_angle">
     <property name="geometry">
      <rect>
-      <x>680</x>
+      <x>700</x>
       <y>60</y>
-      <width>321</width>
+      <width>301</width>
       <height>26</height>
      </rect>
     </property>
@@ -201,9 +201,9 @@
    <widget class="QLabel" name="label_temp">
     <property name="geometry">
      <rect>
-      <x>680</x>
+      <x>700</x>
       <y>120</y>
-      <width>291</width>
+      <width>271</width>
       <height>26</height>
      </rect>
     </property>
@@ -222,8 +222,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1024</width>
-      <height>768</height>
+      <width>1030</width>
+      <height>735</height>
      </rect>
     </property>
    </widget>
@@ -243,7 +243,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
+     <width>1030</width>
      <height>23</height>
     </rect>
    </property>
