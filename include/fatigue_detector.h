@@ -18,7 +18,7 @@ private:
     cv::dnn::Net face_net;
 
     
-    const float EAR_THRESHOLD = 0.30f;
+    const float EAR_THRESHOLD = 0.17f;
     const int EYES_CLOSED_FRAMES = 15;
     int counter = 0;
 
