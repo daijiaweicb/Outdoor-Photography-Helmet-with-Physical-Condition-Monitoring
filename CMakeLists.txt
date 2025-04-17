@@ -19,16 +19,23 @@ include_directories(
 
 file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/fatigue_detector.cpp")
+
 file(GLOB TEST_FILES "${PROJECT_SOURCE_DIR}/test/*.cpp")
 
 add_executable(motor_mpu_test
     ${SOURCES}
     ${PROJECT_SOURCE_DIR}/test/motor_mpu_test.cpp
 )
-
 target_link_libraries(motor_mpu_test PRIVATE i2c ${GPIOD_LIBRARIES})
 target_compile_options(motor_mpu_test PRIVATE ${GPIOD_CFLAGS_OTHER})
-
 install(TARGETS motor_mpu_test RUNTIME DESTINATION bin)
+
+add_executable(stepmotor_test
+    ${SOURCES}
+    ${PROJECT_SOURCE_DIR}/test/stepmotor_test.cpp
+)
+target_link_libraries(stepmotor_test PRIVATE ${GPIOD_LIBRARIES})
+target_compile_options(stepmotor_test PRIVATE ${GPIOD_CFLAGS_OTHER})
+install(TARGETS stepmotor_test RUNTIME DESTINATION bin)
 
 add_subdirectory(QTViewer)
