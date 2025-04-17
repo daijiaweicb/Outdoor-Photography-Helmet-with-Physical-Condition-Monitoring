@@ -19,7 +19,7 @@ void MotorControlQT::MPUCallback(AngleData &data)
 
     if (g_systemMode == SystemMode::Normal)
     {
-        setAngle(90 - angle.NewData);
+        setAngle(90 + angle.NewData);
     }
     else if (g_systemMode == SystemMode::FatigueDetection)
     {
