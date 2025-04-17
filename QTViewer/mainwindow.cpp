@@ -9,6 +9,10 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QDir>
+#include <QFileInfo>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QIcon>
 #include <atomic>
 #include <thread>
 
@@ -44,6 +48,25 @@ MainWindow::MainWindow(QWidget *parent)
     settings.height = 480;
     settings.framerate = 30;
     cam->start(settings);
+
+    QString imagePath = "./images/background.png";
+    QPixmap pix(imagePath);
+
+    if (!pix.isNull()) {
+        QStandardItemModel *model = new QStandardItemModel(this);
+        QStandardItem *item = new QStandardItem();
+        item->setIcon(QIcon(pix));
+        item->setTextAlignment(Qt::AlignCenter);
+        model->appendRow(item);
+
+        ui->listView->setModel(model);
+        ui->listView->setViewMode(QListView::IconMode);
+        ui->listView->setIconSize(QSize(150, 150));
+        ui->listView->setSpacing(10);
+        ui->listView->setResizeMode(QListView::Adjust);
+    } else {
+        qDebug() << "Background load failed" << imagePath;
+    }
 }
 
 MainWindow::~MainWindow()
@@ -80,8 +103,10 @@ void MainWindow::on_ChangeMode_clicked()
 void MainWindow::onModeChanged(SystemMode newMode)
 {
     if (newMode == SystemMode::Normal)
+    {
         ui->label_status->setText("Current Mode：Normal");
-        ui->label_fati->setText("                      ")
+        ui->label_fati->setText("                      ");
+    }
     else if (newMode == SystemMode::FatigueDetection)
         ui->label_status->setText("Current Mode：FatigueDetection");
     else if (newMode == SystemMode::Temp)
