@@ -14,7 +14,7 @@ using namespace std;
  *   direction - Movement direction: either "forward" or "backward"
  *
  * Example:
- *   sudo ./motor_control 200 forward
+ *   ./motor_control 200 forward
  */
 
 int main(int argc, char* argv[])
