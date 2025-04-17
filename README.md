@@ -1,25 +1,113 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
+<p align="middle">
+  <img src="https://github.com/user-attachments/assets/05bc4ca6-dca0-45ce-85ae-d13045f83054" alt="LOGO" width="100"/>
+</p>
 
-## Installation
+# 1. Project Introduction 
+
+
+The project is a helmet photography platform that has real-time camera stabilization and fatigue detection. It is based on raspberry pi using c++ under Linux.  
+
+### Mode 1 Front view capture
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/9de4fa92-fb1c-4261-8e1e-c0fe95a3aa8d" alt="LOGO" width="500"/>
+</p>
+
+1. Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road.  
+
+2. Take videos of the view.
+
+### Mode 2 Selfie and condition monitoring
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/bdd2dea1-08a3-4b30-9a46-625c4f827f6e" alt="LOGO" width="500"/>
+</p>
+
+1. Identify the Fatigue level of users by the camera (Eye blinking).
+
+2. Combine pervious data with the current temperature, humidity and give advice to user.
+
+3. Take selfie videos.
+
+The button of the Qt window could change the mode of the photography platform.
+
+# 2. Hardware part 
+## 2.1 Hardware List
+
+| No. | Item                                           | Quantity |
+|-----|------------------------------------------------|----------|
+| 1   | Raspberry Pi 5                                 | 1        |
+| 2   | MPU 6050                                        | 1        |
+| 3   | MG90S motor                                     | 1        |
+| 4   | 28BYJ-48 motor                                  | 1        |
+| 5   | Raspberry Pi official camera V3 (wide version) | 1        |
+| 6   | 7-inch screen                                   | 1        |
+
+
+Comments: 
+
+**Camera part**
+
+The reason for choosing the Raspberry Pi camera V3 wide range version is to better capture the face image using higher FOV. The distance between the face and camera could be really close so that the camera V2 with a range of 60 degree could not work when doing the fatigue detection.
+
+**Motor part**
+
+In this project, two motors are used: MG90S and 2BYJ-48 stepper motor. The team first try to use the 2BYJ-48 stepper motor to do the angle retainer but found it moves slower than expected. For a better real time performance, the team use MG90S to replace it. However, the MG90S motor could only turn 180 degree which makes it not suitable for mode changing. So, the final plan in the project is to combine the two motors: MG90S for angle retainer and 2BYJ-48 for mode changing.
+
+## 2.2 Hardware Connection
+
+### Frame
+![image](https://github.com/user-attachments/assets/0d391542-6c58-4638-bdd6-689b8dd0681f)
+
+### Features
+- Stabilized outdoor photography with helmet-mounted camera
+- Real-time fatigue detection through eye movement
+- Smart environment sensing
+
+
+# 3. Software part
+Make sure you you have **install the required library** and **enable the iic function** on Raspberry Pi before cmake the program.
+The required library 
+
+1. libopencv-dev
+2. libgpio
+3. dlib
+4. liblapack-dev libblas-dev
+5. libcamera-dev
+6. libqwt-qt5-dev
+
+
+
 ```bash
 cmake .
 make
 sudo make install
 ```
 
-## Structure
-### Mode 1
-Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road
+In the project, the shape_predictor_68_face_landmarks.dat file is needed for the fatigue detection part.
 
 
-### Mode 2
-1. Identify the Fatigue level of users by the camera (Eye blinking and Mouth opening and closing)
-
-2. Combine pervious data with the current temperature, humidity and give advice to user
 
 
-### Frame
-![1e670894-2de2-45d7-86f5-565f9e828a4b](https://github.com/user-attachments/assets/6487dc9f-63e7-45f8-b6ee-b69a6d64750a)
+# 4. Social media
+
+| Follow me 🔔 |  
+|:--------:|  
+| [<img src="https://github.com/user-attachments/assets/aea9b545-b5d0-4563-9a56-6cd11e22de6e" width="30"/> TikTok](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1) |
+
+
+# 5. Authors
+
+Yixuan Zha
+
+Boang Tian
+
+Chang Sun
+
+Qiming Cao
+
+yihang Hou
+
+# 5. Acknowledgements
 
 
 

@@ -1,6 +1,6 @@
 #ifndef MPU6050_H
 #define MPU6050_H
-
+//MPU6050
 #include <gpiod.h>
 #include <thread>
 #include <memory>
