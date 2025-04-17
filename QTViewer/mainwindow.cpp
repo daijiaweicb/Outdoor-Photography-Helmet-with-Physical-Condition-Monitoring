@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     settings.framerate = 30;
     cam->start(settings);
 
-    QString imagePath = "../../QTViwer/images/background.png";
+    QString imagePath = "../../QTViewer/images/background.png";
     QPixmap pix(imagePath);
 
     if (!pix.isNull()) {
