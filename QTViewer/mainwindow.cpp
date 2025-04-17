@@ -60,13 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
         item->setTextAlignment(Qt::AlignCenter);
         model->appendRow(item);
 
-        ui->listView->setModel(model);
-        ui->listView->setViewMode(QListView::IconMode);
-        ui->listView->setResizeMode(QListView::Adjust);
-        ui->listView->setMovement(QListView::Static);
-        ui->listView->setWrapping(true);
-        ui->listView->setSpacing(0);
-        ui->listView->setIconSize(ui->listView->size());
+        ui->listView->setPixmap(QPixmap(imagePath));
+        ui->listView->setScaledContents(true);
     }
     else
     {
