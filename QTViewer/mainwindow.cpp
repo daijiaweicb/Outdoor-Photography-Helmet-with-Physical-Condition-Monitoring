@@ -44,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent)
     settings.height = 480;
     settings.framerate = 30;
     cam->start(settings);
-    startDetectionThread();
 }
 
 MainWindow::~MainWindow()
@@ -53,11 +52,6 @@ MainWindow::~MainWindow()
     {
         cam->stop();
         delete cam;
-    }
-    running = false;
-    if (detectionThread.joinable())
-    {
-        detectionThread.join();
     }
     delete ui;
 }
@@ -113,7 +107,6 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
 
-        
         if (isRecording && videoWriter.isOpened())
         {
             std::lock_guard<std::mutex> lock(writerMutex);
@@ -133,7 +126,6 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         if (busy)
             return;
         busy = true;
-        
 
         std::thread([this, detectInput]()
                     {
