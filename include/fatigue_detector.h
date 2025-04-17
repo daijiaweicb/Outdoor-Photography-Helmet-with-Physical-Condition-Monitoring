@@ -2,34 +2,37 @@
 #define FATIGUE_DETECTOR_H
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/dnn.hpp>
 #include <dlib/opencv.h>
 #include <dlib/image_processing.h>
-#include <dlib/image_processing/frontal_face_detector.h>
-#include <map>
-#include <string>
-#include <chrono>
 
 class FatigueDetector {
 public:
-    FatigueDetector(const std::string& model_path = "../../models/shape_predictor_68_face_landmarks.dat");
+    FatigueDetector();
+
     bool detect(const cv::Mat& frame, cv::Mat& output);
 
 private:
-    float eye_aspect_ratio(const std::vector<cv::Point2f>& eye);
     
-    std::vector<cv::Point2f> extract_eye(const dlib::full_object_detection& shape, bool left);
-
     dlib::shape_predictor predictor;
-    dlib::frontal_face_detector face_detector;
+    cv::dnn::Net face_net;
 
-    std::chrono::high_resolution_clock::time_point lastBlinkStart;
-    bool eyeClosed;
-    double eyeClosedDuration;
+    
+    const float EAR_THRESHOLD = 0.25f;
+    const int EYES_CLOSED_FRAMES = 15;
+    int counter = 0;
 
-    cv::KalmanFilter KF;
-    bool kalmanInitialized = false;
+   
+    int frame_count = 0; 
+    bool has_face = false; 
+    cv::Rect last_face;
 
-    const float EAR_THRESHOLD = 0.21f;
+    bool landmark_initialized = false;
+    std::vector<cv::Point2f> prev_left_eye; 
+    std::vector<cv::Point2f> prev_right_eye; 
+
+    float eye_aspect_ratio(const std::vector<cv::Point2f>& eye);
+    std::vector<cv::Point2f> extract_eye(const dlib::full_object_detection& shape, bool left);
 };
 
 #endif // FATIGUE_DETECTOR_H

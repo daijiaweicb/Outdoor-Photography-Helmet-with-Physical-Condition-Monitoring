@@ -25,15 +25,15 @@ MainWindow::MainWindow(QWidget *parent)
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         ui->label_time->setText("Time:" + now); });
 
-    // service = new MotorSensorService();
-    // service->start();
-    // connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
-    //         this, [=](float temp)
-    //         { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
+    service = new MotorSensorService();
+    service->start();
+    connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
+            this, [=](float temp)
+            { ui->label_temp->setText(QString("Temp: %1 ℃").arg(temp, 0, 'f', 1)); });
 
-    // connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
-    //         this, [=](float angle)
-    //         { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
+    connect(service->getMotorControl(), &MotorControlQT::angleUpdate,
+            this, [=](float angle)
+            { ui->label_angle->setText(QString("Angle: %1°").arg(angle, 0, 'f', 1)); });
 
     timer->start(1000);
 
@@ -105,73 +105,82 @@ void MainWindow::on_Exit_clicked()
 
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
-    std::lock_guard<std::mutex> lock(latestFrameMutex);
-    latestFrame = frame.clone();
-}
 
-void MainWindow::startDetectionThread()
-{
-    detectionThread = std::thread([this]()
-                                  {
-        int frameCounter = 0;
-        while (running) {
-            if (analyzing.load()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                continue;
-            }
+    static std::atomic<bool> busy = false;
+    if (g_systemMode == SystemMode::Normal)
+    {
+        QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
+        currentFrame = safeFrame;
 
-            cv::Mat frameCopy;
-            {
-                std::lock_guard<std::mutex> lock(latestFrameMutex);
-                if (latestFrame.empty()) continue;
-                frameCopy = latestFrame.clone();
-            }
+        
+        if (isRecording && videoWriter.isOpened())
+        {
+            std::lock_guard<std::mutex> lock(writerMutex);
+            cv::Mat bgr;
+            cv::cvtColor(frame, bgr, cv::COLOR_RGB2BGR);
+            videoWriter.write(bgr);
+        }
 
-            SystemMode mode = g_systemMode;
+        QMetaObject::invokeMethod(this, [this, safeFrame]()
+                                  { ui->label_video->setPixmap(QPixmap::fromImage(safeFrame)); });
+    }
+    else if (g_systemMode == SystemMode::FatigueDetection)
+    {
+        cv::Mat flipped;
+        cv::flip(frame, flipped, -1);
+        cv::Mat detectInput = flipped;
+        if (busy)
+            return;
+        busy = true;
+        
 
-            // if (mode == SystemMode::Normal) {
-            //     QImage qimg(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
-            //     QImage safeFrame = qimg.copy();
-
-            //     if (isRecording && videoWriter.isOpened()) {
-            //         videoWriter.write(frameCopy);
-            //     }
-
-            //     QMetaObject::invokeMethod(this, [this, safeFrame]() {
-            //         ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
-            //     });
-
-            //     std::this_thread::sleep_for(std::chrono::milliseconds(30)); 
-            // }
-            // else if (mode == SystemMode::FatigueDetection) {
-                // frameCounter++;
-                QImage img(frameCopy.data, frameCopy.cols, frameCopy.rows, frameCopy.step, QImage::Format_RGB888);
-    QImage preFrame = img.copy();
-    QMetaObject::invokeMethod(this, [this, preFrame]() {
-        ui->label_video->setPixmap(QPixmap::fromImage(preFrame));
-    });
-
-    cv::Mat detectInput = frameCopy.clone();
-
-    threadPool.enqueue([this, detectInput]() {
+        std::thread([this, detectInput]()
+                    {
         cv::Mat output;
         bool drowsy = detector.detect(detectInput, output);
 
-        QMetaObject::invokeMethod(this, [this, drowsy]() {
-            ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
-        });
+        if (output.empty()) {
+            QMetaObject::invokeMethod(this, [this]() {
+                busy = false;
+            });
+            return;
+        }     
+        QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
+        QImage safeFrame = qimg.copy();
+        currentFrame = safeFrame;
 
-        // ✅ 放到检测任务末尾，检测真正完成后才释放 analyzing
-        analyzing = false;
-    });
+        
+        if (isRecording && videoWriter.isOpened())
+        {
+            std::lock_guard<std::mutex> lock(writerMutex);
+            cv::Mat bgr;
+            cv::cvtColor(detectInput, bgr, cv::COLOR_RGB2BGR);
+            videoWriter.write(bgr);
+        }
+        QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
+            ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
+            ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
+            busy = false;
+
+            // static int displayCount = 0;
+            // static auto lastDisplay = std::chrono::steady_clock::now();
+
+            // displayCount++;
+            // auto nowDisplay = std::chrono::steady_clock::now();
+            // if (std::chrono::duration_cast<std::chrono::seconds>(nowDisplay - lastDisplay).count() >= 1) {
+            //     qDebug() << "Display FPS:" << displayCount;
+            //     displayCount = 0;
+            //     lastDisplay = nowDisplay;
             // }
-            // else if (mode == SystemMode::Temp) {
-            //     QMetaObject::invokeMethod(this, [this]() {
-            //         ui->label_video->setText("Mode is changing, please wait .....");
-            //     });
-            //     std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
-            // }
-        } });
+        }); })
+            .detach();
+    }
+    else if (g_systemMode == SystemMode::Temp)
+    {
+        QMetaObject::invokeMethod(this, [this]()
+                                  { ui->label_video->setText("Mode is changing, please wait ....."); });
+    }
 }
 
 void MainWindow::on_btn_record_clicked()
@@ -191,7 +200,7 @@ void MainWindow::on_btn_record_clicked()
         qDebug() << "saveDir =" << saveDir;
         qDebug() << "fullPath =" << fullPath;
 
-        int fps = 30;
+        int fps = (g_systemMode == SystemMode::FatigueDetection) ? 10 : 20;
         QSize size = currentFrame.size();
 
         videoWriter.open(fullPath.toStdString(),
@@ -211,6 +220,7 @@ void MainWindow::on_btn_record_clicked()
     else
     {
         isRecording = false;
+        std::lock_guard<std::mutex> lock(writerMutex);
         if (videoWriter.isOpened())
         {
             videoWriter.release();

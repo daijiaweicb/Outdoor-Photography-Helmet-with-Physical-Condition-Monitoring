@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
+#include <mutex>
 #include "Mode.h"
 #include "motor_thread.h"
 #include "motor_sensor_service.h"
@@ -56,11 +57,7 @@ private:
     cv::VideoWriter videoWriter;
     bool isRecording = false;
     FatigueDetector detector;
-    ThreadPool threadPool{20};
-    std::thread detectionThread;
-    std::atomic<bool> running = true;
-    std::atomic<bool> analyzing = false;
-    std::mutex latestFrameMutex;
-    cv::Mat latestFrame;
+    std::mutex writerMutex; 
+
 };
 #endif // MAINWINDOW_H
