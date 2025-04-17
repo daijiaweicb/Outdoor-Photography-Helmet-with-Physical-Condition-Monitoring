@@ -217,17 +217,20 @@
      <string>Temp: </string>
     </property>
    </widget>
-   <widget class="QListView" name="listView">
+   <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
       <width>1030</width>
-      <height>735</height>
+      <height>725</height>
      </rect>
     </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
-   <zorder>listView</zorder>
+   <zorder>label</zorder>
    <zorder>label_time</zorder>
    <zorder>label_video</zorder>
    <zorder>label_status</zorder>

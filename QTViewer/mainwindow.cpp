@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent)
         item->setTextAlignment(Qt::AlignCenter);
         model->appendRow(item);
 
-        ui->listView->setPixmap(QPixmap(imagePath));
-        ui->listView->setScaledContents(true);
+        ui->label->setPixmap(QPixmap(imagePath));
+        ui->label->setScaledContents(true);
     }
     else
     {
