@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->listView->setModel(model);
         ui->listView->setViewMode(QListView::IconMode);
         ui->listView->setIconSize(QSize(150, 150));
-        ui->listView->setSpacing(0);
+        ui->listView->setSpacing(10);
         ui->listView->setResizeMode(QListView::Adjust);
     } else {
         qDebug() << "Background load failed" << imagePath;
