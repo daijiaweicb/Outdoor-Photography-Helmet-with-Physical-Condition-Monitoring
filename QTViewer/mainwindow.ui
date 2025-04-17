@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>833</height>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <widget class="QLabel" name="label_time">
     <property name="geometry">
      <rect>
-      <x>655</x>
-      <y>9</y>
-      <width>72</width>
+      <x>680</x>
+      <y>10</y>
+      <width>291</width>
       <height>26</height>
      </rect>
     </property>
@@ -38,7 +38,7 @@
      <rect>
       <x>9</x>
       <y>122</y>
-      <width>640</width>
+      <width>681</width>
       <height>480</height>
      </rect>
     </property>
@@ -66,10 +66,10 @@
    <widget class="QLabel" name="label_status">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>640</y>
-      <width>82</width>
-      <height>23</height>
+      <x>160</x>
+      <y>600</y>
+      <width>391</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -93,7 +93,7 @@
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>690</y>
+      <y>640</y>
       <width>321</width>
       <height>71</height>
      </rect>
@@ -112,10 +112,10 @@
    <widget class="QPushButton" name="btn_record">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>710</x>
       <y>330</y>
-      <width>321</width>
-      <height>71</height>
+      <width>271</width>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
@@ -132,9 +132,9 @@
    <widget class="QPushButton" name="Exit">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>710</y>
-      <width>321</width>
+      <x>700</x>
+      <y>640</y>
+      <width>271</width>
       <height>71</height>
      </rect>
     </property>
@@ -156,8 +156,8 @@
    <widget class="QLabel" name="label_fati">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>9</y>
+      <x>10</x>
+      <y>40</y>
       <width>640</width>
       <height>50</height>
      </rect>
@@ -182,9 +182,9 @@
    <widget class="QLabel" name="label_angle">
     <property name="geometry">
      <rect>
-      <x>655</x>
-      <y>65</y>
-      <width>57</width>
+      <x>680</x>
+      <y>60</y>
+      <width>321</width>
       <height>26</height>
      </rect>
     </property>
@@ -201,9 +201,9 @@
    <widget class="QLabel" name="label_temp">
     <property name="geometry">
      <rect>
-      <x>655</x>
-      <y>122</y>
-      <width>60</width>
+      <x>680</x>
+      <y>120</y>
+      <width>291</width>
       <height>26</height>
      </rect>
     </property>
@@ -217,6 +217,26 @@
      <string>Temp: </string>
     </property>
    </widget>
+   <widget class="QListView" name="listView">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1024</width>
+      <height>768</height>
+     </rect>
+    </property>
+   </widget>
+   <zorder>listView</zorder>
+   <zorder>label_time</zorder>
+   <zorder>label_video</zorder>
+   <zorder>label_status</zorder>
+   <zorder>ChangeMode</zorder>
+   <zorder>btn_record</zorder>
+   <zorder>Exit</zorder>
+   <zorder>label_fati</zorder>
+   <zorder>label_angle</zorder>
+   <zorder>label_temp</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
