@@ -19,13 +19,13 @@ void MotorThread::run()
     if (g_systemMode == SystemMode::Normal) {
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
-        motor.forward(2048);
+        motor.forward(1800);
         g_systemMode = SystemMode::FatigueDetection;
         emit modeChanged(g_systemMode);
     } else if (g_systemMode == SystemMode::FatigueDetection) {
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
-        motor.backward(2048);
+        motor.backward(1800);
         g_systemMode = SystemMode::Normal;
         emit modeChanged(g_systemMode);
     }
