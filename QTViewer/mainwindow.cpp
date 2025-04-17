@@ -49,10 +49,11 @@ MainWindow::MainWindow(QWidget *parent)
     settings.framerate = 30;
     cam->start(settings);
 
-    QString imagePath = "../../QTViewer/images/background.png";
+    QString imagePath = "../../QTViwer/images/background.png";
     QPixmap pix(imagePath);
 
-    if (!pix.isNull()) {
+    if (!pix.isNull())
+    {
         QStandardItemModel *model = new QStandardItemModel(this);
         QStandardItem *item = new QStandardItem();
         item->setIcon(QIcon(pix));
@@ -61,10 +62,13 @@ MainWindow::MainWindow(QWidget *parent)
 
         ui->listView->setModel(model);
         ui->listView->setViewMode(QListView::IconMode);
-        ui->listView->setIconSize(QSize(150, 150));
-        ui->listView->setSpacing(10);
+        ui->listView->setMovement(QListView::Static); 
+        ui->listView->setSpacing(0);                  
+        ui->listView->setIconSize(ui->listView->size());
         ui->listView->setResizeMode(QListView::Adjust);
-    } else {
+    }
+    else
+    {
         qDebug() << "Background load failed" << imagePath;
     }
 }
