@@ -129,7 +129,9 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     static std::atomic<bool> busy = false;
     if (g_systemMode == SystemMode::Normal)
     {
-        QImage qimg(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+        cv::Mat flipped;
+        cv::flip(frame, flipped, -1);
+        QImage qimg(flipped.data, flipped.cols, flipped.rows, flipped.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
 
@@ -146,9 +148,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     }
     else if (g_systemMode == SystemMode::FatigueDetection)
     {
-        cv::Mat flipped;
-        cv::flip(frame, flipped, -1);
-        cv::Mat detectInput = flipped;
+        cv::Mat detectInput = frame;
         if (busy)
             return;
         busy = true;
