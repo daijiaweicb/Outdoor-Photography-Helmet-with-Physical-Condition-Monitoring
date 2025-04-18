@@ -175,7 +175,31 @@ void MainWindow::on_Exit_clicked()
                                        QMessageBox::No | QMessageBox::Yes);
     if (reply == QMessageBox::Yes)
     {
-        safeShutdown();
+        if (g_systemMode == SystemMode::FatigueDetection)
+        {
+            if (motorThread && motorThread->isRunning())
+            {
+                qDebug() << "motor is already running... exit canceled";
+                return;
+            }
+
+            motorThread = new MotorThread(this);
+
+            connect(motorThread, &MotorThread::modeChanged, this, &MainWindow::onModeChanged);
+
+            connect(motorThread, &MotorThread::finished, this, [this]()
+            {
+                motorThread->deleteLater();
+                motorThread = nullptr;
+                safeShutdown();
+            });
+
+            motorThread->start();
+        }
+        else
+        {
+            safeShutdown();
+        }
     }
 }
 
