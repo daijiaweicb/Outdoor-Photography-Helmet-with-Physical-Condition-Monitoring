@@ -84,6 +84,13 @@ MainWindow::MainWindow(QWidget *parent)
  */
 MainWindow::~MainWindow()
 {
+    if (g_systemMode == SystemMode::FatigueDetection)
+    {
+        MotorThread *exitMotor = new MotorThread(this);
+        connect(exitMotor, &MotorThread::finished, exitMotor, &QObject::deleteLater);
+        g_systemMode = SystemMode::Temp;
+        exitMotor->start();
+    }
     if (cam)
     {
         cam->unregisterCallback();
@@ -93,13 +100,7 @@ MainWindow::~MainWindow()
         delete cam;
         cam = nullptr;
     }
-    if (g_systemMode == SystemMode::FatigueDetection)
-    {
-        MotorThread *exitMotor = new MotorThread(this);
-        connect(exitMotor, &MotorThread::finished, exitMotor, &QObject::deleteLater);
-        g_systemMode = SystemMode::Temp;
-        exitMotor->start();
-    }
+    
     delete ui;
 }
 
