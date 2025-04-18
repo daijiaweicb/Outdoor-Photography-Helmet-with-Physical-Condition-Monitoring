@@ -109,12 +109,14 @@ Project file strcuture
 │   ├── mainwindow.cpp
 │   ├── mainwindow.h
 │   ├── mainwindow.ui
+│   ├── mock_for_test
 │   ├── motor_control_QT.cpp
 │   ├── motor_control_QT.h
 │   ├── motor_sensor_service.cpp
 │   ├── motor_sensor_service.h
 │   ├── motor_thread.cpp
-│   └── motor_thread.h
+│   ├── motor_thread.h
+│   └── qt_tests
 ├── README.md
 ├── include
 │   ├── IServoControl.h
