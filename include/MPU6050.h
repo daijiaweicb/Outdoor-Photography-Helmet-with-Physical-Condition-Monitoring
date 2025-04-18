@@ -48,7 +48,7 @@ public:
 
     struct MPUCallbackInterface
     {
-        virtual void MPUCallback(AngleData &data) = 0;
+        virtual void MPUCallback(const AngleData &data) = 0;
         virtual ~MPUCallbackInterface() = default;
     };
 

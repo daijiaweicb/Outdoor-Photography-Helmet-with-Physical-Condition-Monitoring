@@ -23,7 +23,7 @@ MotorControlQT::MotorControlQT(QObject *parent)
  *
  * @param data Reference to AngleData containing roll and temp.
  */
-void MotorControlQT::MPUCallback(AngleData &data)
+void MotorControlQT::MPUCallback(const AngleData &data)
 {
 
     angle.NewData = data.roll;

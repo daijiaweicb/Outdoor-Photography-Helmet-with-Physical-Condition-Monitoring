@@ -54,7 +54,7 @@ public:
      *
      * @param data Struct containing current roll angle and temperature.
      */
-    void MPUCallback(AngleData &data) override;
+    void MPUCallback(const AngleData &data) override;
 
 Q_SIGNALS:
     /**
