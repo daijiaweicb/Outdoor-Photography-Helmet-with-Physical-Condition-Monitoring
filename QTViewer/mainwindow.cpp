@@ -150,6 +150,7 @@ void MainWindow::safeShutdown()
     qDebug() << ">>> safeShutdown() called";
     if (motorThread)
     {
+        qDebug >> "motor thread is not null";
         if (motorThread->isRunning())
         {
             qDebug() << ">>> Waiting for motor thread to finish...";
