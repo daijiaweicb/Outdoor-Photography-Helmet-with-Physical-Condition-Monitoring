@@ -32,7 +32,8 @@ TEST(MotorControlTest, SetsCorrectAngleWithPositiveRoll)
     MockServo servo;
     TestableMotorControl control(&servo);
 
-    MPU::AngleData data{15.0f, 28.0f};
+    MPU::AngleData data{15.0f};
+    data.temp = 28.0f;
     control.MPUCallback(data);
 
     EXPECT_EQ(servo.last_angle, 75); // 90 - 15
@@ -45,7 +46,8 @@ TEST(MotorControlTest, SetsCorrectAngleWithNegativeRoll)
     MockServo servo;
     TestableMotorControl control(&servo);
 
-    MPU::AngleData data{-15.0f, 28.0f};
+    MPU::AngleData data{-15.0f};
+    data.temp = 28.0f;
     control.MPUCallback(data);
 
     EXPECT_EQ(servo.last_angle, 105); // 90 - (-15)
@@ -58,7 +60,8 @@ TEST(MotorControlTest, SetsCorrectAngleWithZeroRoll)
     MockServo servo;
     TestableMotorControl control(&servo);
 
-    MPU::AngleData data{0.0f, 28.0f};
+    MPU::AngleData data{0.0f};
+    data.temp = 28.0f;
     control.MPUCallback(data);
 
     EXPECT_EQ(servo.last_angle, 90); // 90 - 0
@@ -71,7 +74,8 @@ TEST(MotorControlTest, SetsCenterAngleInFatigueMode)
     MockServo servo;
     TestableMotorControl control(&servo);
 
-    MPU::AngleData data{999.0f, 28.0f};
+    MPU::AngleData data{180.0f};
+    data.temp = 28.0f;
     control.MPUCallback(data);
 
     EXPECT_EQ(servo.last_angle, 90); 
@@ -84,11 +88,13 @@ TEST(MotorControlTest, HandlesSequentialMPUCallbacks)
     MockServo servo;
     TestableMotorControl control(&servo);
 
-    MPU::AngleData data1{10.0f, 26.0f};
+    MPU::AngleData data1{10.0f};
+    data1.temp = 28.0f;
     control.MPUCallback(data1);
     EXPECT_EQ(servo.last_angle, 80); // 90 - 10
 
-    MPU::AngleData data2{20.0f, 27.0f};
+    MPU::AngleData data2{20.0f};
+    data2.temp = 28.0f;
     control.MPUCallback(data2);
     EXPECT_EQ(servo.last_angle, 70); // 90 - 20
 }
