@@ -146,8 +146,30 @@ void MainWindow::on_Exit_clicked()
                                        QMessageBox::No | QMessageBox::Yes);
     if (reply == QMessageBox::Yes)
     {
-        QApplication::quit();
+        safeShutdown();
     }
+}
+
+void MainWindow::safeShutdown()
+{
+    qDebug() << ">>> safeShutdown() called";
+    if (motorThread)
+    {
+        if (motorThread->isRunning())
+        {
+            qDebug() << ">>> Waiting for motor thread to finish...";
+            motorThread->wait();
+        }
+        motorThread->deleteLater();
+        motorThread = nullptr;
+    }
+    if (cam)
+    {
+        cam->stop();
+        delete cam;
+        cam = nullptr;
+    }
+    this->close();  
 }
 
 /**

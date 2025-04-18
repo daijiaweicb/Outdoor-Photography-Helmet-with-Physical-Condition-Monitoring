@@ -62,6 +62,10 @@ public:
      * Performs either video preview or fatigue detection depending on system mode.
      */
     void hasFrame(const cv::Mat &frame, const libcamera::ControlList &metadata) override;
+    /**
+     * @brief Shutdown the application
+     */
+    safeShutdown();
 
 private Q_SLOTS:
     /**
