@@ -32,7 +32,7 @@ public:
      * @param pin4 GPIO line number for phase D
      * @return true if initialization succeeds; false otherwise.
      */
-    bool start(int chipNo, int pin1, int pin2, int pin3, int pin4);
+    virtual bool start(int chipNo, int pin1, int pin2, int pin3, int pin4);
 
     /**
      * @brief Rotates the motor forward by a specified number of steps.
@@ -40,7 +40,7 @@ public:
      * Uses a standard 8-step half-stepping sequence in clockwise direction.
      * @param steps Number of step cycles to execute.
      */
-    void forward(int steps);
+    virtual void forward(int steps);
 
     /**
      * @brief Rotates the motor backward by a specified number of steps.
@@ -49,14 +49,14 @@ public:
      * @param steps Number of step cycles to execute.
      */
 
-    void backward(int steps);
+    virtual void backward(int steps);
 
     /**
      * @brief Releases all GPIO lines and stops the motor.
      *
      * Turns off all outputs and frees the requested GPIO resources.
      */
-    void cleanup();
+    virtual void cleanup();
     private:
     /**
      * @brief Applies a given 4-phase step pattern to the GPIO lines.
