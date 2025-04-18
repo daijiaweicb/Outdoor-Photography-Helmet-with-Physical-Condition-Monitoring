@@ -4,9 +4,21 @@
 </p>
 
 # 1. Project Introduction 
+[![Platform](https://img.shields.io/badge/Platform-Raspberry%20Pi-red)](https://www.raspberrypi.com)
+[![Language](https://img.shields.io/badge/Language-C++17-blue)](https://isocpp.org)
+[![Build System](https://img.shields.io/badge/CMake-Build-blueviolet)](https://cmake.org)
+[![Qt](https://img.shields.io/badge/Qt-Enabled-brightgreen)](https://www.qt.io/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-Enabled-lightgrey)](https://opencv.org)
+[![libcamera](https://img.shields.io/badge/libcamera-Supported-yellowgreen)](https://www.raspberrypi.com/documentation/computers/camera.html)
+[![dlib](https://img.shields.io/badge/dlib-Face%20Detection-orange)](http://dlib.net/)
 
+This is a real-time embedded project based on **Raspberry Pi** using **C++**.
+The project constructed a helmet photography platform that has real-time camera stabilization and fatigue detection. 
 
-The project is a helmet photography platform that has real-time camera stabilization and fatigue detection. It is based on raspberry pi using c++ under Linux.  
+Key Features
+- Stabilized outdoor photography with helmet-mounted camera
+- Real-time fatigue detection through eye movement
+
 
 ### Mode 1 Front view capture
 <p align="left">
@@ -43,26 +55,24 @@ The button of the Qt window could change the mode of the photography platform.
 | 6   | 7-inch screen                                   | 1        |
 
 
-Comments: 
-
-**Camera part**
-
-The reason for choosing the Raspberry Pi camera V3 wide range version is to better capture the face image using higher FOV. The distance between the face and camera could be really close so that the camera V2 with a range of 60 degree could not work when doing the fatigue detection.
-
-**Motor part**
-
-In this project, two motors are used: MG90S and 2BYJ-48 stepper motor. The team first try to use the 2BYJ-48 stepper motor to do the angle retainer but found it moves slower than expected. For a better real time performance, the team use MG90S to replace it. However, the MG90S motor could only turn 180 degree which makes it not suitable for mode changing. So, the final plan in the project is to combine the two motors: MG90S for angle retainer and 2BYJ-48 for mode changing.
-
 ## 2.2 Hardware Connection
 
 ### Frame
-![image](https://github.com/user-attachments/assets/0d391542-6c58-4638-bdd6-689b8dd0681f)
 
-### Features
-- Stabilized outdoor photography with helmet-mounted camera
-- Real-time fatigue detection through eye movement
-- Smart environment sensing
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/0d391542-6c58-4638-bdd6-689b8dd0681f" alt="LOGO" width="500"/>
+</p>
 
+**Camera and motor unit**
+
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/01c394d5-c90f-46a5-900a-441c4ec4d4fc" alt="LOGO" width="500"/>
+</p>
+
+**MPU6050 and Raspberry pi**
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/838197bf-a61f-4a84-9bb8-b4b9b139b390" alt="LOGO" width="500"/>
+</p>
 
 # 3. Software part
 Make sure you you have **install the required library** and **enable the iic function** on Raspberry Pi before cmake the program.
@@ -71,10 +81,8 @@ The required library
 1. libopencv-dev
 2. libgpio
 3. dlib
-4. liblapack-dev libblas-dev
-5. libcamera-dev
-6. libqwt-qt5-dev
-
+4. libcamera-dev
+5. libqwt-qt5-dev
 
 
 ```bash
@@ -96,25 +104,16 @@ In the project, the shape_predictor_68_face_landmarks.dat file is needed for the
 
 
 # 5. Authors
+| Member       | Contribution                               |
+|--------------|--------------------------------------------|
+Yixuan Zha     |  Camera stabilization, Seneor and QT constrcution part
+Boang Tian     |  Sensor and Opencv with fatigue detection part
+Chang Sun      |  Motor and Soldering part
+Qiming Cao     |  Sensor realization and Soldering part
+Yihang Hou     |  Camera and Social media part
 
-Yixuan Zha
 
-Boang Tian
-
-Chang Sun
-
-Qiming Cao
-
-yihang Hou
-
-# 5. Acknowledgements
-
-Bernd Porr
-
-Chongfeng Wei
-
-Tom O'Hara
-
-Giulia Lafratta
+# 6. Acknowledgements
+Special thanks to the ENG5220 course instructors for the guidance and support throughout the project : Bernd Porr, Chongfeng Wei, Tom O'Hara and Giulia Lafratta. Your support helped us improve our project and turn a simple idea into a working reality.
 
 
