@@ -29,32 +29,71 @@ namespace Ui
 }
 QT_END_NAMESPACE
 
+/**
+ * @class MainWindow
+ * @brief GUI controller for real-time fatigue detection system.
+ *
+ * The MainWindow class integrates:
+ * - Real-time video capture using libcamera + OpenCV
+ * - Servo & sensor management via MotorSensorService
+ * - Stepper motor mode control (Normal/FatigueDetection)
+ * - Fatigue detection using EAR-based analysis
+ * - Video recording with timestamped filenames
+ *
+ * It also manages signal-slot communication to update UI in real-time.
+ */
 class MainWindow : public QMainWindow, public Libcam2OpenCV::Callback
 {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructor. Initializes UI and starts all subsystems.
+     */
     MainWindow(QWidget *parent = nullptr);
+
+    /**
+     * @brief Destructor. Ensures resources and devices are safely stopped.
+     */
     ~MainWindow();
 
+    /**
+     * @brief Receives frames from camera callback.
+     * Performs either video preview or fatigue detection depending on system mode.
+     */
     void hasFrame(const cv::Mat &frame, const libcamera::ControlList &metadata) override;
 
 private Q_SLOTS:
+    /**
+     * @brief Called when mode change button is clicked.
+     */
     void on_ChangeMode_clicked();
+
+    /**
+     * @brief Updates UI based on system mode changes.
+     */
     void onModeChanged(SystemMode newMode);
+
+    /**
+     * @brief Handles clean program shutdown when exit button is clicked.
+     */
     void on_Exit_clicked();
+
+    /**
+     * @brief Starts or stops video recording based on user input.
+     */
     void on_btn_record_clicked();
 
 private:
-    Ui::MainWindow *ui;
-    MotorThread *motorThread = nullptr;
-    MotorSensorService *service = nullptr;
-    QTimer *timer;
-    Libcam2OpenCV *cam = nullptr;
-    QImage currentFrame;
-    cv::VideoWriter videoWriter;
-    bool isRecording = false;
-    FatigueDetector detector;
-    std::mutex writerMutex; 
+    Ui::MainWindow *ui;                    // Qt-generated UI class
+    MotorThread *motorThread = nullptr;    // Thread for stepper motor transitions
+    MotorSensorService *service = nullptr; // Wrapper for servo and sensor system
+    QTimer *timer;                         // Clock timer for UI
+    Libcam2OpenCV *cam = nullptr;          // Camera interface
+    QImage currentFrame;                   // Latest captured image frame
+    cv::VideoWriter videoWriter;           // OpenCV video recorder
+    bool isRecording = false;              // Indicates recording status
+    FatigueDetector detector;              // Fatigue detection processor
+    std::mutex writerMutex;                // Ensures thread-safe video writing
 };
 #endif // MAINWINDOW_H

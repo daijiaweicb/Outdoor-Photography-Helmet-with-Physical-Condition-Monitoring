@@ -16,8 +16,17 @@
 #include <atomic>
 #include <thread>
 
+/**
+ * @brief Constructs the main window and initializes all subsystems.
+ *
+ * - Sets up UI labels and clock timer
+ * - Starts MotorSensorService (servo & MPU6050)
+ * - Registers Qt slots for temperature/angle
+ * - Starts libcamera video stream (640x480, 30 FPS)
+ * - Loads background image into UI
+ */
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow), detector("../../models/")
 {
     ui->setupUi(this);
     ui->label_status->setText("Current Mode：Normal");
@@ -69,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent)
     }
 }
 
+/**
+ * @brief Gracefully shuts down camera and motor.
+ */
 MainWindow::~MainWindow()
 {
     if (cam)
@@ -79,6 +91,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/**
+ * @brief Starts motor thread to handle mode change (Normal ↔ FatigueDetection).
+ * Ensures motor is not already running before transition.
+ */
 void MainWindow::on_ChangeMode_clicked()
 {
     if (motorThread && motorThread->isRunning())
@@ -100,6 +116,9 @@ void MainWindow::on_ChangeMode_clicked()
     motorThread->start();
 }
 
+/**
+ * @brief Updates status label on mode change.
+ */
 void MainWindow::onModeChanged(SystemMode newMode)
 {
     if (newMode == SystemMode::Normal)
@@ -123,6 +142,13 @@ void MainWindow::on_Exit_clicked()
     }
 }
 
+/**
+ * @brief Frame handler called on each new video frame.
+ * Behavior depends on system mode:
+ * - Normal: just display the image (flipped)
+ * - FatigueDetection: run EAR-based fatigue detection in a separate thread
+ * - Temp: notify UI that mode is switching
+ */
 void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
 {
 
@@ -180,17 +206,6 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
             ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
             ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
             busy = false;
-
-            // static int displayCount = 0;
-            // static auto lastDisplay = std::chrono::steady_clock::now();
-
-            // displayCount++;
-            // auto nowDisplay = std::chrono::steady_clock::now();
-            // if (std::chrono::duration_cast<std::chrono::seconds>(nowDisplay - lastDisplay).count() >= 1) {
-            //     qDebug() << "Display FPS:" << displayCount;
-            //     displayCount = 0;
-            //     lastDisplay = nowDisplay;
-            // }
         }); })
             .detach();
     }
@@ -201,6 +216,13 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     }
 }
 
+/**
+ * @brief Starts or stops video recording to disk.
+ *
+ * - Uses timestamped filename in `~/Videos/`
+ * - Recording FPS depends on mode (FatigueDetection = 10, Normal = 20)
+ * - Uses mutex to ensure safe writing
+ */
 void MainWindow::on_btn_record_clicked()
 {
     if (!isRecording)
