@@ -12,6 +12,7 @@
 #include <QFileInfo>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QString>
 #include <QIcon>
 #include <atomic>
 #include <thread>
