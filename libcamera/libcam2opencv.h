@@ -77,6 +77,14 @@ public:
     }
 
     /**
+     * Unregister the callback for the frame data
+     **/
+    void unregisterCallback()
+    {
+        callback = nullptr;
+    }
+
+    /**
      * Starts the camera and the callback at default resolution and framerate
      **/
     void start(Libcam2OpenCVSettings settings = Libcam2OpenCVSettings());
