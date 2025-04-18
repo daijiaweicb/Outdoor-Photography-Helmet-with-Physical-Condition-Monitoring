@@ -84,30 +84,85 @@ The required library
 4. libcamera-dev
 5. libqwt-qt5-dev
 
-
+How to use
 ```bash
-cmake .
+cd Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring
+mkdir build
+cd build
+cmake ..
 make
-sudo make install
+cd QTViewer
+./QT_HELMET
 ```
 
-In the project, the shape_predictor_68_face_landmarks.dat file is needed for the fatigue detection part.
+In the project, the (shape_predictor_68_face_landmarks.dat, deploy.prototxt, res10_300x300_ssd_iter_140000.caffemodel) models are needed for the fatigue detection part. They are in the model folder of the project. 
 
-
+Project file strcuture
+```bash
+.
+├── CMakeLists.txt
+├── LICENSE
+├── QTViewer
+│   ├── CMakeLists.txt
+│   ├── images
+│   ├── main.cpp
+│   ├── mainwindow.cpp
+│   ├── mainwindow.h
+│   ├── mainwindow.ui
+│   ├── motor_control_QT.cpp
+│   ├── motor_control_QT.h
+│   ├── motor_sensor_service.cpp
+│   ├── motor_sensor_service.h
+│   ├── motor_thread.cpp
+│   └── motor_thread.h
+├── README.md
+├── include
+│   ├── IServoControl.h
+│   ├── MG90S_setting.h
+│   ├── MPU6050.h
+│   ├── MPU_kalman.h
+│   ├── Mode.h
+│   ├── Stepmotor_setting.h
+│   ├── fatigue_detector.h
+│   ├── iic.h
+│   ├── motor_control.h
+│   └── pwm.h
+├── libcamera
+│   ├── LICENSE
+│   ├── libcam2opencv.cpp
+│   └── libcam2opencv.h
+├── models
+│   ├── deploy.prototxt
+│   ├── res10_300x300_ssd_iter_140000.caffemodel
+│   └── shape_predictor_68_face_landmarks.dat
+├── src
+│   ├── MPU6050.cpp
+│   ├── MPU_kalman.cpp
+│   ├── Mode.cpp
+│   ├── Stepmotor_setting.cpp
+│   ├── fatigue_detector.cpp
+│   ├── iic.cpp
+│   ├── motor_control.cpp
+│   └── pwm.cpp
+└── test
+    ├── motor_mpu_test.cpp
+    ├── motor_mpu_unit_test.cpp
+    └── stepmotor_test.cpp
+```
 
 
 # 4. Social media
 
 | Follow me 🔔 |  
 |:--------:|  
-| [<img src="https://github.com/user-attachments/assets/aea9b545-b5d0-4563-9a56-6cd11e22de6e" width="30"/> TikTok](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1) |
-
+| <img src="https://github.com/user-attachments/assets/aea9b545-b5d0-4563-9a56-6cd11e22de6e" width="30"/> |
+|[TikTok Link](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1)|
 
 # 5. Authors
 | Member       | Contribution                               |
 |--------------|--------------------------------------------|
-Yixuan Zha     |  Camera stabilization, Seneor and QT constrcution part
-Boang Tian     |  Sensor and Opencv with fatigue detection part
+Yixuan Zha     |  Camera stabilization, Seneor and QT part
+Boang Tian     |  Sensor and Camera Opencv part
 Chang Sun      |  Motor and Soldering part
 Qiming Cao     |  Sensor realization and Soldering part
 Yihang Hou     |  Camera and Social media part
