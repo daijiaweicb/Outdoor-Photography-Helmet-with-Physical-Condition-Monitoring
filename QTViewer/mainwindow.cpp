@@ -220,7 +220,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
                 fati_time++;
             }
             fati_per = static_cast<float>(fati_time) / total * 100;
-            ui->label_per->setText(QString("Fatigue Ratio: %1%").arg(fati_per, 0, 'f', 1));
+            ui->label_per->setText(QString("Fatigue Ratio: %1%").arg(static_cast<double>(fati_per), 0, 'f', 1));
             busy = false;
         }); })
             .detach();
