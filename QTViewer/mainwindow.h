@@ -65,7 +65,8 @@ public:
     /**
      * @brief Shutdown the application
      */
-    safeShutdown();
+
+    void safeShutdown();
 
 private Q_SLOTS:
     /**
