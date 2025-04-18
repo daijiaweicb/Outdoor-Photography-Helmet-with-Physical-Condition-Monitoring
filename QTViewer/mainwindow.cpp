@@ -180,6 +180,9 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
     }
     else if (g_systemMode == SystemMode::FatigueDetection)
     {
+        static int total = 0;
+        static int fati_time = 0;
+        static int fati_per = 0;
         cv::Mat detectInput = frame;
         if (busy)
             return;
@@ -199,7 +202,7 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QImage qimg(output.data, output.cols, output.rows, output.step, QImage::Format_RGB888);
         QImage safeFrame = qimg.copy();
         currentFrame = safeFrame;
-
+        total++;
         
         if (isRecording && videoWriter.isOpened())
         {
@@ -211,6 +214,12 @@ void MainWindow::hasFrame(const cv::Mat &frame, const libcamera::ControlList &)
         QMetaObject::invokeMethod(this, [this, safeFrame, drowsy]() {
             ui->label_video->setPixmap(QPixmap::fromImage(safeFrame));
             ui->label_fati->setText(drowsy ? "Fatigue Detected" : "Normal");
+            if(drowsy == 1)
+            {
+                fati_time++;
+            }
+            fati_per = static_cast<float>(fati_time) / total * 100;
+            ui->label_per->setText(QString("Fatigue Ratio: %1%").arg(fati_per, 0, 'f', 1));
             busy = false;
         }); })
             .detach();
