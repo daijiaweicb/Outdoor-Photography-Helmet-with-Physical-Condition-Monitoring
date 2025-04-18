@@ -88,7 +88,10 @@ MainWindow::~MainWindow()
     {
         cam->unregisterCallback();
         cam->stop();
+
+        QThread::sleep(1);
         delete cam;
+        cam = nullptr;
     }
     if (g_systemMode == SystemMode::FatigueDetection)
     {
