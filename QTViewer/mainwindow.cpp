@@ -88,6 +88,12 @@ MainWindow::~MainWindow()
         cam->stop();
         delete cam;
     }
+    if (g_systemMode == SystemMode::FatigueDetection)
+    {
+        MotorThread exitMotor(this);
+        g_systemMode = SystemMode::Temp;
+        exitMotor.run();
+    }
     delete ui;
 }
 
