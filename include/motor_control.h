@@ -7,17 +7,18 @@
 // Just as a test, not for displaying in the QT interface
 
 /**
- * @brief Callback function that processes real-time angle and temperature data from the MPU sensor.
+ * @class MotorControl
+ * @brief High-level controller for servo positioning based on MPU6050 sensor input.
  *
- * This method is intended to be invoked whenever new angle data (e.g., from an IMU or MPU6050) is received.
- * It updates internal angle tracking, computes delta changes, and sets the servo motor accordingly
- * based on the current `SystemMode`.
+ * This class processes real-time orientation data (roll, temp) from an MPU6050 sensor,
+ * and adjusts a connected servo motor (via the IServoControl interface) accordingly.
  *
- * Behavior by mode:
- * - Normal Mode: Adjusts servo angle dynamically based on pitch/roll data to compensate head movement.
- * - FatigueDetection Mode: Holds servo at center (90°) to remain stable during detection.
+ * It inherits from:
+ * - `MPU`: to access MPU6050 initialization and data acquisition.
+ * - `MPUCallbackInterface`: to receive callbacks when new sensor data is available.
  *
- * @param data Struct containing real-time angle (roll) and temperature information from the MPU.
+ * The servo motor dependency is injected via the constructor, enabling decoupling from
+ * hardware-specific implementations like `MG90S` and facilitating unit testing.
  */
 class MotorControl : public MPU, public MPU::MPUCallbackInterface, public MG90S
 {
@@ -34,11 +35,11 @@ private:
     Data angle;
 
 public:
-    void MPUCallback(AngleData &data) override;
-    MotorControl()
-    {
-        angle.PrevData = 0;
-    }
+    void MPUCallback(const AngleData &data) override;
+    explicit MotorControl(IServoControl* servo) : servo_(servo) {}
+
+protected:
+    IServoControl *servo_ = nullptr; // Injected servo control object
 };
 
 #endif

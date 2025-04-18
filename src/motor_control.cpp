@@ -2,7 +2,7 @@
 #include <cmath>
 #include "Mode.h"
 
-void MotorControl::MPUCallback(AngleData &data)
+void MotorControl::MPUCallback(const AngleData &data)
 {
     // Store the latest angle value
     angle.NewData = data.roll;
@@ -17,12 +17,12 @@ void MotorControl::MPUCallback(AngleData &data)
     if (g_systemMode == SystemMode::Normal)
     {
         // Adjust servo to compensate head tilt (e.g., stabilize head-mounted camera)
-        setAngle(90 - angle.NewData);
+        servo_->setAngle(90 - angle.NewData);
     }
     else if (g_systemMode == SystemMode::FatigueDetection)
     {
         // Lock servo to center (90°) for consistent detection
-        setAngle(90);
+        servo_->setAngle(90);
     }
     // Store current angle for next delta computation
     angle.PrevData = angle.NewData;

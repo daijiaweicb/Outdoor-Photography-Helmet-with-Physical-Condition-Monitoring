@@ -7,15 +7,13 @@ using namespace std;
 
 int main()
 {
+    MG90S servo;
+    MotorControl motorapp(&servo);
+    servo.start_mg90s();
 
-    MotorControl motorapp; 
-
-    MG90S& motor = motorapp; 
-    motor.start_mg90s();
-
-    MPU& mpu = motorapp;  
-    mpu.RegisterSetting(&motorapp); 
-    mpu.beginMPU6050(); 
+    MPU &mpu = motorapp;
+    mpu.RegisterSetting(&motorapp);
+    mpu.beginMPU6050();
     mpu.startWorker();
 
     while (true)

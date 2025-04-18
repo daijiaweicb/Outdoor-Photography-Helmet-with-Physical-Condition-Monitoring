@@ -2,18 +2,20 @@
 #define MG90S_SETTING_H
 
 #include "pwm.h"
+#include "IServoControl.h"
 
 /**
  * @class MG90S
+ * @brief Concrete implementation of IServoControl for MG90S servo motor.
  *
- * This class encapsulates angle-based control logic for the MG90S servo,
- * abstracting low-level PWM signal generation behind simple methods like
- * `start_mg90s()` and `setAngle(int)`.
+ * This class provides an abstraction over low-level PWM control logic
+ * to drive an MG90S hobby servo motor. It implements the `IServoControl`
+ * interface.
  *
- * Internally, it converts desired angles (in degrees) to the corresponding
- * PWM duty cycle (in nanoseconds) and communicates this to the `PWM` driver.
+ * Internally, it maps a desired angle (in degrees) to a corresponding
+ * PWM duty cycle (in nanoseconds), and applies it via a `PWM` driver.
  */
-class MG90S
+class MG90S: public IServoControl
 {
 public:
     /**
