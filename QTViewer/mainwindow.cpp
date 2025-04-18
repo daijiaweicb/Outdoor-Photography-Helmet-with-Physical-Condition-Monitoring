@@ -91,7 +91,8 @@ MainWindow::~MainWindow()
     }
     if (g_systemMode == SystemMode::FatigueDetection)
     {
-        MotorThread exitMotor(this);
+        MotorThread *exitMotor = new MotorThread(this);
+        connect(exitMotor, &MotorThread::finished, exitMotor, &QObject::deleteLater);
         g_systemMode = SystemMode::Temp;
         exitMotor->start();
     }
