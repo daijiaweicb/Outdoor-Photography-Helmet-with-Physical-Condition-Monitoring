@@ -86,6 +86,7 @@ MainWindow::~MainWindow()
 {
     if (cam)
     {
+        cam->unregisterCallback();
         cam->stop();
         delete cam;
     }
@@ -155,6 +156,7 @@ void MainWindow::safeShutdown()
     }
     if (cam)
     {
+        cam->unregisterCallback();
         cam->stop();
         delete cam;
         cam = nullptr;
