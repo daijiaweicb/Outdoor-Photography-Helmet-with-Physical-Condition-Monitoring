@@ -86,7 +86,7 @@ MainWindow::~MainWindow()
 {
     if (g_systemMode == SystemMode::FatigueDetection)
     {
-        MotorThread *exitMotor = new MotorThread(this);
+        MotorThread* exitMotor = new MotorThread(nullptr, this);;
         connect(exitMotor, &MotorThread::finished, exitMotor, &QObject::deleteLater);
         g_systemMode = SystemMode::Temp;
         exitMotor->start();
@@ -116,7 +116,7 @@ void MainWindow::on_ChangeMode_clicked()
         return;
     }
 
-    motorThread = new MotorThread(this);
+    motorThread = new MotorThread(nullptr, this);
 
     connect(motorThread, &MotorThread::modeChanged,
             this, &MainWindow::onModeChanged);
@@ -183,7 +183,7 @@ void MainWindow::on_Exit_clicked()
                 return;
             }
 
-            motorThread = new MotorThread(this);
+            motorThread = new MotorThread(nullptr, this);
 
             connect(motorThread, &MotorThread::modeChanged, this, &MainWindow::onModeChanged);
 

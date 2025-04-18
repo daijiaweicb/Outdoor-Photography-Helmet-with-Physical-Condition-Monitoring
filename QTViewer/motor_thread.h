@@ -17,15 +17,8 @@ class MotorThread : public QThread
 {
     Q_OBJECT
 public:
-    /**
-     * @brief Constructor
-     * @param parent Parent QObject
-     */
-    MotorThread(QObject *parent = nullptr);
+    MotorThread(StepperMotor *injected_motor = nullptr, QObject *parent = nullptr);
 
-    /**
-     * @brief Destructor
-     */
     ~MotorThread();
 
     /**
@@ -44,7 +37,8 @@ Q_SIGNALS:
     void modeChanged(SystemMode newMode);
 
 protected:
-    StepperMotor motor; // Internal instance of the stepper motor controller
+    StepperMotor *motor = nullptr;
+    bool own_motor = true; // 记录是否自己负责释放 motor
 };
 
 #endif // MOTOR_THREAD_H

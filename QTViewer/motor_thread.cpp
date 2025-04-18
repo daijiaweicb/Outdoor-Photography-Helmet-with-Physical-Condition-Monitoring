@@ -1,21 +1,28 @@
 #include "motor_thread.h"
 #include <QDebug>
 
-/**
- * @brief Constructor: Initializes the motor thread object.
- */
-MotorThread::MotorThread(QObject *parent)
+MotorThread::MotorThread(StepperMotor *injected_motor, QObject *parent)
     : QThread(parent)
 {
+    if (injected_motor)
+    {
+        motor = injected_motor;
+        own_motor = false;
+    }
+    else
+    {
+        motor = new StepperMotor();
+        own_motor = true;
+    }
 }
 
-/**
- * @brief Destructor: Cleanup any resources if necessary.
- */
 MotorThread::~MotorThread()
 {
+    if (own_motor && motor)
+    {
+        delete motor;
+    }
 }
-
 /**
  * @brief Core logic of the thread, executed when thread is started.
  *
@@ -28,7 +35,7 @@ MotorThread::~MotorThread()
 void MotorThread::run()
 {
     // Initialize stepper motor with GPIO pins
-    if (!motor.start(0, 17, 25, 27, 22))
+    if (!motor->start(0, 17, 25, 27, 22))
     {
         qDebug() << "Stepmotor init failed";
         return;
@@ -38,7 +45,7 @@ void MotorThread::run()
     {
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
-        motor.forward(1900); // Rotate to FatigueDetection position
+        motor->forward(1900); // Rotate to FatigueDetection position
         g_systemMode = SystemMode::FatigueDetection;
         emit modeChanged(g_systemMode);
     }
@@ -46,11 +53,11 @@ void MotorThread::run()
     {
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
-        motor.backward(1900); // Rotate back to Normal position
+        motor->backward(1900); // Rotate back to Normal position
         g_systemMode = SystemMode::Normal;
         emit modeChanged(g_systemMode);
     }
 
     emit modeChanged(g_systemMode);
-    motor.cleanup();
+    motor->cleanup();
 }
