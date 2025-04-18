@@ -64,6 +64,6 @@ target_link_libraries(motor_mpu_unit_test
 )
 
 target_compile_options(motor_mpu_unit_test PRIVATE ${GPIOD_CFLAGS_OTHER})
-
+add_test(NAME MotorMPUTest COMMAND motor_mpu_unit_test)
 
 add_subdirectory(QTViewer)
