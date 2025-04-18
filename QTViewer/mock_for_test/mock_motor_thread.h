@@ -13,14 +13,8 @@ public:
     MockStepperMotor mock_motor;
 
     TestableMotorThread(QObject* parent = nullptr)
-        : MotorThread(parent)
-    {
-        this->setMotor(&mock_motor);
-    }
-
-    void setMotor(StepperMotor* m) {
-        this->motor = *m;
-    }
+        : MotorThread(&mock_motor, parent) 
+    {}
 
     MockStepperMotor* getMockMotor() {
         return &mock_motor;
