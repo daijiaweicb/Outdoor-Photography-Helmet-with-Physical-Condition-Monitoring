@@ -1,7 +1,8 @@
 #include <QtTest>
+#include <QMetaType>
 #include "mock_motor_thread.h"
 #include "Mode.h"
-
+Q_DECLARE_METATYPE(SystemMode)
 /**
  * @class TestableMotorThread
  * @brief A subclass of MotorThread used for unit testing with a mock StepperMotor.
@@ -10,15 +11,22 @@
  * the real hardware interactions. It is used to verify the behavior of the
  * MotorThread::run() logic without requiring actual GPIO hardware.
  */
-class MotorThreadTest : public QObject {
+class MotorThreadTest : public QObject
+{
     Q_OBJECT
 
 private slots:
+    void initTestCase();
     void testNormalToFatigue();
     void testFatigueToNormal();
 };
 
-void MotorThreadTest::testNormalToFatigue() {
+void MotorThreadTest::initTestCase() {
+    qRegisterMetaType<SystemMode>("SystemMode");
+}
+
+void MotorThreadTest::testNormalToFatigue()
+{
     g_systemMode = SystemMode::Normal;
     TestableMotorThread thread;
 
@@ -26,7 +34,7 @@ void MotorThreadTest::testNormalToFatigue() {
 
     thread.run();
 
-    auto* motor = thread.getMockMotor();
+    auto *motor = thread.getMockMotor();
     QVERIFY(motor->start_called);
     QVERIFY(motor->forward_called);
     QVERIFY(motor->cleanup_called);
@@ -35,7 +43,8 @@ void MotorThreadTest::testNormalToFatigue() {
     QCOMPARE(spy.count(), 3);
 }
 
-void MotorThreadTest::testFatigueToNormal() {
+void MotorThreadTest::testFatigueToNormal()
+{
     g_systemMode = SystemMode::FatigueDetection;
     TestableMotorThread thread;
 
@@ -43,7 +52,7 @@ void MotorThreadTest::testFatigueToNormal() {
 
     thread.run();
 
-    auto* motor = thread.getMockMotor();
+    auto *motor = thread.getMockMotor();
     QVERIFY(motor->start_called);
     QVERIFY(motor->backward_called);
     QVERIFY(motor->cleanup_called);
