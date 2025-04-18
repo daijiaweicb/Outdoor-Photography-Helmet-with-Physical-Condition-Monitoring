@@ -140,16 +140,6 @@ void MainWindow::onModeChanged(SystemMode newMode)
         ui->label_status->setText("Mode is changing .......");
 }
 
-void MainWindow::on_Exit_clicked()
-{
-    auto reply = QMessageBox::question(this, "Exit Confirmation", "Are you sure you want to exit?",
-                                       QMessageBox::No | QMessageBox::Yes);
-    if (reply == QMessageBox::Yes)
-    {
-        safeShutdown();
-    }
-}
-
 void MainWindow::safeShutdown()
 {
     qDebug() << ">>> safeShutdown() called";
@@ -169,7 +159,17 @@ void MainWindow::safeShutdown()
         delete cam;
         cam = nullptr;
     }
-    this->close();  
+    this->close();
+}
+
+void MainWindow::on_Exit_clicked()
+{
+    auto reply = QMessageBox::question(this, "Exit Confirmation", "Are you sure you want to exit?",
+                                       QMessageBox::No | QMessageBox::Yes);
+    if (reply == QMessageBox::Yes)
+    {
+        safeShutdown();
+    }
 }
 
 /**
