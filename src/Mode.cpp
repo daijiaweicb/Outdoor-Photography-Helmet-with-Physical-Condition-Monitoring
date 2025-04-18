@@ -1,3 +1,6 @@
 #include "Mode.h"
 
-SystemMode g_systemMode = SystemMode::Normal;  
+/**
+ *  Current state of the system, initially normal
+ */
+SystemMode g_systemMode = SystemMode::Normal;
