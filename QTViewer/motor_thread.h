@@ -43,7 +43,7 @@ Q_SIGNALS:
      */
     void modeChanged(SystemMode newMode);
 
-private:
+protected:
     StepperMotor motor; // Internal instance of the stepper motor controller
 };
 
