@@ -5,6 +5,19 @@ add_compile_options(-Wno-psabi)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/heads/main.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(googletest)
+
+
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GPIOD REQUIRED libgpiod)
 
@@ -37,5 +50,20 @@ add_executable(stepmotor_test
 target_link_libraries(stepmotor_test PRIVATE ${GPIOD_LIBRARIES})
 target_compile_options(stepmotor_test PRIVATE ${GPIOD_CFLAGS_OTHER})
 install(TARGETS stepmotor_test RUNTIME DESTINATION bin)
+
+enable_testing()
+
+add_executable(motor_mpu_unit_test
+    ${SOURCES}
+    ${PROJECT_SOURCE_DIR}/test/motor_mpu_unit_test.cpp
+)
+target_link_libraries(motor_mpu_unit_test
+    PRIVATE
+    gtest_main
+    ${GPIOD_LIBRARIES}
+)
+
+target_compile_options(motor_mpu_unit_test PRIVATE ${GPIOD_CFLAGS_OTHER})
+
 
 add_subdirectory(QTViewer)
