@@ -93,7 +93,7 @@ MainWindow::~MainWindow()
     {
         MotorThread exitMotor(this);
         g_systemMode = SystemMode::Temp;
-        exitMotor.run();
+        exitMotor->start();
     }
     delete ui;
 }
