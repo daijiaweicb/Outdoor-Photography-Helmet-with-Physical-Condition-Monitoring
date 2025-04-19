@@ -99,27 +99,13 @@ The button of the Qt window could change the mode of the photography platform.
 </p>
 
 # 3. Software part
-Make sure you you have **install the required library** and **enable the iic function** on Raspberry Pi before cmake the program.
-The required library 
 
-1. libopencv-dev
-2. libgpio
-3. dlib
-4. libcamera-dev
-5. libqwt-qt5-dev
+## 3.1 Software implementation and its structure
 
-How to use
-```bash
-cd Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring
-mkdir build
-cd build
-cmake ..
-make
-cd QTViewer
-./QT_HELMET
-```
+### The motor part 
 
-In the project, the (shape_predictor_68_face_landmarks.dat, deploy.prototxt, res10_300x300_ssd_iter_140000.caffemodel) models are needed for the fatigue detection part. They are in the model folder of the project. 
+### The Fatigue detection
+To do the Fatigue detection, the input image is first be fed into the Opencv DNN model to identify the face image. Then the shape_predictor 68 face landmarks finds the characteristic point of the select image of the DNN model. Using the characteristic point data, the EAR (Aspect ratio of the eye) is calculated. If the EAR ratio is continuously lower than the expected value, the user will be marked as fatigue and increase the fatigue ratio on the output (From 0 to 100%). If there is not fatigue detected, the fatigue ratio will automatically decrease.
 
 Project file strcuture
 ```bash
@@ -175,7 +161,36 @@ Project file strcuture
     ├── motor_mpu_unit_test.cpp
     └── stepmotor_test.cpp
 ```
-The QT of the project
+
+
+## 3.2 Required library and How to install
+
+Make sure you you have **install the required library** and **enable the iic function** on Raspberry Pi before cmake the program.
+The required library 
+
+1. libopencv-dev
+2. libgpio
+3. dlib
+4. libcamera-dev
+5. libqwt-qt5-dev
+
+How to use
+```bash
+cd Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring
+mkdir build
+cd build
+cmake ..
+make
+cd QTViewer
+./QT_HELMET
+```
+
+In the project, the (shape_predictor_68_face_landmarks.dat, deploy.prototxt, res10_300x300_ssd_iter_140000.caffemodel) models are needed for the fatigue detection part. They are in the model folder of the project. 
+
+
+## 3.3 The QT of the project
+
+The helmet could change between the modes using the **Change the mode** button. The record button is on the right side and used to capture the image in both modes (The fatigue dectection on the image will not be recorded).
 
 **Normal mode**
 
