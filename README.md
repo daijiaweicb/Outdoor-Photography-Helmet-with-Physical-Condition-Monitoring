@@ -1,7 +1,21 @@
 # Outdoor Photography Helmet with Physical Condition Monitoring
+
+Missing the breathtaking view ahead because you're looking down at the road? This Outdoor Photography Helmet is desgined for you !!!
 <p align="middle">
   <img src="https://github.com/user-attachments/assets/05bc4ca6-dca0-45ce-85ae-d13045f83054" alt="LOGO" width="100"/>
 </p>
+
+
+🏞️
+**Key Features**
+
+**- Stabilized outdoor photography with helmet-mounted camera**
+
+  Allows you to focus on the safety while the camera still steadily records the exciting images in front of you.
+  
+**- Real-time fatigue detection through eye movement**
+
+  Guard your every outdoor adventure.
 
 # 1. Project Introduction 
 [![Platform](https://img.shields.io/badge/Platform-Raspberry%20Pi-red)](https://www.raspberrypi.com)
@@ -15,11 +29,6 @@
 This is a real-time embedded project based on **Raspberry Pi** using **C++**.
 The project constructed a helmet photography platform that has real-time camera stabilization and fatigue detection. 
 
-Key Features
-- Stabilized outdoor photography with helmet-mounted camera
-- Real-time fatigue detection through eye movement
-
-
 ### Mode 1 Front view capture
 <p align="left">
   <img src="https://github.com/user-attachments/assets/9de4fa92-fb1c-4261-8e1e-c0fe95a3aa8d" alt="LOGO" width="500"/>
@@ -27,7 +36,9 @@ Key Features
 
 1. Keep the camera at a certain elevation angle with horizontal level to record the view in front even when climbers are focusing on the road.  
 
-2. Take videos of the view.
+2. Take videos of the view in front.
+
+3. Provide data like the current temperature, angle and time.
 
 ### Mode 2 Selfie and condition monitoring
 <p align="left">
@@ -36,9 +47,7 @@ Key Features
 
 1. Identify the Fatigue level of users by the camera (Eye blinking).
 
-2. Combine pervious data with the current temperature, humidity and give advice to user.
-
-3. Take selfie videos.
+2. Take selfie videos.
 
 The button of the Qt window could change the mode of the photography platform.
 
