@@ -14,7 +14,7 @@ int PWM::start_pwm(int channel, int frequency, float duty_cycle, int chip)
     const int r = fprintf(fp, "%d", channel);
     if (r < 0)
         return r;
-    usleep(100000);
+    usleep(100000); //This dealy is required after exporting the PWM, it is only at the initialization stage, not for real time control (timing).
     per = (int)1E9 / frequency;
     setPeriod(per);
     setDutyCycle(duty_cycle);
