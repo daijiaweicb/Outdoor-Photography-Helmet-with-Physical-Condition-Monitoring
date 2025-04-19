@@ -81,6 +81,12 @@ The button of the Qt window could change the mode of the photography platform.
   <img src="https://github.com/user-attachments/assets/0d391542-6c58-4638-bdd6-689b8dd0681f" alt="LOGO" width="500"/>
 </p>
 
+**Overall structure**
+
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/6b055433-48cf-44f1-93dd-9238f6513d05" alt="LOGO" width="500"/>
+</p>
+
 **Camera and motor unit**
 
 <p align="left">
@@ -169,6 +175,21 @@ Project file strcuture
     ├── motor_mpu_unit_test.cpp
     └── stepmotor_test.cpp
 ```
+The QT of the project
+
+**Normal mode**
+
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/999c964b-fed3-49a7-be2f-27c0e4834d02" alt="LOGO" width="500"/>
+</p>
+
+**Selfie and condition monitoring**
+
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/efe7d86b-fcfd-42ca-9bc0-c9bc520bc328" alt="LOGO" width="500"/>
+</p>
+
+
 
 
 # 4. Social media
