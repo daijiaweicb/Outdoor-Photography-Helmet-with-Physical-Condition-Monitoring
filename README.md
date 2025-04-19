@@ -17,6 +17,15 @@ Missing the breathtaking view ahead because you're looking down at the road? Thi
 
   Guard your every outdoor adventure.
 
+
+# Contents
+- [1. Project Introduction](#1-project-introduction)
+- [2. Hardware Part](#2-hardware-part)
+- [3. Software Part](#3-software-part)
+- [4. Social Media](#4-social-media)
+- [5. Authors](#5-authors)
+- [6. Acknowledgements](#6-acknowledgements)
+
 # 1. Project Introduction 
 [![Platform](https://img.shields.io/badge/Platform-Raspberry%20Pi-red)](https://www.raspberrypi.com)
 [![Language](https://img.shields.io/badge/Language-C++17-blue)](https://isocpp.org)
