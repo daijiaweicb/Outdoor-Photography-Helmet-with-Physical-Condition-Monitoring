@@ -123,12 +123,12 @@ MPU::SensorData MPU::readMPU6050(IIC &iic)
     return data;
 }
 
-//MPU6050 Initialization Calibration
+// MPU6050 Initialization Calibration
 bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples)
 {
     float gx = 0, gy = 0, gz = 0;
-    using namespace std::chrono;
-    auto next_time = steady_clock::now();
+
+    auto next_time = std::chrono::steady_clock::now();
 
     for (int i = 0; i < samples; i++)
     {
@@ -148,8 +148,8 @@ bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples)
         gy += gy_raw * gyroScale;
         gz += gz_raw * gyroScale;
 
-        next_time += milliseconds(10);
-        std::this_thread::sleep_until(next_time);//Only at Initialization Calibration, data reads are event triggered
+        next_time += std::chrono::milliseconds(10);
+        std::this_thread::sleep_until(next_time); // Only at Initialization Calibration, data reads are event triggered
     }
 
     calib.gyroBiasX = gx / samples;
