@@ -6,10 +6,13 @@
  * @param  {Callback} cb   : 
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb) {
-    if (running) {
-        stop();
+    if (!running.exchange(false)) return;
+
+    struct itimerspec its{};
+    timerfd_settime(fd, 0, &its, nullptr);
+    if (worker.joinable() && std::this_thread::get_id() != worker.get_id()) {
+        worker.join();
     }
-    if (running.exchange(true)) return;
 
     struct itimerspec its;
     const int sec = millisecs / 1000;
