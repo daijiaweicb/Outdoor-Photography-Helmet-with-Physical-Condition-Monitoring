@@ -79,6 +79,7 @@ void StepperMotor::onStep()
 {
     if (stepCount >= totalSteps)
     {
+        timer.stop();
         {
             std::lock_guard<std::mutex> lock(cv_mutex);
             isBusy = false;
