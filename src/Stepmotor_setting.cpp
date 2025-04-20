@@ -52,9 +52,8 @@ void StepperMotor::forward(int steps)
     }
 
     int ms = std::max(1, step_delay / 1000);
-    timer.start(ms, [this]() {
-        this->onStep();
-    });
+    timer.start(ms, [this]()
+                { this->onStep(); });
 }
 
 void StepperMotor::backward(int steps)
@@ -70,16 +69,14 @@ void StepperMotor::backward(int steps)
     }
 
     int ms = std::max(1, step_delay / 1000);
-    timer.start(ms, [this]() {
-        this->onStep();
-    });
+    timer.start(ms, [this]()
+                { this->onStep(); });
 }
 
 void StepperMotor::onStep()
 {
     if (stepCount >= totalSteps)
     {
-        timer.stop();
         {
             std::lock_guard<std::mutex> lock(cv_mutex);
             isBusy = false;
@@ -118,20 +115,11 @@ void StepperMotor::onStep()
 
     currentStep = (currentStep + 1) % 8;
     stepCount++;
-
-    if (stepCount < totalSteps)
-    {
-        int ms = std::max(1, step_delay / 1000);
-        timer.start(ms, [this]() {
-            this->onStep();
-        });
-    }
 }
 
 void StepperMotor::cleanup()
 {
     timer.stop();
-
     {
         std::lock_guard<std::mutex> lock(cv_mutex);
         isBusy = false;
