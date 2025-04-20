@@ -1,5 +1,6 @@
 #include "Stepmotor_setting.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -50,7 +51,8 @@ void StepperMotor::forward(int steps)
         isBusy = true;
     }
 
-    timer.start(step_delay / 1000, [this]() {
+    int ms = std::max(1, step_delay / 1000);
+    timer.start(ms, [this]() {
         this->onStep();
     });
 }
@@ -67,7 +69,8 @@ void StepperMotor::backward(int steps)
         isBusy = true;
     }
 
-    timer.start(step_delay / 1000, [this]() {
+    int ms = std::max(1, step_delay / 1000);
+    timer.start(ms, [this]() {
         this->onStep();
     });
 }
@@ -81,7 +84,7 @@ void StepperMotor::onStep()
             isBusy = false;
         }
 
-        cv.notify_all(); // notify any thread waiting for completion
+        cv.notify_all();
         return;
     }
 
@@ -117,11 +120,11 @@ void StepperMotor::onStep()
 
     if (stepCount < totalSteps)
     {
-        timer.start(step_delay / 1000, [this]() {
+        int ms = std::max(1, step_delay / 1000);
+        timer.start(ms, [this]() {
             this->onStep();
         });
     }
-
 }
 
 void StepperMotor::cleanup()
