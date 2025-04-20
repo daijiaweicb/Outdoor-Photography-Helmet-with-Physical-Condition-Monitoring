@@ -15,8 +15,8 @@ void HighPrecisionTimer::start(int millisecs, Callback cb) {
     //Calculate cycle interval
     its.it_value.tv_sec = sec;
     its.it_value.tv_nsec = nsec;
-    its.it_interval.tv_sec = 0;
-    its.it_interval.tv_nsec = 0;
+    its.it_interval.tv_sec = sec;
+    its.it_interval.tv_nsec = nsec;
 
 
     if (timerfd_settime(fd, 0, &its, nullptr) == -1) {
