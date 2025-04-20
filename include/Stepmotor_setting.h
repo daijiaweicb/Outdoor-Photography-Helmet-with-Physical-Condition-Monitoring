@@ -18,8 +18,6 @@ public:
     void setStepDelay(int microseconds) { step_delay = microseconds; }
 
     bool isRunning() const;
-    
-    // Called by external thread (e.g., MotorThread) to wait for motion to finish
     void waitUntilDone();
 
 private:
@@ -35,11 +33,10 @@ private:
     bool goingForward = true;
     bool isBusy = false;
 
-    // For synchronization
     mutable std::mutex cv_mutex;
     std::condition_variable cv;
 
-    void step(int stepPattern[4]);
+    void step(int stepPattern[4]); 
     void onStep();
 };
 
