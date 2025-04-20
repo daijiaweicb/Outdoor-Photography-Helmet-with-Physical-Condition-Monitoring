@@ -3,26 +3,23 @@
 
 MotorThread::MotorThread(StepperMotor *injected_motor, QObject *parent)
     : QThread(parent)
-{
-    if (injected_motor)
     {
-        motor = injected_motor;
-        own_motor = false;
+        if (shared_motor) {
+            motor = shared_motor;
+            own_motor = false;
+        } else {
+            motor = new StepperMotor();
+            own_motor = true;
+        }
     }
-    else
+    
+    MotorThread::~MotorThread()
     {
-        motor = new StepperMotor();
-        own_motor = true;
+        if (own_motor && motor) {
+            delete motor;
+            motor = nullptr;
+        }
     }
-}
-
-MotorThread::~MotorThread()
-{
-    if (own_motor && motor)
-    {
-        delete motor;
-    }
-}
 
 void MotorThread::run()
 {

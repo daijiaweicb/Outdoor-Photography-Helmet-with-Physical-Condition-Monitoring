@@ -38,7 +38,7 @@ Q_SIGNALS:
 
 protected:
     StepperMotor *motor = nullptr;
-    bool own_motor = true;
+    bool own_motor = false;
 };
 
 #endif // MOTOR_THREAD_H
