@@ -154,8 +154,6 @@ bool StepperMotor::isRunning() const
 
 void StepperMotor::waitUntilDone()
 {
-    while (isBusy)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    std::unique_lock<std::mutex> lock(cv_mutex);
+    cv.wait(lock, [this]() { return !isBusy; });
 }
