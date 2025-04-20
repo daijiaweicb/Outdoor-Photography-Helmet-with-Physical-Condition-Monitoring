@@ -6,6 +6,9 @@
  * @param  {Callback} cb   : 
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb) {
+    if (running) {
+        stop();
+    }
     if (running.exchange(true)) return;
 
     struct itimerspec its;
