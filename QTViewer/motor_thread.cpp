@@ -1,6 +1,8 @@
 #include "motor_thread.h"
 #include <QDebug>
 
+std::mutex MotorThread::motorLock;
+
 MotorThread::MotorThread(StepperMotor *injected_motor, QObject *parent)
     : QThread(parent)
     {
