@@ -23,6 +23,7 @@ MotorThread::MotorThread(StepperMotor *injected_motor, QObject *parent)
 
 void MotorThread::run()
 {
+    std::unique_lock<std::mutex> guard(motorLock);
     if (!motor->start(0, 17, 25, 27, 22))
     {
         qDebug() << "[MotorThread] Stepmotor init failed";

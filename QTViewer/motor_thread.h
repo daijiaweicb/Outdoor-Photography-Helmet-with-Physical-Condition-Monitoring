@@ -39,6 +39,7 @@ Q_SIGNALS:
 protected:
     StepperMotor *motor = nullptr;
     bool own_motor = false;
+    static std::mutex motorLock;
 };
 
 #endif // MOTOR_THREAD_H
