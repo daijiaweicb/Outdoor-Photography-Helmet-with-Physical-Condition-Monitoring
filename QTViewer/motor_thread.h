@@ -44,4 +44,3 @@ private:
 };
 
 #endif // MOTOR_THREAD_H
-

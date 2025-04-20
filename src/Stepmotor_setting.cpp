@@ -1,5 +1,4 @@
 #include "Stepmotor_setting.h"
-#include "Timer.h"
 #include <iostream>
 
 using namespace std;
@@ -45,8 +44,11 @@ void StepperMotor::forward(int steps)
     totalSteps = steps;
     stepCount = 0;
     currentStep = 0;
+    isBusy = true;
 
-    timer.start(step_delay / 1000, [this]() { this->onStep(); });
+    timer.start(step_delay / 1000, [this]() {
+        this->onStep();
+    });
 }
 
 void StepperMotor::backward(int steps)
@@ -55,8 +57,11 @@ void StepperMotor::backward(int steps)
     totalSteps = steps;
     stepCount = 0;
     currentStep = 0;
+    isBusy = true;
 
-    timer.start(step_delay / 1000, [this]() { this->onStep(); });
+    timer.start(step_delay / 1000, [this]() {
+        this->onStep();
+    });
 }
 
 void StepperMotor::onStep()
@@ -64,6 +69,7 @@ void StepperMotor::onStep()
     if (stepCount >= totalSteps)
     {
         timer.stop();
+        isBusy = false;
         return;
     }
 
@@ -101,6 +107,7 @@ void StepperMotor::onStep()
 void StepperMotor::cleanup()
 {
     timer.stop();
+    isBusy = false;
 
     for (int i = 0; i < 4; i++)
     {
@@ -115,4 +122,9 @@ void StepperMotor::cleanup()
     {
         gpiod_chip_close(chipGPIO);
     }
+}
+
+bool StepperMotor::isRunning() const
+{
+    return isBusy;
 }

@@ -8,6 +8,14 @@
 
 class StepperMotor
 {
+public:
+    virtual bool start(int chipNo, int pin1, int pin2, int pin3, int pin4);
+    virtual void forward(int steps);
+    virtual void backward(int steps);
+    virtual void cleanup();
+    void setStepDelay(int microseconds) { step_delay = microseconds; }
+    bool isRunning() const;  // <-- New: Query if motor is active
+
 private:
     gpiod_chip *chipGPIO = nullptr;
     gpiod_line *pins[4] = {nullptr};
@@ -19,18 +27,10 @@ private:
     int stepCount = 0;
     int totalSteps = 0;
     bool goingForward = true;
+    bool isBusy = false;  // <-- New: true while motor is stepping
 
-public:
-    virtual bool start(int chipNo, int pin1, int pin2, int pin3, int pin4);
-    virtual void forward(int steps);
-    virtual void backward(int steps);
-    virtual void cleanup();
-
-    void setStepDelay(int microseconds) { step_delay = microseconds; }
-
-private:
     void step(int stepPattern[4]);
-    void onStep();
+    void onStep();  // <-- Called by timer
 };
 
 #endif
