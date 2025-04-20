@@ -1,4 +1,6 @@
 #include "Stepmotor_setting.h"
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -45,11 +47,15 @@ bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
  */
 void StepperMotor::step(int stepPattern[4])
 {
+    static thread_local auto next_time = std::chrono::steady_clock::now();
+
     for (int i = 0; i < 4; i++)
     {
         gpiod_line_set_value(pins[i], stepPattern[i]);
     }
-    usleep(step_delay);
+
+    next_time += std::chrono::microseconds(step_delay);
+    std::this_thread::sleep_until(next_time);
 }
 
 /**

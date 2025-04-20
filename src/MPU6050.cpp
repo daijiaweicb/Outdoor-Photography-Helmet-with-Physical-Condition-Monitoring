@@ -123,9 +123,13 @@ MPU::SensorData MPU::readMPU6050(IIC &iic)
     return data;
 }
 
-bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
+//MPU6050 Initialization Calibration
+bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples)
 {
     float gx = 0, gy = 0, gz = 0;
+    using namespace std::chrono;
+    auto next_time = steady_clock::now();
+
     for (int i = 0; i < samples; i++)
     {
         uint8_t buffer[14];
@@ -134,16 +138,20 @@ bool MPU::calibrateSensors(IIC &iic, AngleData &calib, int samples = 1000)
             std::cerr << "Calibration read error" << std::endl;
             return false;
         }
-        // MPU6050 register 0x43 starts with gyro data (skips temperature register)
+
         int16_t gx_raw = (buffer[8] << 8) | buffer[9];
         int16_t gy_raw = (buffer[10] << 8) | buffer[11];
         int16_t gz_raw = (buffer[12] << 8) | buffer[13];
-        const float gyroScale = 250.0f / 32768.0f; // ±250°/s
+        const float gyroScale = 250.0f / 32768.0f;
+
         gx += gx_raw * gyroScale;
         gy += gy_raw * gyroScale;
         gz += gz_raw * gyroScale;
-        usleep(10000); // Sampling interval 10ms
+
+        next_time += milliseconds(10);
+        std::this_thread::sleep_until(next_time);//Only at Initialization Calibration, data reads are event triggered
     }
+
     calib.gyroBiasX = gx / samples;
     calib.gyroBiasY = gy / samples;
     calib.gyroBiasZ = gz / samples;
