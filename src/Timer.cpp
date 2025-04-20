@@ -6,35 +6,39 @@
  * @param  {Callback} cb   : 
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb) {
+    // stop previous timer if running
     if (!running.exchange(false)) return;
 
+    // stop current timer and join worker if needed
     struct itimerspec its{};
     timerfd_settime(fd, 0, &its, nullptr);
+
     if (worker.joinable() && std::this_thread::get_id() != worker.get_id()) {
         worker.join();
     }
 
-    struct itimerspec its;
+    // setup interval timer
     const int sec = millisecs / 1000;
     const int nsec = (millisecs % 1000) * 1000000;
 
-    //Calculate cycle interval
     its.it_value.tv_sec = sec;
     its.it_value.tv_nsec = nsec;
     its.it_interval.tv_sec = sec;
     its.it_interval.tv_nsec = nsec;
 
-
     if (timerfd_settime(fd, 0, &its, nullptr) == -1) {
         throw std::runtime_error("timerfd_settime failed: " + std::string(strerror(errno)));
     }
 
-    //Start woker thread
+    // launch worker thread
     worker = std::thread([this, cb]() {
         setThreadPriority();
         eventLoop(cb);
     });
+
+    running = true;
 }
+
 
 /**
  * Stop the timer
