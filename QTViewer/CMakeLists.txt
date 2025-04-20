@@ -91,6 +91,7 @@ add_executable(test_motorthreadqt
     motor_thread.cpp
     ${CMAKE_SOURCE_DIR}/src/Mode.cpp
     ${CMAKE_SOURCE_DIR}/src/Stepmotor_setting.cpp
+    ${CMAKE_SOURCE_DIR}/src/Timer.cpp
 )
 
 target_include_directories(test_motorthreadqt PRIVATE
