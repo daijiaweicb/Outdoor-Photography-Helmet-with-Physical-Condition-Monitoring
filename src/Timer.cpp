@@ -10,6 +10,8 @@ void HighPrecisionTimer::start(int millisecs, Callback cb) {
         stop();
     }
 
+    running = true;
+
     struct itimerspec its;
     const int sec = millisecs / 1000;
     const int nsec = (millisecs % 1000) * 1000000;
@@ -34,17 +36,17 @@ void HighPrecisionTimer::start(int millisecs, Callback cb) {
 /**
  * Stop the timer
  */
-void HighPrecisionTimer::stop() 
-{
+void HighPrecisionTimer::stop() {
     if (!running.exchange(false)) return;
-    
+
     struct itimerspec its{};
     timerfd_settime(fd, 0, &its, nullptr);
-    
-    if (worker.joinable()) {
+
+    if (worker.joinable() && std::this_thread::get_id() != worker.get_id()) {
         worker.join();
     }
 }
+
 /**
  * HighPrecisionTimer 
  * 
