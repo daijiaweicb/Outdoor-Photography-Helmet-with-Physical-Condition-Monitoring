@@ -75,8 +75,10 @@ void StepperMotor::backward(int steps)
 
 void StepperMotor::onStep()
 {
+    std::cout <<"onStep called" << std::endl;
     if (stepCount >= totalSteps)
     {
+        timer.stop();
         {
             std::lock_guard<std::mutex> lock(cv_mutex);
             isBusy = false;
