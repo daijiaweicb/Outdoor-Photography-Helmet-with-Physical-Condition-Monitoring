@@ -6,18 +6,11 @@
  * @param  {Callback} cb   : 
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb) {
-    // stop previous timer if running
-    if (!running.exchange(false)) return;
-
-    // stop current timer and join worker if needed
-    struct itimerspec its{};
-    timerfd_settime(fd, 0, &its, nullptr);
-
-    if (worker.joinable() && std::this_thread::get_id() != worker.get_id()) {
-        worker.join();
+    if (running) {
+        stop();
     }
 
-    // setup interval timer
+    struct itimerspec its;
     const int sec = millisecs / 1000;
     const int nsec = (millisecs % 1000) * 1000000;
 
@@ -30,15 +23,13 @@ void HighPrecisionTimer::start(int millisecs, Callback cb) {
         throw std::runtime_error("timerfd_settime failed: " + std::string(strerror(errno)));
     }
 
-    // launch worker thread
+    running = true;
+
     worker = std::thread([this, cb]() {
         setThreadPriority();
         eventLoop(cb);
     });
-
-    running = true;
 }
-
 
 /**
  * Stop the timer
