@@ -4,8 +4,8 @@
 MotorThread::MotorThread(StepperMotor *injected_motor, QObject *parent)
     : QThread(parent)
     {
-        if (shared_motor) {
-            motor = shared_motor;
+        if (injected_motor) {
+            motor = injected_motor;
             own_motor = false;
         } else {
             motor = new StepperMotor();
