@@ -114,6 +114,14 @@ void StepperMotor::onStep()
 
     currentStep = (currentStep + 1) % 8;
     stepCount++;
+
+    if (stepCount < totalSteps)
+    {
+        timer.start(step_delay / 1000, [this]() {
+            this->onStep();
+        });
+    }
+
 }
 
 void StepperMotor::cleanup()
