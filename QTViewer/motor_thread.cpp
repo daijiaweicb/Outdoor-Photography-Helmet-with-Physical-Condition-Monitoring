@@ -38,7 +38,9 @@ void MotorThread::run()
         emit modeChanged(g_systemMode);
 
         motor->forward(1900);
+        qDebug()<< "start forward";
         motor->waitUntilDone();
+        qDebug()<< "waitUntilDone finished";
 
         g_systemMode = SystemMode::FatigueDetection;
         emit modeChanged(g_systemMode);
