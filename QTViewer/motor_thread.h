@@ -18,7 +18,6 @@ class MotorThread : public QThread
     Q_OBJECT
 public:
     MotorThread(StepperMotor *injected_motor = nullptr, QObject *parent = nullptr);
-
     ~MotorThread();
 
     /**
@@ -38,7 +37,11 @@ Q_SIGNALS:
 
 protected:
     StepperMotor *motor = nullptr;
-    bool own_motor = true; // 记录是否自己负责释放 motor
+    bool own_motor = true;
+
+private:
+    void waitForMotor(); // Optional: helper function to wait until motor finishes
 };
 
 #endif // MOTOR_THREAD_H
+
