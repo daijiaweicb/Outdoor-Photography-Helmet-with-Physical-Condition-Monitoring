@@ -34,6 +34,7 @@ set(PROJECT_SOURCES
     ${CMAKE_SOURCE_DIR}/src/iic.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU_kalman.cpp
     ${CMAKE_SOURCE_DIR}/src/fatigue_detector.cpp
+    ${CMAKE_SOURCE_DIR}/src/Timer.cpp
     ${LIBCAMERA_HEADER_DIR}/libcam2opencv.cpp
 )
 
