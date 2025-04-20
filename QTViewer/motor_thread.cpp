@@ -28,7 +28,7 @@ void MotorThread::run()
 {
     if (!motor->start(0, 17, 25, 27, 22))
     {
-        qDebug() << "Stepmotor init failed";
+        qDebug() << "[MotorThread] Stepmotor init failed";
         return;
     }
 
@@ -38,7 +38,7 @@ void MotorThread::run()
         emit modeChanged(g_systemMode);
 
         motor->forward(1900);
-        waitForMotor();
+        motor->waitUntilDone();
 
         g_systemMode = SystemMode::FatigueDetection;
         emit modeChanged(g_systemMode);
@@ -49,19 +49,13 @@ void MotorThread::run()
         emit modeChanged(g_systemMode);
 
         motor->backward(1900);
-        waitForMotor();
+        motor->waitUntilDone();
 
         g_systemMode = SystemMode::Normal;
         emit modeChanged(g_systemMode);
     }
 
     emit modeChanged(g_systemMode);
-    motor->cleanup();
-}
 
-void MotorThread::waitForMotor()
-{
-    while (motor->isRunning()) {
-        QThread::msleep(10);
-    }
+    motor->cleanup(); 
 }

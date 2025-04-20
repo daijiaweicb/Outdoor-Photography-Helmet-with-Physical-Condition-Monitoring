@@ -44,7 +44,11 @@ void StepperMotor::forward(int steps)
     totalSteps = steps;
     stepCount = 0;
     currentStep = 0;
-    isBusy = true;
+
+    {
+        std::lock_guard<std::mutex> lock(cv_mutex);
+        isBusy = true;
+    }
 
     timer.start(step_delay / 1000, [this]() {
         this->onStep();
@@ -57,7 +61,11 @@ void StepperMotor::backward(int steps)
     totalSteps = steps;
     stepCount = 0;
     currentStep = 0;
-    isBusy = true;
+
+    {
+        std::lock_guard<std::mutex> lock(cv_mutex);
+        isBusy = true;
+    }
 
     timer.start(step_delay / 1000, [this]() {
         this->onStep();
@@ -69,7 +77,13 @@ void StepperMotor::onStep()
     if (stepCount >= totalSteps)
     {
         timer.stop();
-        isBusy = false;
+
+        {
+            std::lock_guard<std::mutex> lock(cv_mutex);
+            isBusy = false;
+        }
+
+        cv.notify_all(); // notify any thread waiting for completion
         return;
     }
 
@@ -107,7 +121,13 @@ void StepperMotor::onStep()
 void StepperMotor::cleanup()
 {
     timer.stop();
-    isBusy = false;
+
+    {
+        std::lock_guard<std::mutex> lock(cv_mutex);
+        isBusy = false;
+    }
+
+    cv.notify_all();
 
     for (int i = 0; i < 4; i++)
     {
@@ -126,5 +146,14 @@ void StepperMotor::cleanup()
 
 bool StepperMotor::isRunning() const
 {
+    std::lock_guard<std::mutex> lock(cv_mutex);
     return isBusy;
+}
+
+void StepperMotor::waitUntilDone()
+{
+    std::unique_lock<std::mutex> lock(cv_mutex);
+    cv.wait(lock, [this]() {
+        return !isBusy;
+    });
 }

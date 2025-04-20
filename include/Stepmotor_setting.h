@@ -4,6 +4,8 @@
 #include <iostream>
 #include <gpiod.h>
 #include <unistd.h>
+#include <mutex>
+#include <condition_variable>
 #include "Timer.h"
 
 class StepperMotor
@@ -14,7 +16,11 @@ public:
     virtual void backward(int steps);
     virtual void cleanup();
     void setStepDelay(int microseconds) { step_delay = microseconds; }
-    bool isRunning() const;  // <-- New: Query if motor is active
+
+    bool isRunning() const;
+    
+    // Called by external thread (e.g., MotorThread) to wait for motion to finish
+    void waitUntilDone();
 
 private:
     gpiod_chip *chipGPIO = nullptr;
@@ -27,10 +33,14 @@ private:
     int stepCount = 0;
     int totalSteps = 0;
     bool goingForward = true;
-    bool isBusy = false;  // <-- New: true while motor is stepping
+    bool isBusy = false;
+
+    // For synchronization
+    mutable std::mutex cv_mutex;
+    std::condition_variable cv;
 
     void step(int stepPattern[4]);
-    void onStep();  // <-- Called by timer
+    void onStep();
 };
 
 #endif

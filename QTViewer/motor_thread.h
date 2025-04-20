@@ -11,26 +11,27 @@
  * @brief A background thread responsible for controlling the stepper motor based on current system mode.
  *
  * This class transitions the system between `Normal` and `FatigueDetection` modes by rotating
- * the stepper motor accordingly. The thread is executed asynchronously to avoid blocking the main GUI thread.
+ * the stepper motor accordingly. It uses a background thread to ensure non-blocking GUI behavior.
  */
 class MotorThread : public QThread
 {
     Q_OBJECT
+
 public:
-    MotorThread(StepperMotor *injected_motor = nullptr, QObject *parent = nullptr);
-    ~MotorThread();
+    explicit MotorThread(StepperMotor *injected_motor = nullptr, QObject *parent = nullptr);
+    ~MotorThread() override;
 
     /**
-     * @brief Main function of the thread.
+     * @brief Entry point for the thread execution.
      *
-     * Determines current mode and executes the corresponding motor command (forward/backward).
-     * Notifies mode changes via signal.
+     * Determines the current system mode and triggers the appropriate motor action.
+     * Waits for the motor to finish (via condition_variable) before continuing.
      */
     void run() override;
 
 Q_SIGNALS:
     /**
-     * @brief Emitted whenever the mode changes.
+     * @brief Emitted whenever the system mode changes.
      * @param newMode The updated system mode
      */
     void modeChanged(SystemMode newMode);
@@ -38,9 +39,6 @@ Q_SIGNALS:
 protected:
     StepperMotor *motor = nullptr;
     bool own_motor = true;
-
-private:
-    void waitForMotor(); // Optional: helper function to wait until motor finishes
 };
 
 #endif // MOTOR_THREAD_H
