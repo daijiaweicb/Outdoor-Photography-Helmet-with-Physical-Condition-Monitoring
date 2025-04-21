@@ -7,12 +7,12 @@
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb)
 {
-    std::lock_guard<std::mutex> lock(timer_mutex);
+    
     if (running)
     {
         stop();
     }
-
+    std::lock_guard<std::mutex> lock(timer_mutex);
     struct itimerspec its;
     const int sec = millisecs / 1000;
     const int nsec = (millisecs % 1000) * 1000000;
