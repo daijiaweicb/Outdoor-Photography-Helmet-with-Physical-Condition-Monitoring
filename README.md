@@ -115,11 +115,14 @@ Project file strcuture
 ├── QTViewer
 │   ├── CMakeLists.txt
 │   ├── images
+│   │   └── background.png
 │   ├── main.cpp
 │   ├── mainwindow.cpp
 │   ├── mainwindow.h
 │   ├── mainwindow.ui
 │   ├── mock_for_test
+│   │   ├── mock_motor_thread.h
+│   │   └── mock_steppermotor.h
 │   ├── motor_control_QT.cpp
 │   ├── motor_control_QT.h
 │   ├── motor_sensor_service.cpp
@@ -127,6 +130,8 @@ Project file strcuture
 │   ├── motor_thread.cpp
 │   ├── motor_thread.h
 │   └── qt_tests
+│       ├── test_motorcontrolqt.cpp
+│       └── test_motorthreadqt.cpp
 ├── README.md
 ├── include
 │   ├── IServoControl.h
