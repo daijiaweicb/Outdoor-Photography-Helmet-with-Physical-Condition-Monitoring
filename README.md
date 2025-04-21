@@ -161,9 +161,43 @@ Project file strcuture
     ├── motor_mpu_unit_test.cpp
     └── stepmotor_test.cpp
 ```
+## 3.2 Unit Testing
+We have implemented unit tests using GoogleTest and QtTest for key modules:
 
+| Module              | Test File                   | Coverage Description                          | Type         |
+|---------------------|-----------------------------|-----------------------------------------------|--------------|
+| **Mode Control**    | `test_motorthreadqt.cpp`    | Mode transitions, signal emission             | Unit Test (QTest) |
+| **Servo Control**   | `motor_mpu_unit_test.cpp`   | Roll-to-angle mapping, fatigue logic switching| Unit Test (GTest) |
+| **Stepper Control** | `test_motorcontrolqt.cpp`   | Logic correctness of MPUCallback on servo     | Unit Test (GTest) |
 
-## 3.2 Required library and How to install
+How to Run Unit Tests
+```bash
+cd build
+ctest --output-on-failure
+```
+
+## 3.3 Running Manual Test Programs
+In addition to automated unit tests, we provide manual test programs to verify hardware behavior on a real Raspberry Pi. These are integration-level tools that directly interact with GPIO and I²C hardware. Make sure all devices are properly connected and interfaces are enabled.
+
+1. stepmotor_test.cpp – Stepper Motor CLI Tool\
+This test lets you control the 28BYJ-48 stepper motor directly from the command line.
+```bash
+cd build
+./stepmotor_test <steps> <direction>
+```
+steps: Number of steps to move the motor (e.g., 200)\
+direction: Movement direction — forward or backward
+
+2. motor_mpu_test.cpp – MPU6050 + MG90S Servo Test
+This tool initializes the MPU6050 sensor and the MG90S servo, and runs a loop that:\
+Reads real-time roll angle from MPU6050\
+Adjusts servo angle based on the reading
+```bash
+cd build
+./motor_mpu_test
+```
+
+## 3.4 Required library and How to install
 
 Make sure you you have **install the required library** and **enable the iic function** on Raspberry Pi before cmake the program.
 The required library 
@@ -173,6 +207,16 @@ The required library
 3. dlib
 4. libcamera-dev
 5. libqwt-qt5-dev
+
+How to install all required packages
+```bash
+sudo apt update && sudo apt install -y \
+  libopencv-dev \
+  libgpiod-dev \
+  libdlib-dev \
+  libcamera-dev \
+  libqwt-qt5-dev
+```
 
 How to use
 ```bash
@@ -188,7 +232,7 @@ cd QTViewer
 In the project, the (shape_predictor_68_face_landmarks.dat, deploy.prototxt, res10_300x300_ssd_iter_140000.caffemodel) models are needed for the fatigue detection part. They are in the model folder of the project. 
 
 
-## 3.3 The QT of the project
+## 3.5 The QT of the project
 
 The helmet could change between the modes using the **Change the mode** button. The record button is on the right side and used to capture the image in both modes (The fatigue dectection on the image will not be recorded).
 
