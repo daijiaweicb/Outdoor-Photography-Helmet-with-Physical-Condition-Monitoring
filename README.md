@@ -135,6 +135,7 @@ Project file strcuture
 │   ├── MPU_kalman.h
 │   ├── Mode.h
 │   ├── Stepmotor_setting.h
+│   ├── Timer.h
 │   ├── fatigue_detector.h
 │   ├── iic.h
 │   ├── motor_control.h
@@ -152,6 +153,7 @@ Project file strcuture
 │   ├── MPU_kalman.cpp
 │   ├── Mode.cpp
 │   ├── Stepmotor_setting.cpp
+│   ├── Timer.cpp
 │   ├── fatigue_detector.cpp
 │   ├── iic.cpp
 │   ├── motor_control.cpp
@@ -160,6 +162,7 @@ Project file strcuture
     ├── motor_mpu_test.cpp
     ├── motor_mpu_unit_test.cpp
     └── stepmotor_test.cpp
+
 ```
 
 
