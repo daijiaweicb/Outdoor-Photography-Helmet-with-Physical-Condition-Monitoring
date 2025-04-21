@@ -35,6 +35,7 @@ private:
 
     mutable std::mutex cv_mutex;
     std::condition_variable cv;
+    std::atomic<bool> stopped{false};
 
     void step(int stepPattern[4]); 
     void onStep();

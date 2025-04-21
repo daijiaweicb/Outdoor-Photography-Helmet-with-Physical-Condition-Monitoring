@@ -3,7 +3,6 @@
 #include <algorithm>
 
 using namespace std;
-std::atomic<bool> stopped{false};
 
 bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
 {
@@ -42,6 +41,7 @@ bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
 
 void StepperMotor::forward(int steps)
 {
+    stopped = false;
     goingForward = true;
     totalSteps = steps;
     stepCount = 0;
@@ -59,6 +59,7 @@ void StepperMotor::forward(int steps)
 
 void StepperMotor::backward(int steps)
 {
+    stopped = false;
     goingForward = false;
     totalSteps = steps;
     stepCount = 0;
@@ -82,9 +83,7 @@ void StepperMotor::onStep()
         if (!stopped.exchange(true))
         {
             std::thread([this]()
-                        {
-                            this->timer.stop();
-                        })
+                        { this->timer.stop(); })
                 .detach();
         }
         {
