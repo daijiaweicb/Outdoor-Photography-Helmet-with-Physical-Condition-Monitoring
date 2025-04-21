@@ -104,7 +104,7 @@ The button of the Qt window could change the mode of the photography platform.
 
 ### The motor part 
 Details at wiki:\
-https://github.com/daijiaweicb/Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring.wiki.git
+[wiki](https://github.com/daijiaweicb/Outdoor-Photography-Helmet-with-Physical-Condition-Monitoring/wiki/Software-part)
 ### The Fatigue detection
 To do the Fatigue detection, the input image is first be fed into the Opencv DNN model to identify the face image. Then the shape_predictor 68 face landmarks finds the characteristic point of the select image of the DNN model. Using the characteristic point data, the EAR (Aspect ratio of the eye) is calculated. If the EAR ratio is continuously lower than the expected value, the user will be marked as fatigue and increase the fatigue ratio on the output (From 0 to 100%). If there is not fatigue detected, the fatigue ratio will automatically decrease.
 
