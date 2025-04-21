@@ -3,6 +3,7 @@
 #include <algorithm>
 
 using namespace std;
+std::atomic<bool> stopped{false};
 
 bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
 {
@@ -75,9 +76,17 @@ void StepperMotor::backward(int steps)
 
 void StepperMotor::onStep()
 {
-    std::cout <<"onStep called" << std::endl;
+    std::cout << "onStep called" << std::endl;
     if (stepCount >= totalSteps)
     {
+        if (!stopped.exchange(true))
+        {
+            std::thread([this]()
+                        {
+                            this->timer.stop();
+                        })
+                .detach();
+        }
         {
             std::lock_guard<std::mutex> lock(cv_mutex);
             isBusy = false;
