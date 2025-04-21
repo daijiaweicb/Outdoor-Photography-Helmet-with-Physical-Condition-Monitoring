@@ -188,14 +188,24 @@ sudo apt update && sudo apt install -y \
   libcamera-dev \
   libqwt-qt5-dev
 ```
-## 3.3 Unit Testing
+## 3.3 Unit Testing and Mocked Hardware
 We have implemented unit tests using GoogleTest and QtTest for key modules:
 
+###  Test Coverage Summary
 | Module              | Test File                   | Coverage Description                          | Type         |
 |---------------------|-----------------------------|-----------------------------------------------|--------------|
 | **Mode Control**    | `test_motorthreadqt.cpp`    | Mode transitions, signal emission             | Unit Test (QTest) |
 | **Servo Control**   | `motor_mpu_unit_test.cpp`   | Roll-to-angle mapping, fatigue logic switching| Unit Test (GTest) |
 | **Stepper Control** | `test_motorcontrolqt.cpp`   | Logic correctness of MPUCallback on servo     | Unit Test (GTest) |
+
+###  Mocked Hardware Classes
+To allow unit testing without real hardware, several mock classes were implemented to simulate hardware behavior:
+| Mock Class             | Real Target              | Purpose |
+|------------------------|--------------------------|---------|
+| `MockStepperMotor`     | `StepperMotor`           | Simulates stepper motor movement, tracks `start()`/`forward()`/`cleanup()` calls |
+| `MockServo`            | `MG90S` via `IServoControl` | Captures servo angle values set by the controller |
+| `TestableMotorThread`  | `MotorThread`            | Injects a mock motor and verifies signal emissions |
+| `MockMotorControlQT`   | `MotorControlQT`         | Isolates logic to test sensor-to-servo behavior |
 
 How to Run Unit Tests
 ```bash
@@ -258,11 +268,15 @@ The helmet could change between the modes using the **Change the mode** button. 
 
 
 # 4. Social media
-
-| Follow me 🔔 |  
-|:--------:|  
-| <img src="https://github.com/user-attachments/assets/aea9b545-b5d0-4563-9a56-6cd11e22de6e" width="30"/> |
-|[TikTok Link](https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1)|
+<p align="center">
+  <a href="https://www.tiktok.com/@outdoor.photograp8?_t=ZN-8vV1aefj4Dv&_r=1" target="_blank">
+    <img src="https://img.shields.io/badge/Follow us on-TikTok-black?logo=tiktok&logoColor=white&style=for-the-badge&labelWidth=140" alt="TikTok Badge"/>
+  </a>
+  &nbsp;
+  <a href="https://www.instagram.com/photography_helmet/?igsh=MTNmcTA4Mm9saXdtcw%3D%3D" target="_blank">
+    <img src="https://img.shields.io/badge/Follow us on-Instagram-E4405F?logo=instagram&logoColor=white&style=for-the-badge&labelWidth=140" alt="Instagram Badge"/>
+  </a>
+</p>
 
 # 5. Authors
 | Member       | Contribution                               |
