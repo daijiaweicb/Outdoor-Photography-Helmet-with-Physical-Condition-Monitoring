@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
         motor.cleanup();
         return 1;
     }
-
+    motor.waitUntilDone();
     motor.cleanup();
     cout << "Motor movement complete. GPIO released." << endl;
 

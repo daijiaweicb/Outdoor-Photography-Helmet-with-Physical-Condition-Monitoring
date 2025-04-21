@@ -14,7 +14,8 @@ int PWM::start_pwm(int channel, int frequency, float duty_cycle, int chip)
     const int r = fprintf(fp, "%d", channel);
     if (r < 0)
         return r;
-    usleep(100000); //This delay is required after exporting the PWM (Create PWM subdir).It happens only at the initialization stage, not for real time control (timing)
+    //PWM initialization
+    usleep(100000); //Only at initialization stage, not for real time control (timing).It is required after exporting the PWM (Create PWM subdir).
     per = (int)1E9 / frequency;
     setPeriod(per);
     setDutyCycle(duty_cycle);

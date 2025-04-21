@@ -91,6 +91,7 @@ private Q_SLOTS:
 
 private:
     Ui::MainWindow *ui;                    // Qt-generated UI class
+    StepperMotor* sharedMotor;
     MotorThread *motorThread = nullptr;    // Thread for stepper motor transitions
     MotorSensorService *service = nullptr; // Wrapper for servo and sensor system
     QTimer *timer;                         // Clock timer for UI
