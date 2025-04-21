@@ -7,7 +7,7 @@
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb)
 {
-    std::lock_guard<std::mutex> lock(timer_mutex); 
+    std::lock_guard<std::mutex> lock(timer_mutex);
     if (running)
     {
         stop();
@@ -27,12 +27,12 @@ void HighPrecisionTimer::start(int millisecs, Callback cb)
         throw std::runtime_error("timerfd_settime failed: " + std::string(strerror(errno)));
     }
 
-    running = true;
-
     worker = std::thread([this, cb]()
                          {
         setThreadPriority();
         eventLoop(cb); });
+
+    running = true;
 }
 
 /**
@@ -53,7 +53,6 @@ void HighPrecisionTimer::stop()
     }
     worker = std::thread();
 }
-
 
 /**
  * HighPrecisionTimer
