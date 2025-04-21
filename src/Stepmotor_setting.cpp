@@ -1,11 +1,11 @@
 #include "Stepmotor_setting.h"
-#include <chrono>
-#include <thread>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
 /**
- * @brief Initializes GPIO lines for the stepper motor.
+ * @brief Initializes GPIO chip and requests output lines for stepper motor control.
  */
 bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
 {
@@ -21,6 +21,7 @@ bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
     gpio_pins[2] = pin3;
     gpio_pins[3] = pin4;
 
+    // Request output access to each GPIO pin
     for (int i = 0; i < 4; i++)
     {
         pins[i] = gpiod_chip_get_line(chipGPIO, gpio_pins[i]);
@@ -43,80 +44,153 @@ bool StepperMotor::start(int chipNo, int pin1, int pin2, int pin3, int pin4)
 }
 
 /**
- * @brief Drives a single step using the specified step pattern.
- */
-void StepperMotor::step(int stepPattern[4])
-{
-    static thread_local auto next_time = std::chrono::steady_clock::now();
-
-    for (int i = 0; i < 4; i++)
-    {
-        gpiod_line_set_value(pins[i], stepPattern[i]);
-    }
-
-    next_time += std::chrono::microseconds(step_delay);
-    std::this_thread::sleep_until(next_time);
-}
-
-/**
- * @brief Rotates the stepper motor forward (clockwise).
+ * @brief Starts the motor moving forward for a given number of steps.
  */
 void StepperMotor::forward(int steps)
 {
-    int stepSequence[8][4] = {
-        {1, 0, 0, 0}, // Step 1
-        {1, 1, 0, 0}, // Step 2
-        {0, 1, 0, 0}, // Step 3
-        {0, 1, 1, 0}, // Step 4
-        {0, 0, 1, 0}, // Step 5
-        {0, 0, 1, 1}, // Step 6
-        {0, 0, 0, 1}, // Step 7
-        {1, 0, 0, 1}  // Step 8
-    };
+    stopped = false;
+    goingForward = true;
+    shouldStop = false;
+    totalSteps = steps;
+    stepCount = 0;
+    currentStep = 0;
 
-    for (int i = 0; i < steps; i++)
     {
-        step(stepSequence[i % 8]);
+        std::lock_guard<std::mutex> lock(cv_mutex);
+        isBusy = true;
     }
+
+    int ms = std::max(1, step_delay / 1000); // Convert µs to ms (minimum 1 ms)
+    timer.start(ms, [this]() { this->onStep(); });
 }
 
 /**
- * @brief Rotates the stepper motor backward (counter-clockwise).
+ * @brief Starts the motor moving backward for a given number of steps.
  */
 void StepperMotor::backward(int steps)
 {
-    int stepSequenceReverse[8][4] = {
-        {1, 0, 0, 1}, // Step 1
-        {0, 0, 0, 1}, // Step 2
-        {0, 0, 1, 1}, // Step 3
-        {0, 0, 1, 0}, // Step 4
-        {0, 1, 1, 0}, // Step 5
-        {0, 1, 0, 0}, // Step 6
-        {1, 1, 0, 0}, // Step 7
-        {1, 0, 0, 0}  // Step 8
-    };
+    stopped = false;
+    goingForward = false;
+    shouldStop = false;
+    totalSteps = steps;
+    stepCount = 0;
+    currentStep = 0;
 
-    for (int i = 0; i < steps; i++)
     {
-        step(stepSequenceReverse[i % 8]);
+        std::lock_guard<std::mutex> lock(cv_mutex);
+        isBusy = true;
     }
+
+    int ms = std::max(1, step_delay / 1000); // Convert µs to ms (minimum 1 ms)
+    timer.start(ms, [this]() { this->onStep(); });
 }
 
 /**
- * @brief Releases all allocated GPIO lines and turns off motor phases.
+ * @brief Called on each timer tick. Advances one step and stops when done.
+ */
+void StepperMotor::onStep()
+{
+    if (stepCount >= totalSteps)
+    {
+        if (!stopped.exchange(true))
+        {
+            // Stop timer in a separate thread to avoid joining within itself
+            std::thread([this]() { this->timer.stop(); }).detach();
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(cv_mutex);
+            isBusy = false;
+            shouldStop = true;
+            cv.notify_all();
+            return;
+        }
+    }
+
+    // 8-step full stepping sequence (half-step mode)
+    static const int stepSequence[8][4] = {
+        {1, 0, 0, 0},
+        {1, 1, 0, 0},
+        {0, 1, 0, 0},
+        {0, 1, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 1, 1},
+        {0, 0, 0, 1},
+        {1, 0, 0, 1}};
+
+    static const int stepSequenceReverse[8][4] = {
+        {1, 0, 0, 1},
+        {0, 0, 0, 1},
+        {0, 0, 1, 1},
+        {0, 0, 1, 0},
+        {0, 1, 1, 0},
+        {0, 1, 0, 0},
+        {1, 1, 0, 0},
+        {1, 0, 0, 0}};
+
+    const int (*sequence)[4] = goingForward ? stepSequence : stepSequenceReverse;
+
+    // Write one step to GPIO
+    for (int i = 0; i < 4; i++)
+    {
+        gpiod_line_set_value(pins[i], sequence[currentStep][i]);
+    }
+
+    currentStep = (currentStep + 1) % 8;
+    stepCount++;
+
+    if (shouldStop) return;
+}
+
+/**
+ * @brief Stops the motor and releases all GPIO lines.
  */
 void StepperMotor::cleanup()
 {
+    timer.stop();
+
+    {
+        std::lock_guard<std::mutex> lock(cv_mutex);
+        isBusy = false;
+    }
+
+    cv.notify_all();
+
     for (int i = 0; i < 4; i++)
     {
         if (pins[i])
         {
-            gpiod_line_set_value(pins[i], 0);
+            gpiod_line_set_value(pins[i], 0); // Set low before release
             gpiod_line_release(pins[i]);
         }
     }
+
     if (chipGPIO)
     {
         gpiod_chip_close(chipGPIO);
+    }
+}
+
+/**
+ * @brief Checks if the motor is currently active.
+ */
+bool StepperMotor::isRunning() const
+{
+    std::lock_guard<std::mutex> lock(cv_mutex);
+    return isBusy;
+}
+
+/**
+ * @brief Blocks until the motor has finished moving.
+ */
+void StepperMotor::waitUntilDone()
+{
+    std::unique_lock<std::mutex> lock(cv_mutex);
+    cv.wait(lock, [this]() { return !isBusy; });
+
+    if (!stopped)
+    {
+        timer.stop();
+        stopped = true;
     }
 }

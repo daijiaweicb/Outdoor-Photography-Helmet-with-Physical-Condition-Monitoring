@@ -1,51 +1,47 @@
 #include "motor_thread.h"
 #include <QDebug>
 
+std::mutex MotorThread::motorLock;
+
 MotorThread::MotorThread(StepperMotor *injected_motor, QObject *parent)
     : QThread(parent)
-{
-    if (injected_motor)
     {
-        motor = injected_motor;
-        own_motor = false;
+        if (injected_motor) {
+            motor = injected_motor;
+            own_motor = false;
+        } else {
+            motor = new StepperMotor();
+            own_motor = true;
+        }
     }
-    else
+    
+    MotorThread::~MotorThread()
     {
-        motor = new StepperMotor();
-        own_motor = true;
+        if (own_motor && motor) {
+            delete motor;
+            motor = nullptr;
+        }
     }
-}
 
-MotorThread::~MotorThread()
-{
-    if (own_motor && motor)
-    {
-        delete motor;
-    }
-}
-/**
- * @brief Core logic of the thread, executed when thread is started.
- *
- * Based on the global `g_systemMode`, the function:
- * - Rotates the stepper motor forward if in `Normal` mode and transitions to `FatigueDetection`
- * - Rotates the motor backward if in `FatigueDetection` and transitions to `Normal`
- *
- * Emits modeChanged signals during transition and calls motor.cleanup() at the end.
- */
 void MotorThread::run()
 {
-    // Initialize stepper motor with GPIO pins
+    std::unique_lock<std::mutex> guard(motorLock);
     if (!motor->start(0, 17, 25, 27, 22))
     {
-        qDebug() << "Stepmotor init failed";
+        qDebug() << "[MotorThread] Stepmotor init failed";
         return;
     }
-    // Handle mode transition
+
     if (g_systemMode == SystemMode::Normal)
     {
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
-        motor->forward(1900); // Rotate to FatigueDetection position
+
+        motor->forward(1900);
+        qDebug()<< "start forward";
+        motor->waitUntilDone();
+        qDebug()<< "waitUntilDone finished";
+
         g_systemMode = SystemMode::FatigueDetection;
         emit modeChanged(g_systemMode);
     }
@@ -53,11 +49,15 @@ void MotorThread::run()
     {
         g_systemMode = SystemMode::Temp;
         emit modeChanged(g_systemMode);
-        motor->backward(1900); // Rotate back to Normal position
+
+        motor->backward(1900);
+        motor->waitUntilDone();
+
         g_systemMode = SystemMode::Normal;
         emit modeChanged(g_systemMode);
     }
 
     emit modeChanged(g_systemMode);
-    motor->cleanup();
+
+    motor->cleanup(); 
 }

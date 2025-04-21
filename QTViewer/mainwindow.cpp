@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
         QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
         ui->label_time->setText("Time:" + now); });
 
+    sharedMotor = new StepperMotor();
+
     service = new MotorSensorService();
     service->start();
     connect(service->getMotorControl(), &MotorControlQT::temperatureUpdated,
@@ -86,7 +88,8 @@ MainWindow::~MainWindow()
 {
     if (g_systemMode == SystemMode::FatigueDetection)
     {
-        MotorThread* exitMotor = new MotorThread(nullptr, this);;
+        MotorThread *exitMotor = new MotorThread(nullptr, this);
+        ;
         connect(exitMotor, &MotorThread::finished, exitMotor, &QObject::deleteLater);
         g_systemMode = SystemMode::Temp;
         exitMotor->start();
@@ -100,7 +103,7 @@ MainWindow::~MainWindow()
         delete cam;
         cam = nullptr;
     }
-    
+
     delete ui;
 }
 
@@ -110,21 +113,27 @@ MainWindow::~MainWindow()
  */
 void MainWindow::on_ChangeMode_clicked()
 {
-    if (motorThread && motorThread->isRunning())
-    {
+    if (motorThread || sharedMotor->isRunning()) {
         qDebug() << "motor is running....Do not operate....";
         return;
     }
 
-    motorThread = new MotorThread(nullptr, this);
+    if (motorThread) {
+        motorThread->wait();
+        delete motorThread;
+        motorThread = nullptr;
+    }
+
+    motorThread = new MotorThread(sharedMotor, this);
 
     connect(motorThread, &MotorThread::modeChanged,
             this, &MainWindow::onModeChanged);
 
-    connect(motorThread, &MotorThread::finished, this, [this]()
-            {
-        motorThread->deleteLater();
-        motorThread = nullptr; });
+    connect(motorThread, &MotorThread::finished, this, [this]() {
+        QThread::msleep(100);
+        delete motorThread;
+        motorThread = nullptr;
+    });
 
     motorThread->start();
 }
@@ -150,7 +159,7 @@ void MainWindow::safeShutdown()
     qDebug() << ">>> safeShutdown() called";
     if (motorThread)
     {
-        qDebug()<< "motor thread is not null";
+        qDebug() << "motor thread is not null";
         if (motorThread->isRunning())
         {
             qDebug() << ">>> Waiting for motor thread to finish...";
@@ -188,11 +197,10 @@ void MainWindow::on_Exit_clicked()
             connect(motorThread, &MotorThread::modeChanged, this, &MainWindow::onModeChanged);
 
             connect(motorThread, &MotorThread::finished, this, [this]()
-            {
+                    {
                 motorThread->deleteLater();
                 motorThread = nullptr;
-                safeShutdown();
-            });
+                safeShutdown(); });
 
             motorThread->start();
         }

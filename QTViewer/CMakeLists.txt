@@ -1,5 +1,6 @@
 project(QT_HELMET VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -34,6 +35,7 @@ set(PROJECT_SOURCES
     ${CMAKE_SOURCE_DIR}/src/iic.cpp
     ${CMAKE_SOURCE_DIR}/src/MPU_kalman.cpp
     ${CMAKE_SOURCE_DIR}/src/fatigue_detector.cpp
+    ${CMAKE_SOURCE_DIR}/src/Timer.cpp
     ${LIBCAMERA_HEADER_DIR}/libcam2opencv.cpp
 )
 
@@ -90,6 +92,7 @@ add_executable(test_motorthreadqt
     motor_thread.cpp
     ${CMAKE_SOURCE_DIR}/src/Mode.cpp
     ${CMAKE_SOURCE_DIR}/src/Stepmotor_setting.cpp
+    ${CMAKE_SOURCE_DIR}/src/Timer.cpp
 )
 
 target_include_directories(test_motorthreadqt PRIVATE
