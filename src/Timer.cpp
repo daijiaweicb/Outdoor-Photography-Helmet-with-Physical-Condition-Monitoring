@@ -45,13 +45,12 @@ void HighPrecisionTimer::stop()
     struct itimerspec its{};
     timerfd_settime(fd, 0, &its, nullptr);
 
-    if (worker.joinable() && std::this_thread::get_id() != worker.get_id())
+    if (std::this_thread::get_id() == worker.get_id())
     {
-        worker.join();
+        return;
     }
     worker = std::thread();
 }
-
 
 /**
  * HighPrecisionTimer
