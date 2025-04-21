@@ -30,7 +30,7 @@ void MotorControlQT::MPUCallback(const AngleData &data)
 
     angle.RevData = angle.NewData - angle.PrevData;
 
-    // std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " Temp: " << data.temp << "℃" << std::endl;
+    std::cout << "Angle Change: " << angle.RevData << " New Angle: " << angle.NewData << "°" << " Temp: " << data.temp << "℃" << std::endl;
 
     // Mode-dependent servo behavior
     if (g_systemMode == SystemMode::Normal)
