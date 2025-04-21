@@ -7,12 +7,8 @@
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb)
 {
-    
-    if (running)
-    {
-        stop();
-    }
-    // std::lock_guard<std::mutex> lock(timer_mutex);
+    stop();
+    std::lock_guard<std::mutex> lock(timer_mutex);
     struct itimerspec its;
     const int sec = millisecs / 1000;
     const int nsec = (millisecs % 1000) * 1000000;
@@ -40,18 +36,27 @@ void HighPrecisionTimer::start(int millisecs, Callback cb)
  */
 void HighPrecisionTimer::stop()
 {
-    // std::lock_guard<std::mutex> lock(timer_mutex);
-    if (!running.exchange(false))
-        return;
-
-    struct itimerspec its{};
-    timerfd_settime(fd, 0, &its, nullptr);
-
-    if (worker.joinable() && std::this_thread::get_id() != worker.get_id())
+    std::thread localWorker;
     {
-        worker.join();
+        std::lock_guard<std::mutex> lock(timer_mutex);
+        if (!running)
+            return;
+
+        running = false;
+
+        struct itimerspec its{};
+        timerfd_settime(fd, 0, &its, nullptr);
+
+        if (worker.joinable() && std::this_thread::get_id() != worker.get_id()) {
+            localWorker = std::move(worker);
+        } else {
+            worker = std::thread();
+        }
     }
-    worker = std::thread();
+
+    if (localWorker.joinable()) {
+        localWorker.join();
+    }
 }
 
 /**
