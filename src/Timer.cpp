@@ -7,6 +7,7 @@
  */
 void HighPrecisionTimer::start(int millisecs, Callback cb)
 {
+    std::lock_guard<std::mutex> lock(timer_mutex); 
     if (running)
     {
         stop();
@@ -39,6 +40,7 @@ void HighPrecisionTimer::start(int millisecs, Callback cb)
  */
 void HighPrecisionTimer::stop()
 {
+    std::lock_guard<std::mutex> lock(timer_mutex);
     if (!running.exchange(false))
         return;
 

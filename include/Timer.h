@@ -10,6 +10,7 @@
 #include <atomic>
 #include <chrono>
 #include <functional>
+#include <mutex>
 
 class HighPrecisionTimer {
 public:
@@ -35,6 +36,7 @@ private:
     int fd = -1;
     std::atomic<bool> running{false};
     std::thread worker;
+    std::mutex timer_mutex;
 
     void eventLoop(const Callback& cb);
 
