@@ -32,6 +32,7 @@ private:
     int totalSteps = 0;
     bool goingForward = true;
     bool isBusy = false;
+    bool shouldStop = false;
 
     mutable std::mutex cv_mutex;
     std::condition_variable cv;

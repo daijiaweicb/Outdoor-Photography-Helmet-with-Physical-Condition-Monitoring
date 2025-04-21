@@ -119,6 +119,7 @@ void MainWindow::on_ChangeMode_clicked()
     }
 
     if (motorThread) {
+        motorThread->wait();
         delete motorThread;
         motorThread = nullptr;
     }

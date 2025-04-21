@@ -43,6 +43,7 @@ void StepperMotor::forward(int steps)
 {
     stopped = false;
     goingForward = true;
+    shouldStop = false;
     totalSteps = steps;
     stepCount = 0;
     currentStep = 0;
@@ -61,6 +62,7 @@ void StepperMotor::backward(int steps)
 {
     stopped = false;
     goingForward = false;
+    shouldStop = false;
     totalSteps = steps;
     stepCount = 0;
     currentStep = 0;
@@ -89,10 +91,10 @@ void StepperMotor::onStep()
         {
             std::lock_guard<std::mutex> lock(cv_mutex);
             isBusy = false;
+            shouldStop = true;
+            cv.notify_all();
+            return;
         }
-
-        cv.notify_all();
-        return;
     }
 
     static const int stepSequence[8][4] = {
@@ -124,6 +126,9 @@ void StepperMotor::onStep()
 
     currentStep = (currentStep + 1) % 8;
     stepCount++;
+    if (shouldStop) {
+        return; 
+    }
 }
 
 void StepperMotor::cleanup()
@@ -160,5 +165,12 @@ bool StepperMotor::isRunning() const
 void StepperMotor::waitUntilDone()
 {
     std::unique_lock<std::mutex> lock(cv_mutex);
-    cv.wait(lock, [this]() { return !isBusy; });
+    cv.wait(lock, [this]()
+            { return !isBusy; });
+
+    if (!stopped)
+    {
+        timer.stop();
+        stopped = true;
+    }
 }
