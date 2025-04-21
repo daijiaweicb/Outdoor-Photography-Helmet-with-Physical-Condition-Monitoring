@@ -171,37 +171,30 @@ void MainWindow::safeShutdown()
     this->close();
 }
 
-void MainWindow::on_Exit_clicked()
+void MainWindow::on_ChangeMode_clicked()
 {
-    auto reply = QMessageBox::question(this, "Exit Confirmation", "Are you sure you want to exit?",
-                                       QMessageBox::No | QMessageBox::Yes);
-    if (reply == QMessageBox::Yes)
-    {
-        if (g_systemMode == SystemMode::FatigueDetection)
-        {
-            if (motorThread && motorThread->isRunning())
-            {
-                qDebug() << "motor is already running... exit canceled";
-                return;
-            }
-
-            motorThread = new MotorThread(nullptr, this);
-
-            connect(motorThread, &MotorThread::modeChanged, this, &MainWindow::onModeChanged);
-
-            connect(motorThread, &MotorThread::finished, this, [this]()
-                    {
-                motorThread->deleteLater();
-                motorThread = nullptr;
-                safeShutdown(); });
-
-            motorThread->start();
-        }
-        else
-        {
-            safeShutdown();
-        }
+    if (motorThread || sharedMotor->isRunning()) {
+        qDebug() << "motor is running....Do not operate....";
+        return;
     }
+
+    if (motorThread) {
+        delete motorThread;
+        motorThread = nullptr;
+    }
+
+    motorThread = new MotorThread(sharedMotor, this);
+
+    connect(motorThread, &MotorThread::modeChanged,
+            this, &MainWindow::onModeChanged);
+
+    connect(motorThread, &MotorThread::finished, this, [this]() {
+        QThread::msleep(100);
+        delete motorThread;
+        motorThread = nullptr;
+    });
+
+    motorThread->start();
 }
 
 /**
